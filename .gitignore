@@ -1,0 +1,213 @@
+# JetBrains IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+
+# Xcode
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+
+# CMake
+cmake-build-*/
+build/
+out/
+bin/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+*.ninja
+*.cbp
+
+# Meson
+meson-private/
+meson-info/
+meson-logs/
+
+# C/C++
+*.o
+*.obj
+*.ko
+*.a
+*.lib
+*.dll
+*.so
+*.so.*
+*.dylib
+*.pdb
+*.idb
+*.ilk
+*.exp
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Dependency files
+*.d
+
+# VCPKG
+vcpkg/
+vcpkg_installed/
+vcpkg-manifest-install.log
+vcpkg-bootstrap.log
+.vcpkg-root
+
+# Conan
+conanbuildinfo.cmake
+conanbuildinfo.txt
+conaninfo.txt
+conan_imports/
+conan_user_home/
+
+# Assets
+zeroday/engine/assets/**/*
+!zeroday/engine/assets/
+!zeroday/engine/assets/**/*.json
+!zeroday/engine/assets/**/*.txt
+!zeroday/engine/assets/**/*.md
+!zeroday/engine/assets/**/.gitkeep
+
+# Shaders
+zeroday/engine/shaders/**/*.spv
+zeroday/engine/shaders/**/*.bin
+zeroday/engine/shaders/**/*.cache
+
+# Textures
+zeroday/engine/assets/textures/**/*.png
+zeroday/engine/assets/textures/**/*.jpg
+zeroday/engine/assets/textures/**/*.jpeg
+zeroday/engine/assets/textures/**/*.tga
+zeroday/engine/assets/textures/**/*.bmp
+zeroday/engine/assets/textures/**/*.hdr
+zeroday/engine/assets/textures/**/*.exr
+!zeroday/engine/assets/textures/
+!zeroday/engine/assets/textures/**/*.json
+!zeroday/engine/assets/textures/**/*.txt
+
+# Models
+zeroday/engine/assets/models/**/*.fbx
+zeroday/engine/assets/models/**/*.obj
+zeroday/engine/assets/models/**/*.gltf
+zeroday/engine/assets/models/**/*.glb
+zeroday/engine/assets/models/**/*.blend
+zeroday/engine/assets/models/**/*.3ds
+zeroday/engine/assets/models/**/*.dae
+zeroday/engine/assets/models/**/*.stl
+!zeroday/engine/assets/models/
+!zeroday/engine/assets/models/**/*.json
+!zeroday/engine/assets/models/**/*.txt
+!zeroday/engine/assets/models/**/license.txt
+
+# Third Party
+zeroday/engine/third_party/**
+!zeroday/engine/third_party/.gitkeep
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*~
+*.bak
+*.backup
+*.old
+
+# Temp files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# ========== TEST ve DEBUG ==========
+# Testing
+Testing/
+test-results/
+coverage/
+*.gcda
+*.gcno
+*.gcov
+
+# Profiling
+*.profraw
+*.profdata
+
+# ========== DOCUMENTATION ==========
+# Generated documentation
+docs/_build/
+docs/_generated/
+docs/_static/_build/
+
+# Doxygen
+doxygen/
+html/
+latex/
+
+# ========== CACHE ve STATE DOSYALARI ==========
+# Package managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ========== CUSTOM BUILD ARTIFACTS ==========
+# Engine specific
+*.engine
+*.game
+*.dll
+*.pdb
+*.ilk
+*.exp
+
+# Shader compilation cache
+shader_cache/
+compiled_shaders/
+
+# Asset cache
+asset_cache/
+imported_assets/

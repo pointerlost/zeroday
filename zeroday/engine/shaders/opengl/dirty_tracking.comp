@@ -1,0 +1,42 @@
+#version 450
+layout(local_size_x = 64) in;
+
+// Input: Get dirty flags from CPU
+layout(std430, binding = 0) buffer CPUDirtyFlags {
+    uint cpuDirtyFlags[];
+};
+
+// Output: GPU-friendly dirty list
+layout(std430, binding = 1) buffer GPUDirtyList {
+    uint gpuDirtyIndices[];
+    atomic_uint gpuDirtyCount;
+};
+
+// Entity mobility information
+layout(std430, binding = 2) buffer EntityMobility {
+    uint entityMobility[];  // 0 = static, 1 = dynamic
+};
+
+// Frustum culling results
+layout(std430, binding = 3) buffer FrustumResults {
+    uint frustumVisible[];
+};
+
+void main() {
+    uint entityIndex = gl_GlobalInvocationID.x;
+
+    // is Entity dirty?
+    bool isDirty = (cpuDirtyFlags[entityIndex] != 0);
+
+    // check in Frustum?
+    bool isVisible = (frustumVisible[entityIndex] != 0);
+
+    // if Dirty and Visible add into GPU dirty list
+    if (isDirty && isVisible) {
+        uint dirtyIndex = atomicCounterIncrement(gpuDirtyCount);
+        gpuDirtyIndices[dirtyIndex] = entityIndex;
+
+        // clear CPU dirty flag | we are doing in the gpu after sending to GPU
+        // cpuDirtyFlags[entityIndex] = 0;
+    }
+}

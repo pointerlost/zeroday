@@ -1,0 +1,12 @@
+{
+  "shaders": [
+    {
+      "name": "basic",
+      "type": "GLSL",
+      "stages": {
+        "vertex": "opengl/basic.vert",
+        "fragment": "opengl/basic.frag"
+      }
+    }
+  ]
+}

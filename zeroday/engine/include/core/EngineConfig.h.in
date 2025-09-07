@@ -1,0 +1,18 @@
+#pragma once
+constexpr float SCR_WIDTH  = 1920.0f;
+constexpr float SCR_HEIGHT = 1080.0f;
+
+/* ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | */
+
+constexpr float MainMenuBarWidth = SCR_WIDTH;
+constexpr float MainMenuBarHeight = 26.0f;
+
+// Inspector
+constexpr float InspectorWidth = 400.0f;
+constexpr float InspectorHeight = SCR_HEIGHT - MainMenuBarHeight;
+
+// Hierarchy
+constexpr float HierarchyWidth = 400.0f;
+constexpr float HierarchyHeight = SCR_HEIGHT - MainMenuBarHeight;
+
+/* ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | ImGui | */
