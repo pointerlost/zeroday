@@ -89,44 +89,26 @@ conaninfo.txt
 conan_imports/
 conan_user_home/
 
-# Assets
-zeroday/engine/assets/**/*
+zeroday/engine/assets/models/**/*
+zeroday/engine/assets/textures/**/*
+zeroday/engine/assets/fonts/**/*
+
 !zeroday/engine/assets/
+!zeroday/engine/assets/models/
+!zeroday/engine/assets/textures/
+!zeroday/engine/assets/fonts/
+!zeroday/engine/assets/materialJSON/
+
 !zeroday/engine/assets/**/*.json
 !zeroday/engine/assets/**/*.txt
 !zeroday/engine/assets/**/*.md
 !zeroday/engine/assets/**/.gitkeep
+!zeroday/engine/assets/**/license.txt
 
 # Shaders
 zeroday/engine/shaders/**/*.spv
 zeroday/engine/shaders/**/*.bin
 zeroday/engine/shaders/**/*.cache
-
-# Textures
-zeroday/engine/assets/textures/**/*.png
-zeroday/engine/assets/textures/**/*.jpg
-zeroday/engine/assets/textures/**/*.jpeg
-zeroday/engine/assets/textures/**/*.tga
-zeroday/engine/assets/textures/**/*.bmp
-zeroday/engine/assets/textures/**/*.hdr
-zeroday/engine/assets/textures/**/*.exr
-!zeroday/engine/assets/textures/
-!zeroday/engine/assets/textures/**/*.json
-!zeroday/engine/assets/textures/**/*.txt
-
-# Models
-zeroday/engine/assets/models/**/*.fbx
-zeroday/engine/assets/models/**/*.obj
-zeroday/engine/assets/models/**/*.gltf
-zeroday/engine/assets/models/**/*.glb
-zeroday/engine/assets/models/**/*.blend
-zeroday/engine/assets/models/**/*.3ds
-zeroday/engine/assets/models/**/*.dae
-zeroday/engine/assets/models/**/*.stl
-!zeroday/engine/assets/models/
-!zeroday/engine/assets/models/**/*.json
-!zeroday/engine/assets/models/**/*.txt
-!zeroday/engine/assets/models/**/license.txt
 
 # Third Party
 zeroday/engine/third_party/**
