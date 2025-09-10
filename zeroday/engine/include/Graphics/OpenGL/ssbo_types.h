@@ -31,7 +31,7 @@ namespace Graphics {
     static_assert(sizeof(CameraSSBO) % 16 == 0);
     /********************************************************************************/
 
-    struct alignas(16) GlobalFragmentSSBO {
+    struct alignas(16) GlobalSSBO {
         glm::vec3 globalAmbient = glm::vec3(0.1f);
         float _p1    = {};
 
@@ -41,7 +41,7 @@ namespace Graphics {
         int activeLightCount = 0;
         float _p3[3] = {};
     };
-    static_assert(sizeof(GlobalFragmentSSBO) % 16 == 0);
+    static_assert(sizeof(GlobalSSBO) % 16 == 0);
     /********************************************************************************/
 
     struct alignas(16) LightSSBO {

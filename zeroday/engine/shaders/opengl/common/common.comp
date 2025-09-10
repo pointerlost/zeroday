@@ -1,0 +1,20 @@
+#version 460
+
+#include "constant.glsl"
+
+struct GlobalData {
+    vec3 globalAmbient;
+    float _p1;
+    vec3 cameraPos;
+    float _p2;
+    int activeLightCount;
+    float _p3[3];
+};
+
+layout(std430, binding = GLOBAL_GPU_BINDING) buffer GlobalBuffer {
+    GlobalData globalData;
+};
+
+layout(std430, binding = GLOBAL_CPU_BINDING) buffer CPUGlobalData {
+    GlobalData cpuGlobalData;
+};

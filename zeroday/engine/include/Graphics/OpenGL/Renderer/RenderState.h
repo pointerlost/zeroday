@@ -11,22 +11,23 @@ namespace OpenGL {
 
     struct RenderState {
     public:
-        Graphics::GlobalFragmentSSBO* globalFragmentSSBO;
+        static constexpr uint8_t FRAME_COUNT = 3;
+        Graphics::GlobalSSBO* globalFragmentSSBO;
 
-        std::vector<RenderCommandMDI> mdiStaticBuild;  // Build on scene changes
-        std::vector<RenderCommandMDI> mdiDynamicBuild; // rebuilt per frame
-
-        std::vector<MDIBatch> staticBatches;  // GPU-ready batches
-        std::vector<MDIBatch> dynamicBatches; // GPU-ready batches
+        // std::vector<RenderCommandMDI> mdiStaticBuild;  // Build on scene changes
+        // std::vector<RenderCommandMDI> mdiDynamicBuild; // rebuilt per frame
+        // std::vector<MDIBatch> staticBatches;  // GPU-ready batches
+        // std::vector<MDIBatch> dynamicBatches; // GPU-ready batches
     };
 
     struct EditorRenderState final : public RenderState {
-        BufferInfo staticBuffer;
-        BufferInfo dynamicBuffer;
+        BufferInfo transformBuffer;
+        BufferInfo materialBuffer;
+        BufferInfo lightBuffer;
+        BufferInfo cameraBuffer;
+        BufferInfo globalBuffer;
     };
     struct GameRenderState   final : public RenderState {
-        BufferInfo staticBuffer;
-        BufferInfo dynamicBuffer;
     };
 
 }

@@ -1,0 +1,16 @@
+#ifndef CONSTANTS_GLSL
+#define CONSTANTS_GLSL
+
+
+// Phase-based binding points (reuse them)
+const int BINDING_PHASE_INPUT    = 0; // For CPU->GPU data
+const int BINDING_PHASE_OUTPUT   = 1; // For GPU->CPU data
+const int BINDING_PHASE_METADATA = 2; // For metadata
+const int BINDING_PHASE_SCRATCH  = 3; // For temporary data
+const int BINDING_PHASE_BATCH    = 4;
+
+
+#define PI 3.14159265359
+
+
+#endif

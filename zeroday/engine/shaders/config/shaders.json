@@ -1,11 +1,96 @@
 {
   "shaders": [
     {
-      "name": "basic",
+      "name": "main",
       "type": "GLSL",
       "stages": {
-        "vertex": "opengl/basic.vert",
-        "fragment": "opengl/basic.frag"
+        "vertex": "opengl/main.vert",
+        "fragment": "opengl/main.frag"
+      }
+    },
+    {
+      "name": "batch_builder",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/common/batch_builder.comp"
+      }
+    },
+    {
+      "name": "camera_data",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/common/camera_data.comp"
+      }
+    },
+    {
+      "name": "common",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/common/common.comp"
+      }
+    },
+    {
+      "name": "dirty_tracker",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/common/dirty_tracker.comp"
+      }
+    },
+    {
+      "name": "light_data",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/common/light_data.comp"
+      }
+    },
+    {
+      "name": "material_data",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/common/material_data.comp"
+      }
+    },
+    {
+      "name": "transform_data",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/common/transform_data.comp"
+      }
+    },
+    {
+      "name": "frustum_cull",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/compute/frustum_cull.comp"
+      }
+    },
+    {
+      "name": "lighting_calc",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/compute/lighting_calc.comp"
+      }
+    },
+    {
+      "name": "pbr_calc",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/compute/pbr_calc.comp"
+      }
+    },
+    {
+      "name": "attributes",
+      "type": "COMPUTE",
+      "stages": {
+        "compute": "opengl/core/attributes.comp"
+      }
+    },
+    {
+      "name": "debug",
+      "type": "GLSL",
+      "stages": {
+        "vertex":   "opengl/debug/debug.vert",
+        "fragment": "opengl/debug/debug.frag"
       }
     }
   ]

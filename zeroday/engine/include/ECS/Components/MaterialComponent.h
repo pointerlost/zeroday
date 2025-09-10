@@ -13,9 +13,5 @@ namespace ECS {
 
         // Default initializer for instance
         MaterialComponent();
-        MaterialComponent(const MaterialComponent&) = default;
-        MaterialComponent(MaterialComponent&&) = default;
-        MaterialComponent& operator=(const MaterialComponent&) = default;
-        MaterialComponent& operator=(MaterialComponent&&) = default;
     };
 }

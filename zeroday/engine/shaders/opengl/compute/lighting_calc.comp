@@ -1,0 +1,35 @@
+#ifndef LIGHTING_CALC_COMPUTE
+#define LIGHTING_CALC_COMPUTE
+
+#include "common/light_data.glsl"
+#include "compute/pbr_calc.comp"
+
+out vec3 lightingResult;
+
+// -------------------
+// Light models (use MaterialData)
+vec3 CalcDirectionalLight(LightData light, vec3 N, vec3 V) {
+    vec3 L = normalize(-light.direction);
+    return CalcPBR(m, N, V, L, light.radiance * light.intensity);
+}
+
+vec3 CalcPointLight(LightData light, vec3 fragPos, vec3 N, vec3 V) {
+    vec3 L = normalize(light.position - fragPos);
+    float d = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * d + light.quadratic * d * d);
+    return CalcPBR(m, N, V, L, light.radiance * light.intensity) * attenuation;
+}
+
+vec3 CalcSpotLight(LightData light, vec3 fragPos, vec3 N, vec3 V) {
+    vec3 L = normalize(light.position - fragPos);
+    float theta = dot(L, normalize(-light.direction));
+    float epsilon = light.cutOff - light.outerCutOff;
+    float spotFactor = clamp((theta - light.outerCutOff) / max(epsilon, 1e-5), 0.0, 1.0);
+
+    float d = length(light.position - fragPos);
+    float attenuation = 1.0 / (light.constant + light.linear * d + light.quadratic * d * d);
+
+    return CalcPBR(m, N, V, L, light.radiance * light.intensity) * attenuation * spotFactor;
+}
+
+#endif

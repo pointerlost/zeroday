@@ -2,6 +2,7 @@
 
 // Shaders folder
 #define SHADERS_DIR "@SHADERS_DIR@"
+#define COMPUTE_SHADERS_DIR "@COMPUTE_SHADERS_DIR@"
 
 // Assets folder
 #define ASSETS_DIR "@ASSETS_DIR@"

@@ -7,4 +7,6 @@
 
 inline constexpr uint32_t INVALID_ENTITY = UINT32_MAX;
 
-inline constexpr int MAX_ENTITIES = 200000;
+inline constexpr int MAX_ENTITIES = 500000;
+inline constexpr int MAX_MATERIAL = 300000;
+inline constexpr int MAX_LIGHT    = 20000;

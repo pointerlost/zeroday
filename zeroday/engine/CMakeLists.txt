@@ -165,6 +165,7 @@ add_custom_command(TARGET engine POST_BUILD
 
 # Configure engine config files
 set(SHADERS_DIR "${CMAKE_CURRENT_BINARY_DIR}/shaders")
+set(COMPUTE_SHADERS_DIR "${SHADERS_DIR}/computeOpenGL")
 set(ASSETS_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets")
 set(TEXTURES_DIR "${ASSETS_DIR}/textures")
 set(MODEL_DIR "${ASSETS_DIR}/models")

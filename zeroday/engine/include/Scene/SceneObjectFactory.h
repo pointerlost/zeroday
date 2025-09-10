@@ -20,7 +20,7 @@ namespace Graphics
 
 		[[nodiscard]] ECS::Entity CreateLight(LIGHTING::LightType type = LIGHTING::LightType::Point, const std::string& meshName = "sphere") const;
 
-		[[nodiscard]] ECS::Entity CreateCamera(ECS::CameraMode mode = ECS::CameraMode::Primary, ECS::CameraType type = ECS::PERSPECTIVE);
+		[[nodiscard]] ECS::Entity CreateCamera(ECS::CameraType type = ECS::CameraType::Perspective);
 
 		[[nodiscard]] ECS::Entity CreateModel(const std::string& path) const;
 

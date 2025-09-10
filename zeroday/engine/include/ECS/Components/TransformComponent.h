@@ -10,11 +10,5 @@ namespace ECS {
     
     struct TransformComponent {
         std::shared_ptr<Transform> transform;
-
-        TransformComponent() = default;
-        TransformComponent(const TransformComponent&) = default;
-        TransformComponent& operator=(const TransformComponent&) = default;
-        TransformComponent(TransformComponent&&) = default;
-        TransformComponent& operator=(TransformComponent&&) = default;
     };
 }

@@ -33,25 +33,10 @@ namespace OpenGL {
 
     // Per-draw payload your shader will index with gl_BaseInstance
     struct DrawPayloadGPU {
-        int transformIndex = INT_MAX;
-        int materialIndex  = INT_MAX;
-        int meshID         = INT_MAX; // for debugging or LOD table
-        int pad            = INT_MAX; // keep std430 alignment happy
-    };
-
-    // A batch = single VAO (and ideally single shader/material set)
-    struct MDIBatch {
-        GLuint VAO = 0;
-        int materialIndex = INT_MAX; // material batch
-
-        std::vector<DrawElementsIndirectCommand> cmdsCPU;
-        std::vector<DrawPayloadGPU> payloadsCPU; // holds data in same layout GPU expects
-
-        GLuint indirectBuffer = 0; // GL_DRAW_INDIRECT_BUFFER
-        GLuint payloadSSBO    = 0; // GL_SHADER_STORAGE_BUFFER
-
-        // for debugging
-        [[nodiscard]] GLsizei drawCount() const { return static_cast<GLsizei>(cmdsCPU.size()); }
+        int transformIndex = -1;
+        int materialIndex  = -1;
+        int meshID         = -1; // for debugging or LOD table
+        int pad            = -1; // keep std430 alignment happy
     };
 
 }

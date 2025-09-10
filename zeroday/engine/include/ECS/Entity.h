@@ -19,14 +19,4 @@ namespace ECS {
         EntityMobility mobility = EntityMobility::Dynamic;
     };
 
-    struct GPUEntityMetadata {
-        uint32_t VAO;
-        uint32_t materialIndex;
-        uint32_t transformIndex;
-        uint32_t indexCount;
-        uint32_t indexOffset;
-        uint32_t mobility;
-        uint32_t dirtyFlags;
-        uint32_t padding;
-    };
 }
