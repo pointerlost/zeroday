@@ -76,5 +76,5 @@ namespace Zeroday {
 
 // ---------------------------------------------------------
 
-// Helper to choose between single/multiple arguments (no message or something)
+// Helper to choose between single/multiple arguments (without message or with message and so on)
 #define ZD_INTERNAL_ASSERT_GET_MACRO(_1,_2,NAME,...) NAME
