@@ -1,0 +1,14 @@
+//
+// Created by pointerlost on 9/16/25.
+//
+#include <Scene/transform_system.h>
+#include "core/Services.h"
+#include "Graphics/OpenGL/Renderer/RenderContext.h"
+
+namespace ecs::systems {
+
+    void TransformSystem::Update(World* world) {
+        auto* context = Services::GetRenderContext();
+        auto& ers = context->GetEditorRenderState();
+    }
+}
