@@ -4,7 +4,7 @@
 #pragma once
 #include <memory>
 
-namespace Graphics {
+namespace Zeroday {
 
     // forward declarations
     struct MeshData3D;

@@ -3,7 +3,7 @@
 
 int main()
 {
-	const auto engine = std::make_unique<core::Engine>();
+	const auto engine = std::make_unique<Zeroday::Engine>();
 
 	try {
 		// init engine pointers
@@ -11,17 +11,17 @@ int main()
 
 		// init resources
 		if (!engine->initResources()) {
-			Logger::error("Failed to initialize resources!");
+			Logger::Error("Failed to initialize resources!");
 			return -1;
 		}
 
 		// start the engine
 		if (!engine->run()) {
-			Logger::error("Engine run failed or stopped because of some reasons!");
+			Logger::Error("Engine run failed or stopped because of some reasons!");
 			return -1;
 		}
 	} catch (const std::exception& e) {
-		Logger::error("Engine source loading encountered a problem! Error: " + std::string(e.what()));
+		Logger::Error("Engine source loading encountered a problem! Error: " + std::string(e.what()));
 		return -1;
 	}
 

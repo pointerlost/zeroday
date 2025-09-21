@@ -7,7 +7,7 @@
 #include <assimp/scene.h>
 #include <glm/ext.hpp>
 
-namespace Graphics
+namespace Zeroday
 {
     class MeshLibrary;
     class MaterialLibrary;
@@ -18,7 +18,7 @@ namespace Graphics
     struct MeshEntry;
 }
 
-namespace Graphics {
+namespace Zeroday {
 
     class ModelLoader {
     public:

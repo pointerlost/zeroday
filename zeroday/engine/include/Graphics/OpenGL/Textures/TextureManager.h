@@ -9,13 +9,13 @@
 #include <glad/glad.h>
 
 
-namespace Graphics {
+namespace Zeroday {
     enum class MaterialTextureType;
 }
 
-namespace Graphics { struct Texture; }
+namespace Zeroday { struct Texture; }
 
-namespace Graphics {
+namespace Zeroday {
 
     class TextureManager {
     public:

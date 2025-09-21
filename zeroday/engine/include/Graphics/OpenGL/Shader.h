@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-namespace Graphics {
+namespace Zeroday {
     struct Shader {
         std::string name;
         GLuint program;

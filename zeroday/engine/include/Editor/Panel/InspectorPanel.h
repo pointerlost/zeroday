@@ -2,11 +2,11 @@
 // Created by pointerlost on 8/13/25.
 //
 #pragma once
-#include "../../ECS/World.h"
+#include "Scene/World.h"
 #include "Editor/Panel/EditorPanel.h"
 
 
-namespace ECS {
+namespace ecs {
     struct NameComponent;
     struct TransformComponent;
     struct LightComponent;
@@ -24,12 +24,12 @@ namespace EDITOR::UI {
 
     private:
         // Component based UI design
-        void drawComponentUI(ECS::NameComponent& comp);
-        void drawComponentUI(ECS::TransformComponent& comp);
-        void drawComponentUI(ECS::MaterialComponent& comp);
-        void drawComponentUI(ECS::LightComponent& comp);
-        void drawComponentUI(ECS::CameraComponent& comp);
+        void drawComponentUI(ecs::NameComponent& comp);
+        void drawComponentUI(ecs::TransformComponent& comp);
+        void drawComponentUI(ecs::MaterialComponent& comp);
+        void drawComponentUI(ecs::LightComponent& comp);
+        void drawComponentUI(ecs::CameraComponent& comp);
 
-        bool deleteEntity(ECS::NameComponent& comp, EditorState& state);
+        bool deleteEntity(ecs::NameComponent& comp, EditorState& state);
     };
 }

@@ -14,7 +14,7 @@ constexpr int GLOBAL_DATA_SSBO_IDX = 6;
 
 namespace LIGHTING { enum class LightType; }
 
-namespace Graphics {
+namespace Zeroday {
 
     struct alignas(16) TransformSSBO {
         glm::mat4 model     = glm::mat4(1.0f);

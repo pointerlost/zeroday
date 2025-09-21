@@ -2,7 +2,6 @@
 #include <memory>
 #include "core/Window.h"
 #include "ImGui/ImGuiLayer.h"
-#include "ECS/World.h"
 #include "Editor/Editor.h"
 #include "Editor/State/EditorState.h"
 #include "core/AssetManager.h"
@@ -15,8 +14,7 @@
 #include "Scene/SceneObjectFactory.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
 
-namespace core
-{
+namespace Zeroday {
 
 	class Engine {
 	public:
@@ -33,20 +31,20 @@ namespace core
 
 	private:
 
-		std::unique_ptr<EDITOR::EditorState> editorState;
-		std::unique_ptr<EDITOR::Editor> editor;
-		std::unique_ptr<Window> window;
-		std::unique_ptr<ECS::World> world;
-		std::unique_ptr<Graphics::MeshLibrary> meshLibrary;
-		std::unique_ptr<ASSET::AssetManager> assetManager;
-		std::unique_ptr<Graphics::SceneObjectFactory> sceneObjectFactory;
-		std::unique_ptr<OpenGL::Renderer> renderer;
-		std::unique_ptr<Graphics::ModelLoader> modelLoader;
-		std::unique_ptr<ENGINE::UI::ImGuiLayer> imGuiLayer;
-		std::unique_ptr<Graphics::MaterialLibrary> materialLibrary;
-		std::unique_ptr<Graphics::TextureManager> textureManager;
-		std::unique_ptr<OpenGL::BufferManager> glBufferManager;
-		std::unique_ptr<OpenGL::RenderContext> renderContext;
+		std::unique_ptr<EDITOR::EditorState> m_EditorState;
+		std::unique_ptr<EDITOR::Editor> m_Editor;
+		std::unique_ptr<Window> m_Window;
+		std::unique_ptr<opengl::BufferManager> m_GLBufferManager;
+		std::unique_ptr<ecs::World> m_World;
+		std::unique_ptr<opengl::Renderer> m_Renderer;
+		std::unique_ptr<Zeroday::SceneObjectFactory> m_SceneObjectFactory;
+		std::unique_ptr<ENGINE::UI::ImGuiLayer> m_ImGuiLayer;
+		std::unique_ptr<Zeroday::MeshLibrary> g_MeshLibrary;
+		std::unique_ptr<ASSET::AssetManager> g_AssetManager;
+		std::unique_ptr<Zeroday::ModelLoader> g_ModelLoader;
+		std::unique_ptr<Zeroday::MaterialLibrary> g_MaterialLibrary;
+		std::unique_ptr<Zeroday::TextureManager> g_TextureManager;
+		std::unique_ptr<opengl::RenderContext> g_RenderContext;
 
 		void InitWindow();
 		void InitCallBack();
@@ -64,7 +62,7 @@ namespace core
 
 		void OpenGLSetUpResources() noexcept;
 		void OpenGLRenderStuff()    noexcept;
-		void glfwRenderEventStuff() const  noexcept;
+		void glfwRenderEventStuff() const noexcept;
 
 		void UpdatePhase();
 		void UIPhase();

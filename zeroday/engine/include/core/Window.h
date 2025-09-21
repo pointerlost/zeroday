@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 
 
-namespace core {
+namespace Zeroday {
 
 	class Window {
 	public:

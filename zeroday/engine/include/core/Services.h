@@ -3,27 +3,27 @@
 //
 #pragma once
 
-namespace Graphics { class MaterialLibrary; class MeshLibrary; class ModelLoader; class TextureManager; }
+namespace Zeroday { class MaterialLibrary; class MeshLibrary; class ModelLoader; class TextureManager; }
 namespace ASSET    { class AssetManager;  }
-namespace OpenGL   { class RenderContext; }
+namespace opengl   { class RenderContext; }
 namespace EDITOR   { class EditorState;   }
 
 namespace Services {
 
-    Graphics::MaterialLibrary *GetMaterialLibrary();
-    Graphics::MeshLibrary     *GetMeshLibrary();
+    Zeroday::MaterialLibrary *GetMaterialLibrary();
+    Zeroday::MeshLibrary     *GetMeshLibrary();
     ASSET::AssetManager       *GetAssetManager();
-    Graphics::ModelLoader     *GetModelLoader();
-    OpenGL::RenderContext     *GetRenderContext();
-    Graphics::TextureManager  *GetTextureManager();
+    Zeroday::ModelLoader     *GetModelLoader();
+    opengl::RenderContext     *GetRenderContext();
+    Zeroday::TextureManager  *GetTextureManager();
     EDITOR::EditorState       *GetEditorState();
 
     // Service registration
-    void RegisterMaterialLibrary(Graphics::MaterialLibrary *lib);
-    void RegisterMeshLibrary(Graphics::MeshLibrary *lib);
+    void RegisterMaterialLibrary(Zeroday::MaterialLibrary *lib);
+    void RegisterMeshLibrary(Zeroday::MeshLibrary *lib);
     void RegisterAssetManager(ASSET::AssetManager  *mngr);
-    void RegisterModelLoader(Graphics::ModelLoader *loader);
-    void RegisterRenderContext(OpenGL::RenderContext *rc);
-    void RegisterTextureManager(Graphics::TextureManager *mngr);
+    void RegisterModelLoader(Zeroday::ModelLoader *loader);
+    void RegisterRenderContext(opengl::RenderContext *rc);
+    void RegisterTextureManager(Zeroday::TextureManager *mngr);
     void RegisterEditorState(EDITOR::EditorState *state);
 }

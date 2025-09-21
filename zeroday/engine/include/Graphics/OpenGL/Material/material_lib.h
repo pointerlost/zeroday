@@ -7,7 +7,7 @@
 #include "material.h"
 
 // Forward declaration
-namespace Graphics
+namespace Zeroday
 {
 	class TextureManager;
 	struct Texture;
@@ -17,7 +17,7 @@ using json = nlohmann::json;
 
 inline constexpr auto BASIC_SHADER = "basic";
 
-namespace Graphics {
+namespace Zeroday {
 
 	class MaterialLibrary {
 	public:

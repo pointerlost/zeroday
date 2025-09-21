@@ -4,106 +4,80 @@
 #include <glm/gtx/string_cast.hpp>
 
 
-class Transform {
-public:
-    // Get Euler angles (degrees) - user friendly (for example UI)
-    glm::vec3 GetEulerRotation() const {
-        if (m_eulerDirty) {
-            m_cachedEuler = glm::degrees(glm::eulerAngles(rotation));
-            m_eulerDirty = false;
+namespace Zeroday {
+
+    class Transform {
+    public:
+        Transform(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale)
+            : m_Position(position), m_Rotation(rotation), m_Scale(scale) {}
+        Transform() = default;
+        Transform(const Transform&) = default;
+
+        // Get Euler angles (degrees) - user friendly (for example UI)
+        const glm::vec3& GetEulerRotation() const;
+
+        // set Euler angles (degrees) - converts to quaternion internally
+        void SetEulerRotation(const glm::vec3& eulerDegrees);
+        // set individual Euler components
+        void SetEulerRotation(float x, float y, float z) { SetEulerRotation(glm::vec3(x, y, z)); }
+
+        // --- Quaternion Interface (for internal use) ---
+
+        // get raw quaternion
+        const glm::quat& GetRotation() const { return m_Rotation; }
+
+        // set quaternion directly
+        void SetRotation(const glm::quat& newRotation) {
+            m_Rotation = glm::normalize(newRotation);
+            m_EulerDirty = true;
         }
-        return m_cachedEuler;
-    }
 
-    // set Euler angles (degrees) - converts to quaternion internally
-    void SetEulerRotation(const glm::vec3& eulerDegrees) {
-        const glm::vec3 eulerRad = glm::radians(eulerDegrees);
-        rotation = glm::quat(eulerRad);
-        m_eulerDirty = true;
-    }
+        // --- Rotation Operations ---
 
-    // set individual Euler components
-    void SetEulerRotation(float x, float y, float z) {
-        SetEulerRotation(glm::vec3(x, y, z));
-    }
+        // rotate around axis (quaternion operation)
+        void Rotate(float angleDegrees, const glm::vec3& axis);
 
-    // --- Quaternion Interface (for internal use) ---
+        // rotate using Euler angles (convenience method)
+        void RotateEuler(const glm::vec3& eulerDegrees);
 
-    // get raw quaternion
-    const glm::quat& GetRotation() const { return rotation; }
+        // look at target point
+        void LookAt(const glm::vec3& target, const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // set quaternion directly
-    void SetRotation(const glm::quat& newRotation) {
-        rotation = glm::normalize(newRotation);
-        m_eulerDirty = true;
-    }
+        // --- Direction Vectors ---
 
-    // --- Rotation Operations ---
+        glm::vec3 GetForward() const { return m_Rotation * glm::vec3(0.0f, 0.0f, -1.0f); }
+        glm::vec3 GetRight()   const { return m_Rotation * glm::vec3(1.0f, 0.0f, 0.0f);  }
+        glm::vec3 GetUp()      const { return m_Rotation * glm::vec3(0.0f, 1.0f, 0.0f);  }
 
-    // rotate around axis (quaternion operation)
-    void Rotate(float angleDegrees, const glm::vec3& axis) {
-        const glm::quat rot = glm::angleAxis(glm::radians(angleDegrees), glm::normalize(axis));
-        rotation = glm::normalize(rot * rotation);
-        m_eulerDirty = true;
-    }
+        // --- Transformation Matrices ---
 
-    // rotate using Euler angles (convenience method)
-    void RotateEuler(const glm::vec3& eulerDegrees) {
-        const auto rot = glm::quat(glm::radians(eulerDegrees));
-        rotation       = glm::normalize(rot * rotation);
-        m_eulerDirty = true;
-    }
+        void ReCalculateViewMatrix()  const;
+        void ReCalculateModelMatrix() const;
+        const glm::mat4& GetViewMatrix()  const;
+        const glm::mat4& GetModelMatrix() const;
 
-    // look at target point
-    void LookAt(const glm::vec3& target, const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f)) {
-        const glm::vec3 direction = glm::normalize(target - position);
-        rotation = glm::quatLookAt(direction, up);
-        m_eulerDirty = true;
-    }
+        // --- Utility Methods ---
 
-    // --- Direction Vectors ---
+        void Translate(const glm::vec3& translation);
+        void SetScale(const glm::vec3& newScale);
+        void SetScale(float uniformScale);
 
-    glm::vec3 GetForward() const { return rotation * glm::vec3(0.0f, 0.0f, -1.0f); }
-    glm::vec3 GetRight()   const { return rotation * glm::vec3(1.0f, 0.0f, 0.0f);  }
-    glm::vec3 GetUp()      const { return rotation * glm::vec3(0.0f, 1.0f, 0.0f);  }
+    private:
+        // storage
+        glm::vec3 m_Position = glm::vec3(0.0f);
+        glm::quat m_Rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f); // Identity quaternion
+        glm::vec3 m_Scale    = glm::vec3(1.0f);
 
-    // --- Transformation Matrices ---
+        mutable glm::mat4 m_View  = glm::mat4(1.0f);
+        mutable glm::mat4 m_Model = glm::mat4(1.0f);
 
-    glm::mat4 GetModelMatrix() const {
-        const glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
-        const glm::mat4 rotationMat = glm::mat4_cast(rotation);
-        const glm::mat4 scaleMat    = glm::scale(glm::mat4(1.0f), scale);
-        return translation * rotationMat * scaleMat;
-    }
+        mutable bool m_ViewMatrixDirty  = true;
+        mutable bool m_ModelMatrixDirty = true;
 
-    glm::mat4 GetViewMatrix() const {
-        const glm::mat4 rotationMat    = glm::mat4_cast(rotation);
-        const glm::mat4 translationMat = glm::translate(glm::mat4(1.0f), -position);
-        return rotationMat * translationMat;
-    }
+        // cache for Euler angles to avoid conversion costs
+        mutable glm::vec3 m_CachedEuler = glm::vec3(0.0f);
+        mutable bool m_EulerDirty = true;
+    };
 
-    // --- Utility Methods ---
 
-    void Translate(const glm::vec3& translation) {
-        position += translation;
-    }
-
-    void SetScale(const glm::vec3& newScale) {
-        scale = newScale;
-    }
-
-    void SetScale(float uniformScale) {
-        scale = glm::vec3(uniformScale);
-    }
-
-private:
-    // storage
-    glm::vec3 position = glm::vec3(0.0f);
-    glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f); // Identity quaternion
-    glm::vec3 scale    = glm::vec3(1.0f);
-
-    // cache for Euler angles to avoid conversion costs
-    mutable glm::vec3 m_cachedEuler = glm::vec3(0.0f);
-    mutable bool m_eulerDirty = true;
-};
-
+}

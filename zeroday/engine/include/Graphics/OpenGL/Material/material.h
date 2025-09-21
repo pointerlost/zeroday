@@ -7,9 +7,9 @@
 #include <memory>
 #include <optional>
 
-namespace Graphics { struct Texture;}
+namespace Zeroday { struct Texture;}
 
-namespace Graphics {
+namespace Zeroday {
 
 	enum class MaterialTextureType {
 		BaseColor,

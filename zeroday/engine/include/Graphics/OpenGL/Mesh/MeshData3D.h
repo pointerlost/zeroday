@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 
-namespace Graphics {
+namespace Zeroday {
 
 	struct Vertex
 	{

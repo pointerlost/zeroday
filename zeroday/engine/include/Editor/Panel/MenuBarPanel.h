@@ -4,17 +4,17 @@
 #pragma once
 #include "Editor/Panel/EditorPanel.h"
 
-namespace Graphics { class SceneObjectFactory; }
-namespace Graphics { class RenderContext;      }
+namespace Zeroday { class SceneObjectFactory; }
+namespace Zeroday { class RenderContext;      }
 
 namespace EDITOR::UI {
 
     class MenuBarPanel final : public EditorPanel {
     public:
-        explicit MenuBarPanel(Graphics::SceneObjectFactory* objectFactory) : sceneObjectFactory(objectFactory) {}
+        explicit MenuBarPanel(Zeroday::SceneObjectFactory* objectFactory) : sceneObjectFactory(objectFactory) {}
         void draw(EditorState& state) override;
 
     private:
-        Graphics::SceneObjectFactory* sceneObjectFactory;
+        Zeroday::SceneObjectFactory* sceneObjectFactory;
     };
 }

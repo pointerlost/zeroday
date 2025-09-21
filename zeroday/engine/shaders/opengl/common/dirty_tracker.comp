@@ -3,19 +3,19 @@
 
 #include "common/constants.glsl"
 
-#define COMPONENT_FLAG_TRANSFORM_DIRTY    (1 << 0)
-#define COMPONENT_FLAG_MATERIAL_DIRTY     (1 << 1)
-#define COMPONENT_FLAG_LIGHT_DIRTY        (1 << 2)
+#define COMPONENT_FLAG_TRANSFORM_DIRTY (1 << 0)
+#define COMPONENT_FLAG_MATERIAL_DIRTY  (1 << 1)
+#define COMPONENT_FLAG_LIGHT_DIRTY     (1 << 2)
 
 struct DirtyEntityState {
-    uint entityId;          // unique entity identifier
-    uint componentFlags;    // bitmask of dirty components
+    uint entityId;        // unique entity identifier
+    uint componentFlags;  // bitmask of dirty components
 };
 
-// contains all entities with dirty components for current frame
+// contains all entities with dirty components
 layout(std430, binding = BINDING_DIRTY_TRACKING) buffer DirtyTrackingBuffer {
-    uint dirtyEntityCount;                  // number of dirty entities this frame
-    DirtyEntityState dirtyEntities[];       // array of dirty entity states
+    uint dirtyEntityCount;             // number of dirty entities this frame
+    DirtyEntityState dirtyEntities[];  // array of dirty entity states
 };
 
 #endif

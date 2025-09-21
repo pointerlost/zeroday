@@ -8,15 +8,15 @@
 #include "Graphics/OpenGL/ssbo_types.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
 
-namespace Graphics { struct MaterialSSBO; }
-namespace Graphics { struct TransformSSBO; }
-namespace ECS {
+namespace Zeroday { struct MaterialSSBO; }
+namespace Zeroday { struct TransformSSBO; }
+namespace ecs {
     struct LightComponent;
     struct MaterialComponent;
     struct TransformComponent;
 }
 
-namespace OpenGL {
+namespace opengl {
 
     struct ContiguousRange {
         uint32_t start;
@@ -31,10 +31,10 @@ namespace OpenGL {
         template<typename T, typename ComponentType>
         static void UpdateRange(const ContiguousRange& range,
                           T* gpuData,
-                          const ECS::REGISTRY::ComponentRegistry<ComponentType>& registry) {
+                          const ecs::REGISTRY::ComponentRegistry<ComponentType>& registry) {
             // range validation
             if (range.start + range.count > registry.GetCapacity()) {
-                Logger::error("UpdateRange: Range out of bounds! " +
+                Logger::Error("UpdateRange: Range out of bounds! " +
                              std::to_string(range.start) + "+" +
                              std::to_string(range.count) + " > " +
                              std::to_string(registry.GetCapacity()));
@@ -57,17 +57,17 @@ namespace OpenGL {
         template<typename T, typename ComponentType>
         static void UpdateSingle(uint32_t slotIdx,
                                 T* gpuData,
-                                const ECS::REGISTRY::ComponentRegistry<ComponentType>& registry) {
+                                const ecs::REGISTRY::ComponentRegistry<ComponentType>& registry) {
             // Buffer bounds check
             if (slotIdx >= registry.GetCapacity()) {
-                Logger::error("BufferUpdater: slotIdx out of bounds! " +
+                Logger::Error("BufferUpdater: slotIdx out of bounds! " +
                              std::to_string(slotIdx) + " >= " +
                              std::to_string(registry.GetCapacity()));
                 return;
             }
 
             if (!gpuData) {
-                Logger::error("BufferUpdater: gpuData is null!");
+                Logger::Error("BufferUpdater: gpuData is null!");
                 return;
             }
 
@@ -75,25 +75,25 @@ namespace OpenGL {
             if (!component) return;
 
             // Component-specific update logic
-            if constexpr (std::is_same_v<ComponentType, ECS::TransformComponent>) {
+            if constexpr (std::is_same_v<ComponentType, ecs::TransformComponent>) {
                 UpdateTransformComponent(component, gpuData[slotIdx]);
-            } else if constexpr (std::is_same_v<ComponentType, ECS::MaterialComponent>) {
+            } else if constexpr (std::is_same_v<ComponentType, ecs::MaterialComponent>) {
                 UpdateMaterialComponent(component,  gpuData[slotIdx]);
-            } else if constexpr (std::is_same_v<ComponentType, ECS::LightComponent>) {
+            } else if constexpr (std::is_same_v<ComponentType, ecs::LightComponent>) {
                 UpdateLightComponent(component,     gpuData[slotIdx]);
-            } else if constexpr (std::is_same_v<ComponentType, ECS::CameraComponent>) {
+            } else if constexpr (std::is_same_v<ComponentType, ecs::CameraComponent>) {
                 UpdateCameraComponent(component,    gpuData[slotIdx]);
             }
         }
 
         template<typename T>
         [[nodiscard]] static bool EnsureBufferCapacity(BufferInfo& buffer,
-            const ECS::REGISTRY::ComponentRegistry<T>& registry,
+            const ecs::REGISTRY::ComponentRegistry<T>& registry,
             size_t gpuElementSize, size_t bufferOffset = 0)
         {
             GLsizeiptr requiredSize = bufferOffset + (registry.GetCapacity() * gpuElementSize);
             if (requiredSize > buffer.capacity) {
-                Logger::warn("Buffer capacity exceeded! Required: " +
+                Logger::Warn("Buffer capacity exceeded! Required: " +
                             std::to_string(requiredSize) + ", Current: " +
                             std::to_string(buffer.capacity));
                 return false;
@@ -103,12 +103,12 @@ namespace OpenGL {
 
     private:
         // Component-specific update implementations
-        static void UpdateTransformComponent(const ECS::TransformComponent* comp, Graphics::TransformSSBO& gpuData);
-        static void UpdateMaterialComponent(const ECS::MaterialComponent* comp,   Graphics::MaterialSSBO&  gpuData);
-        static void UpdateLightComponent(const ECS::LightComponent* comp,         Graphics::LightSSBO&     gpuData);
-        static void UpdateCameraComponent(const ECS::CameraComponent* comp,       Graphics::CameraSSBO&    gpuData);
+        static void UpdateTransformComponent(const ecs::TransformComponent* comp, Zeroday::TransformSSBO& gpuData);
+        static void UpdateMaterialComponent(const ecs::MaterialComponent* comp,   Zeroday::MaterialSSBO&  gpuData);
+        static void UpdateLightComponent(const ecs::LightComponent* comp,         Zeroday::LightSSBO&     gpuData);
+        static void UpdateCameraComponent(const ecs::CameraComponent* comp,       Zeroday::CameraSSBO&    gpuData);
 
-        static Graphics::MaterialSSBO MakeGPUMaterialInstance(const std::shared_ptr<Graphics::MaterialInstance> &inst);
+        static Zeroday::MaterialSSBO MakeGPUMaterialInstance(const std::shared_ptr<Zeroday::MaterialInstance> &inst);
     };
 
 }

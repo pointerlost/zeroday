@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderState.h"
 
-namespace OpenGL
+namespace opengl
 {
 	class RenderContext
 	{

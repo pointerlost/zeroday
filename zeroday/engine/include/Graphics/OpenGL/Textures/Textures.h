@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 
-namespace Graphics
+namespace Zeroday
 {
 	struct Texture {
 		std::string name;

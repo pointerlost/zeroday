@@ -8,7 +8,7 @@
 #include <imgui.h>
 #include <ImGuizmo/ImGuizmo.h>
 
-namespace Graphics {
+namespace Zeroday {
     class SceneObject;
 }
 

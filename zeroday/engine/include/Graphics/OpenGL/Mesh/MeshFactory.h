@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace Graphics
+namespace Zeroday
 {
 	struct Vertex;
 	struct MeshData3D;

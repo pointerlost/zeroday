@@ -6,7 +6,7 @@
 #include <vector>
 #include "Panel/EditorPanel.h"
 
-namespace ECS          { class World;         }
+namespace ecs          { class World;         }
 namespace EDITOR       { struct EditorState;  }
 
 namespace EDITOR {

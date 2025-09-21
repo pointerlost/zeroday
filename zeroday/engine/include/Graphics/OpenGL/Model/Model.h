@@ -9,12 +9,12 @@
 
 
 // forwards
-namespace Graphics {
+namespace Zeroday {
     struct SubMeshInfo;
     struct MeshData3D;
 }
 
-namespace Graphics {
+namespace Zeroday {
 
     struct MeshEntry {
         MeshData3D* meshData;

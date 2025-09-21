@@ -4,7 +4,7 @@
 #include "ImGui/ImGuiObjectState.h"
 
 
-namespace ECS {
+namespace ecs {
 	struct CameraComponent;
 	struct LightComponent;
 	struct MaterialComponent;
@@ -12,16 +12,16 @@ namespace ECS {
 	struct TransformComponent;
 	class World;
 }
-namespace Graphics { class SceneObjectFactory; }
+namespace Zeroday { class SceneObjectFactory; }
 struct ImGuiIO;
 struct GLFWwindow;
 
-namespace ENGINE::UI
+namespace Zeroday::UI
 {
 	class ImGuiLayer
 	{
 	public:
-		ImGuiLayer(GLFWwindow* window, Graphics::SceneObjectFactory* factory);
+		ImGuiLayer(GLFWwindow* window, SceneObjectFactory* factory);
 
 		void Init(GLFWwindow* window);
 		void initFontAndImages(const ImGuiIO& io);
@@ -33,7 +33,7 @@ namespace ENGINE::UI
 
 	private:
 		GLFWwindow* m_Window = nullptr;
-		Graphics::SceneObjectFactory* sceneObjectFactory = nullptr;
+		Zeroday::SceneObjectFactory* sceneObjectFactory = nullptr;
 
 		bool showDemoWindow = true;
 		bool showAnotherWindow = false;

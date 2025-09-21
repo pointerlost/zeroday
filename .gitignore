@@ -110,9 +110,9 @@ zeroday/engine/shaders/**/*.spv
 zeroday/engine/shaders/**/*.bin
 zeroday/engine/shaders/**/*.cache
 
-# Third Party
-zeroday/engine/third_party/**
-!zeroday/engine/third_party/.gitkeep
+# Vendor
+zeroday/engine/vendor/**
+!zeroday/engine/vendor/.gitkeep
 
 # OS generated files
 .DS_Store

@@ -2,16 +2,15 @@
 // Created by pointerlost on 8/22/25.
 //
 #pragma once
-#include <vector>
 #include <glad/glad.h>
-#include "ECS/Entity.h"
+#include "Scene/Entity.h"
 #include "Graphics/OpenGL/Macros.h"
 
-namespace OpenGL {
+namespace opengl {
 
     // unique for per-object
     struct RenderCommandMDI {
-        ECS::Entity entity   = INVALID_ENTITY;
+        ecs::Entity entity   = INVALID_ENTITY;
         GLuint VAO           = 0;
         uint32_t indexCount  = UINT32_MAX;
         uint32_t indexOffset = UINT32_MAX;
@@ -19,7 +18,7 @@ namespace OpenGL {
         int transformIndex   = -1;
         int subMeshIndex     = -1;
         // storing visibility and mobility etc. for frustum culling or batches
-        ECS::EntityInfo entityInfo{};
+        ecs::EntityInfo entityInfo{};
     };
 
     // OpenGL 4.6 specification, don't change the order!

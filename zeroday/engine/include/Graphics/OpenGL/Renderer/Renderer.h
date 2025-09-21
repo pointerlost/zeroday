@@ -1,27 +1,16 @@
 #pragma once
-#include <memory>
-#include <vector>
-#include <glad/glad.h>
+namespace ecs { class World; }
 
-namespace OpenGL {
-	struct RenderCommandMDI;
-	struct MDIBatch;
-	class BufferManager;
-}
-namespace ECS    { class World;        }
-namespace EDITOR { struct EditorState; }
-
-namespace OpenGL
+namespace opengl
 {
 	class Renderer
 	{
 	public:
-		Renderer(BufferManager* buffManager, ECS::World* w) : bufferManager(buffManager), world(w) {}
+		explicit Renderer(ecs::World* w) : world(w) {}
 
 		void Render();
 
 	private:
-		BufferManager* bufferManager = nullptr;
-		ECS::World* world = nullptr;
+		ecs::World* world = nullptr;
 	};
 }
