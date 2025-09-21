@@ -1,5 +1,8 @@
 # zeroday Engine - Cross-Platform Game Engine
 
+(The project isn't finished yet!)
+You can review it and help, but the readme won't be updated until we're sure this version works!
+
 ## Quick Start
 
 ### Linux/Mac
