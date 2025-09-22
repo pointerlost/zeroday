@@ -7,8 +7,8 @@
 
 namespace Zeroday {
 
-    MeshLibrary::MeshLibrary() : meshData3D(std::make_shared<MeshData3D>()),
-                                 meshFactory(std::make_shared<MeshFactory>()) {
+    MeshLibrary::MeshLibrary() : meshData3D(CreateRef<MeshData3D>()),
+                                 meshFactory(CreateRef<MeshFactory>()) {
         meshFactory->setupMeshes(meshData3D);
     }
 }

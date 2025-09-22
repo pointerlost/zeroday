@@ -24,7 +24,7 @@ namespace Zeroday {
     //         return nullptr;
     //     }
     //
-    //     auto model = std::make_shared<Model>();
+    //     auto model = CreateRef<Model>();
     //
     //     std::string directory;
     //     size_t slashIndex = filePath.find_last_of("/\\");
@@ -58,7 +58,7 @@ namespace Zeroday {
     //     auto existing = m_matLib->getMaterialByName(name.C_Str());
     //     if (existing) return existing;
     //
-    //     auto material = std::make_shared<Material>();
+    //     auto material = CreateRef<Material>();
     //     material->m_name = name.C_Str();
     //
     //     aiColor3D ambient, diffuse, specular;
@@ -120,7 +120,7 @@ namespace Zeroday {
     //     }
     //
     //     // Create MeshData3D
-    //     auto meshData = std::make_shared<MeshData3D>();
+    //     auto meshData = CreateRef<MeshData3D>();
     //     SubMeshInfo& info = meshData->AddMesh3DToMeshData(mesh->mName.C_Str(), vertices, indices);
     //     meshData->uploadToGPU();
     //

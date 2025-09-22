@@ -5,7 +5,7 @@
 #include "Scene/Entity.h"
 
 // forward declarations
-namespace ecs { class World; }
+namespace ecs { class Scene; }
 
 namespace EDITOR {
 
@@ -17,7 +17,7 @@ namespace EDITOR {
 
         entt::entity selectedEntity = {};
         entt::entity cameraEntity   = {};
-        ecs::World* world = nullptr;
+        ecs::Scene* world = nullptr;
 
         bool requestShutdown = false;
     };

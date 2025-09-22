@@ -3,6 +3,9 @@
 //
 #pragma once
 #include <memory>
+#include <utility>
+
+#include "core/UUID.h"
 #include "Graphics/OpenGL/Camera/Camera.h"
 #include "Graphics/OpenGL/Transformations/Transformations.h"
 
@@ -22,6 +25,14 @@ namespace Zeroday::Ecs {
             : m_Transform(position, rotation, scale) {}
         TransformComponent() = default;
         TransformComponent(const TransformComponent&) = default;
+    };
+
+    struct IDComponent {
+        UUID ID;
+
+        IDComponent() = default;
+        IDComponent(const IDComponent&) = default;
+        explicit IDComponent(UUID id) : ID(id) {}
     };
 
     struct CameraComponent {

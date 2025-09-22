@@ -2,7 +2,7 @@
 // Created by pointerlost on 8/29/25.
 //
 #include "Graphics/OpenGL/BufferManager.h"
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 #include "core/Services.h"
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
@@ -112,7 +112,7 @@ namespace opengl {
         // transformUpdateProgram = LoadComputeShader("transform_update.comp");
         // materialUpdateProgram = LoadComputeShader("material_update.comp");
         // frustumCullProgram = LoadComputeShader("frustum_cull.comp");
-        // batchBuilderProgram = LoadComputeShader("batch_builder.comp");
+        // batchBuilderProgram = LoadComputeShader("batch_builder.glsl");
     }
 
     BufferInfo BufferManager::CreateBuffer(GLsizeiptr size, GLbitfield flags, bool mapBuffer) {
@@ -132,7 +132,7 @@ namespace opengl {
         return info;
     }
 
-    void BufferManager::Update(ecs::World* world) {
+    void BufferManager::Update(ecs::Scene* world) {
         UpdateTransforms(world);
         UpdateMaterials(world);
         UpdateLights(world);
@@ -143,7 +143,7 @@ namespace opengl {
         BuildBatches(world);
     }
 
-    void BufferManager::UpdateTransforms(ecs::World* world) {
+    void BufferManager::UpdateTransforms(ecs::Scene* world) {
         auto& transformRegistry = world->GetRegistry<ecs::TransformComponent>();
         auto& dirtyEntities = transformRegistry.GetDirtyEntities();
 
@@ -168,7 +168,7 @@ namespace opengl {
         transformRegistry.ClearDirty();
     }
 
-    void BufferManager::UpdateMaterials(ecs::World* world) {
+    void BufferManager::UpdateMaterials(ecs::Scene* world) {
         auto& materialRegistry = world->GetRegistry<ecs::MaterialComponent>();
         auto& dirtyEntities = materialRegistry.GetDirtyEntities();
 
@@ -194,7 +194,7 @@ namespace opengl {
         materialRegistry.ClearDirty();
     }
 
-    void BufferManager::UpdateLights(ecs::World* world) {
+    void BufferManager::UpdateLights(ecs::Scene* world) {
         auto& lightRegistry = world->GetRegistry<ecs::LightComponent>();
         auto entities = lightRegistry.GetEntities();
 
@@ -218,7 +218,7 @@ namespace opengl {
         }
     }
 
-    void BufferManager::UpdateCamera(ecs::World* world) {
+    void BufferManager::UpdateCamera(ecs::Scene* world) {
         // Camera update logic here
     }
 
@@ -234,12 +234,12 @@ namespace opengl {
         globalData->activeLightCount = world->GetRegistry<ecs::LightComponent>().GetCount();
     }
 
-    void BufferManager::FrustumCull(ecs::World* world) {
+    void BufferManager::FrustumCull(ecs::Scene* world) {
         // Simple frustum culling implementation
         // TODO: Replace with compute shader
     }
 
-    void BufferManager::BuildBatches(ecs::World* world) {
+    void BufferManager::BuildBatches(ecs::Scene* world) {
         // Simple batch building
         // TODO: Replace with compute shader
     }

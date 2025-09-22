@@ -2,7 +2,7 @@
 // Created by pointerlost on 8/13/25.
 //
 #include "Editor/Editor.h"
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 
 
 namespace EDITOR {

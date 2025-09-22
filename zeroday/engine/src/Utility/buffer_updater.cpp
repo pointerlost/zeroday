@@ -11,7 +11,7 @@
 
 namespace opengl {
 
-    Zeroday::MaterialSSBO BufferUpdater::MakeGPUMaterialInstance(const std::shared_ptr<Zeroday::MaterialInstance> &inst) {
+    Zeroday::MaterialSSBO BufferUpdater::MakeGPUMaterialInstance(const Ref<Zeroday::MaterialInstance> &inst) {
         Zeroday::MaterialSSBO gpu{};
         gpu.baseColor = inst->getBaseColor();
         gpu.metallic  = inst->getMetallic();

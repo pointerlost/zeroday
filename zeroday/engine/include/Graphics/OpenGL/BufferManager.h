@@ -4,7 +4,7 @@
 #pragma once
 #include <iostream>
 #include <cstddef>
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 #include "glad/glad.h"
 
 namespace Zeroday {
@@ -22,7 +22,7 @@ namespace opengl {
 }
 
 namespace ecs {
-    class World;
+    class Scene;
     struct TransformComponent;
     struct CameraComponent;
     struct MaterialComponent;
@@ -47,39 +47,54 @@ namespace opengl {
     class BufferManager {
     public:
         void Init();
-        void Update(ecs::World* world);
+        void Update(ecs::Scene* world);
         void Draw();
 
     private:
-        BufferInfo CreateBuffer(GLsizeiptr size, GLbitfield flags, bool mapBuffer);
+        BufferInfo CreateBuffer(GLsizeiptr size, GLbitfield flags, bool mapBuffer = true);
         void ReallocateBuffer(BufferInfo& info, GLsizeiptr newSize);
 
-        void UpdateTransforms(ecs::World* world);
-        void UpdateMaterials(ecs::World* world);
-        void UpdateLights(ecs::World* world);
-        void UpdateCamera(ecs::World* world);
-        void UpdateGlobals();
+        void UpdateTransforms(ecs::Scene* world);
+        void UpdateMaterials(ecs::Scene* world);
+        void UpdateLights(ecs::Scene* world);
+        void UpdateCamera(ecs::Scene* world);
+        void UpdateGlobals(ecs::Scene* world);
 
-        void BuildBatches(ecs::World* world);
+        void BuildBatches(ecs::Scene* world);
+        void DispatchCulling();
+        void ExecuteDrawCommands();
 
-        // Buffers
+        // Core buffers (aligned with your SSBO structs)
         BufferInfo transformBuffer;
         BufferInfo materialBuffer;
         BufferInfo lightBuffer;
+        BufferInfo cameraBuffer;
         BufferInfo globalBuffer;
-        BufferInfo entityMetadataBuffer;
-        BufferInfo visibleEntitiesBuffer;
-        BufferInfo indirectCommandsBuffer;
+
+        // GPU-driven pipeline buffers
+        BufferInfo entityIndexBuffer;       // Entity IDs for GPU processing
+        BufferInfo visibleIndexBuffer;      // Output from culling
+        BufferInfo drawCommandBuffer;       // Indirect draw commands
+        BufferInfo batchDataBuffer;         // Batch metadata
+
+        // Atomic counter for GPU synchronization
+        BufferInfo atomicCounterBuffer;
 
         // Shader programs
-        GLuint transformUpdateProgram = 0;
-        GLuint materialUpdateProgram = 0;
-        GLuint frustumCullProgram = 0;
+        GLuint cullingComputeProgram = 0;
         GLuint batchBuilderProgram = 0;
+        GLuint mainRenderProgram = 0;
+
+        // Mesh management
+        std::unordered_map<std::string, MeshData> meshLibrary;
+
+        // Statistics (i need to update | add a Statistics struct for these stuffs)
+        uint32_t visibleEntityCount = 0;
+        uint32_t totalEntityCount = 0;
 
         static constexpr uint32_t WORKGROUP_SIZE = 64;
-        static constexpr uint32_t MAX_ENTITIES = 10000;
-        static constexpr uint32_t MAX_MATERIALS = 1000;
-        static constexpr uint32_t MAX_LIGHTS = 100;
+        static constexpr uint32_t MAX_ENTITIES = 65536; // Power of 2 for GPU efficiency
+        static constexpr uint32_t MAX_LIGHTS = 256;
+        static constexpr uint32_t MAX_BATCHES = 1024;
     };
 }

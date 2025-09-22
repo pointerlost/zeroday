@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include <optional>
+#include "core/Base.h"
 
 namespace Zeroday { struct Texture;}
 
@@ -30,17 +31,17 @@ namespace Zeroday {
 		float     roughness = 1.0f;
 		glm::vec3 emissive  = glm::vec3(0.0f);
 
-		std::unordered_map<MaterialTextureType, std::shared_ptr<Texture>> textures;
+		std::unordered_map<MaterialTextureType, Ref<Texture>> textures;
 	};
 
 	struct MaterialInstance {
-		std::shared_ptr<Material> base = {};
+		Ref<Material> base = CreateRef<Material>();
 
 		void setBaseColor(glm::vec4 c) { overrideBaseColor    = c; }
 		void setMetallic(float m)      { overrideMetallic  = m; }
 		void setRoughness(float r)     { overrideRoughness = r; }
 		void setEmissive(glm::vec3 e)  { overrideEmissive     = e; }
-		void setTexture(MaterialTextureType type, std::shared_ptr<Texture> tex) {
+		void setTexture(MaterialTextureType type, Ref<Texture> tex) {
 			overrideTextures[type] = std::move(tex);
 		}
 
@@ -57,7 +58,7 @@ namespace Zeroday {
 			return overrideEmissive.value_or(base->emissive);
 		}
 
-		std::shared_ptr<Texture> getTexture(MaterialTextureType type) const {
+		Ref<Texture> getTexture(MaterialTextureType type) const {
 			if (const auto it = overrideTextures.find(type); it != overrideTextures.end())
 				return it->second;
 			if (const auto it = base->textures.find(type); it != base->textures.end())
@@ -78,7 +79,7 @@ namespace Zeroday {
 		std::optional<float>     overrideMetallic;
 		std::optional<float>     overrideRoughness;
 		std::optional<glm::vec3> overrideEmissive;
-		std::unordered_map<MaterialTextureType, std::shared_ptr<Texture>> overrideTextures;
+		std::unordered_map<MaterialTextureType, Ref<Texture>> overrideTextures;
 	};
 
 }

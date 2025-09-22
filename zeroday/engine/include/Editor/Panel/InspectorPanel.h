@@ -2,7 +2,7 @@
 // Created by pointerlost on 8/13/25.
 //
 #pragma once
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 #include "Editor/Panel/EditorPanel.h"
 
 

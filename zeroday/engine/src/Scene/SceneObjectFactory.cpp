@@ -1,5 +1,5 @@
 #include "Scene/SceneObjectFactory.h"
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 #include "core/Services.h"
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
@@ -9,7 +9,7 @@
 
 namespace Zeroday
 {
-	SceneObjectFactory::SceneObjectFactory(ecs::World& w) : world(w) {}
+	SceneObjectFactory::SceneObjectFactory(ecs::Scene& w) : world(w) {}
 
     ecs::Entity SceneObjectFactory::CreatePrimitiveObject(const std::string& meshName) const
     {
@@ -22,10 +22,10 @@ namespace Zeroday
     	const auto& meshData = meshLib->GetMeshData3D();
 
 		ecs::TransformComponent tc;
-		tc.transform = std::make_shared<Transform>();
+		tc.transform = CreateRef<Transform>();
 
 		ecs::MaterialComponent matC;
-		matC.instance = matLib->createInstance("wood");
+		matC.instance = matLib->CreateInstance("wood");
 
 	    ecs::MeshComponent meshC;
     	// create default mesh properties
@@ -51,13 +51,13 @@ namespace Zeroday
 		ecs::NameComponent nc;
 
 		ecs::TransformComponent tc;
-		tc.transform = std::make_shared<Transform>();
+		tc.transform = CreateRef<Transform>();
 
 		ecs::MaterialComponent matC;
-		matC.instance->base = matLib->getMaterialByName("lightSource");
+		matC.instance->base = matLib->GetMaterialByName("lightSource");
 
 		ecs::LightComponent lc;
-		lc.light = std::make_shared<LIGHTING::Light>(type);
+		lc.light = CreateRef<LIGHTING::Light>(type);
 
     	// create default mesh properties
 		ecs::MeshComponent meshC;
@@ -79,7 +79,7 @@ namespace Zeroday
 		ecs::NameComponent nComp;
 
 		ecs::TransformComponent tComp;
-		tComp.transform = std::make_shared<Transform>();
+		tComp.transform = CreateRef<Transform>();
 
 		ecs::CameraComponent cameraComp(type);
 
@@ -111,7 +111,7 @@ namespace Zeroday
 		// }
 		//
 		// Scene::TransformComponent tComp;
-		// tComp.transform = std::make_shared<Transform>();
+		// tComp.transform = CreateRef<Transform>();
 		//
 		// Scene::ModelComponent modelComponent;
 		// modelComponent.model = std::move(model);

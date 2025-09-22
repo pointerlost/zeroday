@@ -39,7 +39,7 @@ namespace Zeroday
 		releaseAll();
 	}
 
-	std::shared_ptr<Texture> TextureManager::load(const std::string& name, const std::string &path) {
+	Ref<Texture> TextureManager::load(const std::string& name, const std::string &path) {
 		if (const auto it  = m_pathMap.find(path); it != m_pathMap.end()) return it->second;
 
 		if (const auto itn = m_nameMap.find(name); itn != m_nameMap.end()) {
@@ -72,7 +72,7 @@ namespace Zeroday
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(data);
 
-		auto tex = std::make_shared<Texture>();
+		auto tex = CreateRef<Texture>();
 		tex->name = name;
 		tex->glID = texID;
 
@@ -91,7 +91,7 @@ namespace Zeroday
 		return tex;
 	}
 
-	std::shared_ptr<Texture> TextureManager::getTextureWithName(const std::string &name) {
+	Ref<Texture> TextureManager::getTextureWithName(const std::string &name) {
 		if (!m_nameMap.contains(name)) {
 			Logger::Warn("Texture \"" + name + "\" not found.");
 			return nullptr;
@@ -99,7 +99,7 @@ namespace Zeroday
 		return m_nameMap[name];
 	}
 
-	std::shared_ptr<Texture> TextureManager::getTextureWithPath(const std::string &path) {
+	Ref<Texture> TextureManager::getTextureWithPath(const std::string &path) {
 		if (!m_pathMap.contains(path)) {
 			Logger::Warn("Texture \"" + path + "\" not found.");
 			return nullptr;
@@ -107,13 +107,13 @@ namespace Zeroday
 		return m_pathMap[path];
 	}
 
-	std::shared_ptr<Texture> TextureManager::GetDefaultTexture(MaterialTextureType type) {
+	Ref<Texture> TextureManager::GetDefaultTexture(MaterialTextureType type) {
 		if (const auto it = m_defaultTextures.find(type); it != m_defaultTextures.end())
 			return it->second;
 		return m_defaultTextures[MaterialTextureType::BaseColor];
 	}
 
-	uint64_t TextureManager::ensureBindlessHandle(std::shared_ptr<Texture> tex) {
+	uint64_t TextureManager::ensureBindlessHandle(Ref<Texture> tex) {
 		if (!tex || tex->bindlessHandle) return tex ? tex->bindlessHandle : 0;
 		if (!GLAD_GL_ARB_bindless_texture || !GLAD_GL_ARB_gpu_shader_int64) return 0;
 		if (!glIsTexture(tex->glID)) return 0;
@@ -128,11 +128,11 @@ namespace Zeroday
 		return handle;
 	}
 
-	uint64_t TextureManager::getBindlessHandle(std::shared_ptr<Texture> tex) const {
+	uint64_t TextureManager::getBindlessHandle(Ref<Texture> tex) const {
 		return tex ? tex->bindlessHandle : 0;
 	}
 
-    void TextureManager::releaseTexture(const std::shared_ptr<Texture> &tex) {
+    void TextureManager::releaseTexture(const Ref<Texture> &tex) {
 		if (!tex) return;
 
 		if (tex->resident && tex->bindlessHandle) {
@@ -149,7 +149,7 @@ namespace Zeroday
 
 		if (!tex->name.empty()) m_nameMap.erase(tex->name);
 		std::erase_if(m_allTextures,
-		              [&](const std::shared_ptr<Texture>& t){ return t.get() == tex.get(); });
+		              [&](const Ref<Texture>& t){ return t.get() == tex.get(); });
     }
 
     void TextureManager::releaseAll() {
@@ -200,7 +200,7 @@ namespace Zeroday
 		}
     }
 
-    std::shared_ptr<Texture> TextureManager::CreateDefaultTexture(const std::string &debugName,
+    Ref<Texture> TextureManager::CreateDefaultTexture(const std::string &debugName,
                                                                   unsigned char r, unsigned char g,
                                                                   unsigned char b, unsigned char a) {
 		GLuint texID = 0;
@@ -215,7 +215,7 @@ namespace Zeroday
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		auto tex = std::make_shared<Texture>();
+		auto tex = CreateRef<Texture>();
 		tex->name = debugName;
 		tex->glID = texID;
 

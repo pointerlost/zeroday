@@ -4,7 +4,7 @@
 #include "Scene/Entity.h"
 #include "Graphics/OpenGL/Lighting/Light.h"
 
-namespace ecs      { class World;         }
+namespace ecs      { class Scene;         }
 namespace opengl   { class RenderContext; }
 
 namespace Zeroday
@@ -12,7 +12,7 @@ namespace Zeroday
 	class SceneObjectFactory
 	{
 	public:
-		explicit SceneObjectFactory(ecs::World& w);
+		explicit SceneObjectFactory(ecs::Scene& w);
 		~SceneObjectFactory() = default;
 
 		[[nodiscard]] ecs::Entity CreatePrimitiveObject(const std::string& meshName = "cube") const;
@@ -24,6 +24,6 @@ namespace Zeroday
 		[[nodiscard]] ecs::Entity CreateModel(const std::string& path) const;
 
 	private:
-		ecs::World& world;
+		ecs::Scene& world;
 	};
 }

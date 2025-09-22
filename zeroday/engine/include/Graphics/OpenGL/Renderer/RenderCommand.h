@@ -10,7 +10,7 @@ namespace opengl {
 
     // unique for per-object
     struct RenderCommandMDI {
-        ecs::Entity entity   = INVALID_ENTITY;
+        entt::entity entity  = INVALID_ENTITY;
         GLuint VAO           = 0;
         uint32_t indexCount  = UINT32_MAX;
         uint32_t indexOffset = UINT32_MAX;

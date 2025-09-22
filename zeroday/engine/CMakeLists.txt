@@ -19,6 +19,8 @@ endif()
 
 add_library(glad_local STATIC
     vendor/glad/src/glad.c
+        include/core/UUID.h
+        include/core/Base.h
 )
 
 # Include directories for local GLAD
@@ -37,7 +39,7 @@ add_library(ZeroDayEngine STATIC
     src/Graphics/OpenGL/Model/Model.cpp
     src/Graphics/OpenGL/Model/ModelLoader.cpp
     src/Graphics/OpenGL/Renderer/RenderContext.cpp
-    src/Graphics/OpenGL/Renderer/Renderer.cpp
+        src/Graphics/OpenGL/Renderer/Renderer3D.cpp
     src/Graphics/OpenGL/Renderer/RenderState.cpp
     src/Graphics/OpenGL/Lighting/Light.cpp
     src/Graphics/OpenGL/Material/material_lib.cpp
@@ -76,13 +78,13 @@ add_library(ZeroDayEngine STATIC
     include/Editor/Panel/MenuBarPanel.h
     include/Graphics/OpenGL/Model/Model.h
     include/Graphics/OpenGL/Model/ModelLoader.h
-    include/Graphics/OpenGL/ssbo_types.h
+        include/Graphics/OpenGL/GPU_buffers.h
     include/Graphics/OpenGL/Macros.h
     include/Graphics/OpenGL/Renderer/RenderCommand.h
     include/Graphics/OpenGL/Renderer/RenderState.h
     include/Graphics/OpenGL/Material/material.h
     include/Graphics/OpenGL/Renderer/RenderContext.h
-    include/Graphics/OpenGL/Renderer/Renderer.h
+        include/Graphics/OpenGL/Renderer/Renderer3D.h
     include/Graphics/OpenGL/Lighting/Light.h
     include/Scene/SceneObjectFactory.h
     include/Graphics/OpenGL/Textures/TextureManager.h
@@ -121,11 +123,14 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Camera/Camera.h
     src/Graphics/OpenGL/Camera/Camera.cpp
     src/core/Logger.cpp
-    include/Scene/World.h
+        include/Scene/Scene.h
     include/Scene/Components.h
     include/Scene/Entity.h
     include/core/Assert.h
     include/core/Compat.h
+        src/Scene/Scene.cpp
+        src/core/UUID.cpp
+        src/Scene/Entity.cpp
 )
 
 # Include directories

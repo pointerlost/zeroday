@@ -17,7 +17,7 @@ namespace Zeroday {
 		[[nodiscard]] float GetIntensity() const { return m_Intensity; }
 
 		virtual void SetPosition(const glm::vec3& position) = 0;
-		virtual glm::vec3 GetPosition() const = 0;
+		[[nodiscard]] virtual glm::vec3 GetPosition() const = 0;
 
 	protected:
 		glm::vec3 m_Radiance = glm::vec3(1.0);
@@ -30,7 +30,7 @@ namespace Zeroday {
 		[[nodiscard]] const glm::vec3& GetDirection() const { return m_Direction; }
 
 		void SetPosition(const glm::vec3&) override {} // Directional lights don't have position
-		glm::vec3 GetPosition() const override { return glm::vec3(0.0f); }
+		[[nodiscard]] glm::vec3 GetPosition() const override { return glm::vec3(0.0f); } // default
 
 	private:
 		glm::vec3 m_Direction = glm::vec3(0.0, 0.0, 1.0);

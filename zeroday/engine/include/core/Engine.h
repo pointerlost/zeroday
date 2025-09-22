@@ -1,11 +1,12 @@
 #pragma once
 #include <memory>
+#include "Base.h"
 #include "core/Window.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Editor/Editor.h"
 #include "Editor/State/EditorState.h"
 #include "core/AssetManager.h"
-#include "Graphics/OpenGL/Renderer/Renderer.h"
+#include "Graphics/OpenGL/Renderer/Renderer3D.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Model/ModelLoader.h"
@@ -21,8 +22,8 @@ namespace Zeroday {
 		Engine() = default;
 		~Engine();
 
-		[[nodiscard]] bool run();
-		[[nodiscard]] bool initResources();
+		[[nodiscard]] bool Run();
+		[[nodiscard]] bool InitResources();
 		void InitServices();
 		void InitPointerObjects();
 
@@ -30,21 +31,20 @@ namespace Zeroday {
 		void GameStateLoop();
 
 	private:
-
-		std::unique_ptr<EDITOR::EditorState> m_EditorState;
-		std::unique_ptr<EDITOR::Editor> m_Editor;
-		std::unique_ptr<Window> m_Window;
-		std::unique_ptr<opengl::BufferManager> m_GLBufferManager;
-		std::unique_ptr<ecs::World> m_World;
-		std::unique_ptr<opengl::Renderer> m_Renderer;
-		std::unique_ptr<Zeroday::SceneObjectFactory> m_SceneObjectFactory;
-		std::unique_ptr<ENGINE::UI::ImGuiLayer> m_ImGuiLayer;
-		std::unique_ptr<Zeroday::MeshLibrary> g_MeshLibrary;
-		std::unique_ptr<ASSET::AssetManager> g_AssetManager;
-		std::unique_ptr<Zeroday::ModelLoader> g_ModelLoader;
-		std::unique_ptr<Zeroday::MaterialLibrary> g_MaterialLibrary;
-		std::unique_ptr<Zeroday::TextureManager> g_TextureManager;
-		std::unique_ptr<opengl::RenderContext> g_RenderContext;
+		Scope<EDITOR::EditorState> m_EditorState;
+		Scope<EDITOR::Editor> m_Editor;
+		Scope<Window> m_Window;
+		Scope<::opengl::BufferManager> m_GLBufferManager;
+		Scope<Scene> m_Scene;
+		Scope<opengl::Renderer3D> m_Renderer3D;
+		Scope<SceneObjectFactory> m_SceneObjectFactory;
+		Scope<UI::ImGuiLayer> m_ImGuiLayer;
+		Scope<MeshLibrary> g_MeshLibrary;
+		Scope<Asset::AssetManager> g_AssetManager;
+		Scope<ModelLoader> g_ModelLoader;
+		Scope<MaterialLibrary> g_MaterialLibrary;
+		Scope<TextureManager> g_TextureManager;
+		Scope<::opengl::RenderContext> g_RenderContext;
 
 		void InitWindow();
 		void InitCallBack();

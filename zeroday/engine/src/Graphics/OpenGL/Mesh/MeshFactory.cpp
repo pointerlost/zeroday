@@ -213,7 +213,7 @@ namespace Zeroday
 		return{};
 	}
 
-	void MeshFactory::setupMeshes(const std::shared_ptr<MeshData3D>& meshData) {
+	void MeshFactory::setupMeshes(const Ref<MeshData3D>& meshData) {
 
 		const auto addMeshObject = [&](const std::string &name) {
 			auto [vertices, indices] = createMeshObject(name);

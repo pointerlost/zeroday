@@ -10,7 +10,7 @@ namespace ecs {
 	struct MaterialComponent;
 	struct NameComponent;
 	struct TransformComponent;
-	class World;
+	class Scene;
 }
 namespace Zeroday { class SceneObjectFactory; }
 struct ImGuiIO;

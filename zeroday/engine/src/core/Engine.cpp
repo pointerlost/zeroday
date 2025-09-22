@@ -16,7 +16,7 @@ namespace Zeroday {
 		}
 	}
 
-	bool Engine::run() {
+	bool Engine::Run() {
 		OpenGLSetUpResources();
 
 		const auto glfwWin = m_Window->getGLFWwindow();
@@ -38,9 +38,9 @@ namespace Zeroday {
 		return true;
 	}
 
-	bool Engine::initResources() {
+	bool Engine::InitResources() {
 		// Load materials
-		if (!g_MaterialLibrary->createMaterials(MATERIAL_JSON_PATH)) {
+		if (!g_MaterialLibrary->CreateMaterials(MATERIAL_JSON_PATH)) {
 			Logger::Error("[Engine::initResources] loadMaterialFromJSON function is not working correctly!");
 			return false;
 		}
@@ -111,7 +111,7 @@ namespace Zeroday {
 
     void Engine::InitWindow()
     {
-        m_Window = std::make_unique<Window>();
+        m_Window = CreateScope<Window>();
 
 		if (!m_Window->initResources()) {
 			Logger::Error("Engine::initWindow FAILED because of initResources!");
@@ -128,90 +128,90 @@ namespace Zeroday {
 	}
 
 	void Engine::InitWorld() {
-		m_World = std::make_unique<ecs::World>();
+		m_Scene = CreateScope<ecs::Scene>();
 
 		Logger::Info("[Engine::InitWorld] World initialized successfully!");
 	}
 
 	void Engine::InitOpenGLBufferState() {
-		m_GLBufferManager = std::make_unique<opengl::BufferManager>();
+		m_GLBufferManager = CreateScope<opengl::BufferManager>();
 
 		Logger::Info("[Engine::InitOpenGLBufferState] glBufferManager initialized successfully!");
 	}
 
 	void Engine::InitAssetManager() {
-		g_AssetManager = std::make_unique<ASSET::AssetManager>();
+		g_AssetManager = CreateScope<ASSET::AssetManager>();
 
 		Logger::Info("[Engine::InitAssetManager] AssetManager initialized successfully!");
 	}
 
 	void Engine::InitTexture()
 	{
-		g_TextureManager = std::make_unique<Zeroday::TextureManager>();
+		g_TextureManager = CreateScope<Zeroday::TextureManager>();
 
 		Logger::Info("[Engine::InitTexture] TextureManager initialized successfully!");
 	}
 
 	void Engine::InitMaterial()
 	{
-		g_MaterialLibrary = std::make_unique<Zeroday::MaterialLibrary>();
+		g_MaterialLibrary = CreateScope<Zeroday::MaterialLibrary>();
 
 		Logger::Info("[Engine::InitMaterial] MaterialLibrary initialized successfully!");
 	}
 
 	void Engine::InitMesh()
 	{
-		g_MeshLibrary = std::make_unique<Zeroday::MeshLibrary>();
+		g_MeshLibrary = CreateScope<Zeroday::MeshLibrary>();
 
 		Logger::Info("[Engine::InitMesh] MeshLibrary initialized successfully!");
 	}
 
 	void Engine::InitModel()
 	{
-		g_ModelLoader = std::make_unique<Zeroday::ModelLoader>();
+		g_ModelLoader = CreateScope<Zeroday::ModelLoader>();
 
 		Logger::Info("[Engine::InitModel] Model Loader initialized successfully!]");
 	}
 
 	void Engine::InitRender()
 	{
-		g_RenderContext = std::make_unique<opengl::RenderContext>();
+		g_RenderContext = CreateScope<opengl::RenderContext>();
 
 		Logger::Info("[Engine::InitRender] RenderContext initialized successfully!");
 
-		m_Renderer = std::make_unique<opengl::Renderer>(m_World.get());
+		m_Renderer3D = CreateScope<opengl::Renderer3D>(m_Scene.get());
 
 		Logger::Info("[Engine::InitRender] RendererManager initialized successfully!");
 	}
 
 	void Engine::InitScene()
 	{
-		m_SceneObjectFactory = std::make_unique<Zeroday::SceneObjectFactory>(*m_World);
+		m_SceneObjectFactory = CreateScope<Zeroday::SceneObjectFactory>(*m_Scene);
 
 		Logger::Info("SceneObjectFactory initialized successfully!");
 	}
 
 	void Engine::InitEditor() {
-		m_EditorState = std::make_unique<EDITOR::EditorState>();
+		m_EditorState = CreateScope<EDITOR::EditorState>();
 
 		const ecs::Entity editorCamera = m_SceneObjectFactory->CreateCamera(ecs::CameraMode::Orbit, ecs::PERSPECTIVE);
-		m_World->GetComponent<ecs::NameComponent>(editorCamera)->name = "Editor Camera";
+		m_Scene->GetComponent<ecs::NameComponent>(editorCamera)->name = "Editor Camera";
 
 		m_EditorState->cameraEntity = editorCamera;
-		m_EditorState->world = m_World.get();
+		m_EditorState->world = m_Scene.get();
 
-		m_Editor = std::make_unique<EDITOR::Editor>(m_EditorState.get());
+		m_Editor = CreateScope<EDITOR::Editor>(m_EditorState.get());
 		// need update !!?
-		m_Editor->addPanel(std::make_unique<EDITOR::UI::InspectorPanel>());
-		m_Editor->addPanel(std::make_unique<EDITOR::UI::SceneHierarchyPanel>());
-		m_Editor->addPanel(std::make_unique<EDITOR::UI::MenuBarPanel>(m_SceneObjectFactory.get()));
+		m_Editor->addPanel(CreateScope<EDITOR::UI::InspectorPanel>());
+		m_Editor->addPanel(CreateScope<EDITOR::UI::SceneHierarchyPanel>());
+		m_Editor->addPanel(CreateScope<EDITOR::UI::MenuBarPanel>(m_SceneObjectFactory.get()));
 
 		Logger::Info("[Engine::InitEditor] Editor initialized successfully!]");
 	}
 
 	void Engine::InitImGui()
 	{
-		m_ImGuiLayer = std::make_unique<ENGINE::UI::ImGuiLayer>(m_Window->getGLFWwindow(), m_SceneObjectFactory.get());
+		m_ImGuiLayer = CreateScope<ENGINE::UI::ImGuiLayer>(m_Window->getGLFWwindow(), m_SceneObjectFactory.get());
 
 		Logger::Info("[Engine::InitImGui] ImGuiLayer initialized successfully!");
 	}
@@ -250,11 +250,11 @@ namespace Zeroday {
 
 	void Engine::RenderPhase() {
 		OpenGLRenderStuff();
-		m_Renderer->Render();
+		m_Renderer3D->Render();
 	}
 
 	void Engine::CleanupPhase() {
-		m_World->CleanResources();
+		m_Scene->CleanResources();
 		glfwRenderEventStuff();
 	}
 }

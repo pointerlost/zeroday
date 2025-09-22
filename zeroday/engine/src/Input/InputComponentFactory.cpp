@@ -13,9 +13,9 @@ namespace Input
 		switch (type)
 		{
 		case InputType::CubeInputComponent:
-			return std::make_shared<CubeInputComponent>(transform, context);
+			return CreateRef<CubeInputComponent>(transform, context);
 		case InputType::SphereInputComponent:
-			return std::make_shared<SphereInputComponent>(transform, context);
+			return CreateRef<SphereInputComponent>(transform, context);
 		default:
 			Zeroday::Error("Unknown input component type: " + std::to_string(static_cast<int>(type)));
 			return nullptr;
@@ -29,6 +29,6 @@ namespace Input
 	{
 		InputContext context{};
 	
-		return std::make_shared<LightInputComponent>(transform, context, light);
+		return CreateRef<LightInputComponent>(transform, context, light);
 	}
 } // namespace Input

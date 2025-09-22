@@ -6,7 +6,7 @@
 #include "core/EngineConfig.h"
 #include <imgui.h>
 #include "glm/ext.hpp"
-#include "Scene/World.h"
+#include "Scene/Scene.h"
 #include "Graphics/OpenGL/Lighting/Light.h"
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Transformations/Transformations.h"

@@ -3,20 +3,20 @@
 
 int main()
 {
-	const auto engine = std::make_unique<Zeroday::Engine>();
+	const auto engine = CreateScope<Zeroday::Engine>();
 
 	try {
 		// init engine pointers
 		engine->InitPointerObjects();
 
 		// init resources
-		if (!engine->initResources()) {
+		if (!engine->InitResources()) {
 			Logger::Error("Failed to initialize resources!");
 			return -1;
 		}
 
 		// start the engine
-		if (!engine->run()) {
+		if (!engine->Run()) {
 			Logger::Error("Engine run failed or stopped because of some reasons!");
 			return -1;
 		}

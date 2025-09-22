@@ -6,7 +6,7 @@
 #include <vector>
 #include "Panel/EditorPanel.h"
 
-namespace ecs          { class World;         }
+namespace ecs          { class Scene;         }
 namespace EDITOR       { struct EditorState;  }
 
 namespace EDITOR {
@@ -16,14 +16,14 @@ namespace EDITOR {
         explicit Editor(EditorState* s);
 
         template<typename T>
-        void addPanel(std::unique_ptr<T> panel) {
+        void addPanel(Scope<T> panel) {
             panels.push_back(std::move(panel));
         }
 
         void drawUI();
 
     private:
-        std::vector<std::unique_ptr<UI::EditorPanel>> panels;
+        std::vector<Scope<UI::EditorPanel>> panels;
 
         EditorState* state;
     };

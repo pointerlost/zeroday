@@ -21,15 +21,15 @@ namespace Zeroday {
 
 	class MaterialLibrary {
 	public:
-		[[nodiscard]] bool createMaterials(const std::string& filePath);
+		[[nodiscard]] bool CreateMaterials(const std::string& filePath);
 
-		[[nodiscard]] std::shared_ptr<MaterialInstance> createInstance(const std::string& name);
+		[[nodiscard]] Ref<MaterialInstance> CreateInstance(const std::string& name);
 
-		[[nodiscard]] std::shared_ptr<Material> getMaterialByName(const std::string& name);
+		[[nodiscard]] Ref<Material> GetMaterialByName(const std::string& name);
 
-		[[nodiscard]] std::shared_ptr<Material> getDefaultMaterial() const;
+		[[nodiscard]] Ref<Material> GetDefaultMaterial() const;
 
 	private:
-		std::unordered_map<std::string, std::shared_ptr<Material>> m_materials;
+		std::unordered_map<std::string, Ref<Material>> m_materials;
 	};
 }

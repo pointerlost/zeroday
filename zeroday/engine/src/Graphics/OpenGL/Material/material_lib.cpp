@@ -1,26 +1,28 @@
 #include "Graphics/OpenGL/Material/material_lib.h"
+
+#include "core/Base.h"
 #include "core/File.h"
 #include "Graphics/OpenGL/Textures/TextureManager.h"
 #include "core/Logger.h"
 #include "core/Services.h"
-#include "Graphics/OpenGL/ssbo_types.h"
+#include "Graphics/OpenGL/GPU_buffers.h"
 #define DEBUG_PTR(ptr) DEBUG::DebugForEngineObjectPointers(ptr)
 
 static auto& file = Zeroday::File::get();
 
 namespace Zeroday
 {
-    bool MaterialLibrary::createMaterials(const std::string& filePath)
+    bool MaterialLibrary::CreateMaterials(const std::string& filePath)
     {
         std::string content = file.readFromFile(filePath);
         if (content.empty()) {
-            Logger::Warn("[MaterialLibrary::createMaterials] content is empty!\n");
+            Warn("[MaterialLibrary::CreateMaterials] content is empty!\n");
             return false;
         }
 
         json parsed = json::parse(content);
         if (!parsed.contains("materials") || !parsed["materials"].is_array()) {
-            Logger::Warn("[MaterialLibrary::createMaterials] Invalid material file structure!\n");
+            Warn("[MaterialLibrary::CreateMaterials] Invalid material file structure!\n");
             return false;
         }
 
@@ -53,7 +55,7 @@ namespace Zeroday
             if (mat.contains("metallic"))  metallic  = mat["metallic"].get<float>();
             if (mat.contains("roughness")) roughness = mat["roughness"].get<float>();
 
-            const auto material = std::make_shared<Material>();
+            const auto material = CreateRef<Material>();
             material->name      = name;
             material->baseColor = baseColor;
             material->emissive  = emissive;
@@ -66,20 +68,20 @@ namespace Zeroday
         return true;
     }
 
-    std::shared_ptr<Material> MaterialLibrary::getMaterialByName(const std::string &name) {
+    Ref<Material> MaterialLibrary::GetMaterialByName(const std::string &name) {
         if (!m_materials.contains(name)) {
-            Logger::Warn("Material \"" + name + "\" not found! but returning fallback\n");
+            Warn("Material \"" + name + "\" not found! but returning fallback\n");
             // return default material
-            return getDefaultMaterial();
+            return GetDefaultMaterial();
         }
         return m_materials.at(name);
     }
 
-    std::shared_ptr<Material> MaterialLibrary::getDefaultMaterial() const {
+    Ref<Material> MaterialLibrary::GetDefaultMaterial() const {
         auto textureManager = Services::GetTextureManager();
 
-        static std::shared_ptr<Material> fallback = [textureManager]{
-            auto mat = std::make_shared<Material>();
+        static Ref<Material> fallback = [textureManager]{
+            auto mat = CreateRef<Material>();
             mat->name      = "default";
             mat->baseColor = glm::vec4(1.0f);
             mat->emissive  = glm::vec3(0.0f);
@@ -93,16 +95,16 @@ namespace Zeroday
             mat->textures[MaterialTextureType::AmbientOcclusion] = textureManager->GetDefaultTexture(MaterialTextureType::AmbientOcclusion);
             mat->textures[MaterialTextureType::Emissive]         = textureManager->GetDefaultTexture(MaterialTextureType::Emissive);
 
-            Logger::Info("Default Material added!");
+            Info("Default Material added!");
             return mat;
         }();
         return fallback;
     }
 
-    std::shared_ptr<MaterialInstance> MaterialLibrary::createInstance(const std::string &name)
+    Ref<MaterialInstance> MaterialLibrary::CreateInstance(const std::string &name)
     {
-        const auto base = getMaterialByName(name);
-        auto instance = std::make_shared<MaterialInstance>();
+        const auto base = GetMaterialByName(name);
+        auto instance  = CreateRef<MaterialInstance>();
         instance->base = base;
         return instance;
     }

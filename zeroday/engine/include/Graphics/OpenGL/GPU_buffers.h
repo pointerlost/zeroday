@@ -16,7 +16,7 @@ namespace LIGHTING { enum class LightType; }
 
 namespace Zeroday {
 
-    struct alignas(16) TransformSSBO {
+    struct TransformSSBO {
         glm::mat4 model     = glm::mat4(1.0f);
         glm::mat4 normalMat = glm::mat4(1.0f);
     };
@@ -24,27 +24,14 @@ namespace Zeroday {
     static_assert(std::is_trivially_copyable_v<TransformSSBO>);
     /********************************************************************************/
 
-    struct alignas(16) CameraSSBO {
-        glm::mat4 view       = glm::mat4(1.0f);
-        glm::mat4 projection = glm::mat4(1.0f);
-    };
-    static_assert(sizeof(CameraSSBO) % 16 == 0);
-    /********************************************************************************/
-
-    struct alignas(16) GlobalSSBO {
+    struct GlobalSSBO {
         glm::vec3 globalAmbient = glm::vec3(0.1f);
-        float _p1    = {};
-
-        glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, -5.0f);
-        float _p2    = {};
-
         int activeLightCount = 0;
-        float _p3[3] = {};
     };
     static_assert(sizeof(GlobalSSBO) % 16 == 0);
     /********************************************************************************/
 
-    struct alignas(16) LightSSBO {
+    struct LightSSBO {
         int   type = 1;          // 0 = directional, 1 = point, 2 = spot
         float constant       = {};
         float linear         = {};
@@ -78,5 +65,16 @@ namespace Zeroday {
         // uint64_t heightHandle;
     };
     static_assert(sizeof(MaterialSSBO) % 16 == 0);
+
+    struct CameraUBO {
+        glm::mat4 viewProjection;
+        glm::mat4 viewMatrix;
+        glm::mat4 projectionMatrix;
+        glm::vec3 cameraPosition;
+        float padding1;
+        glm::vec3 cameraDirection;
+        float padding2;
+    };
+    static_assert(sizeof(CameraUBO) % 16 == 0);
 
 }

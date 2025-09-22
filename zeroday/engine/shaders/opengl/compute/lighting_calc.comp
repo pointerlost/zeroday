@@ -1,35 +1,41 @@
-#ifndef LIGHTING_CALC_COMPUTE
-#define LIGHTING_CALC_COMPUTE
+#ifndef LIGHTING_CALCULATIONS
+#define LIGHTING_CALCULATIONS
 
 #include "common/light_data.glsl"
+#include "common/camera_data.glsl"
 #include "compute/pbr_calc.comp"
 
-out vec3 lightingResult;
-
 // -------------------
-// Light models (use MaterialData)
-vec3 CalcDirectionalLight(LightData light, vec3 N, vec3 V) {
-    vec3 L = normalize(-light.direction);
-    return CalcPBR(m, N, V, L, light.radiance * light.intensity);
+// Light models (require world space positions/normals)
+vec3 CalcDirectionalLight(LightData light, MaterialData material, vec3 worldPos, vec3 worldNormal) {
+    vec3 L = normalize(-light.direction);  // light.direction in world space
+    vec3 V = normalize(uCamera.cameraPosition - worldPos);  // View vector in world space
+
+    return CalcPBR(material, worldNormal, V, L, light.radiance * light.intensity);
 }
 
-vec3 CalcPointLight(LightData light, vec3 fragPos, vec3 N, vec3 V) {
-    vec3 L = normalize(light.position - fragPos);
-    float d = length(light.position - fragPos);
+vec3 CalcPointLight(LightData light, MaterialData material, vec3 worldPos, vec3 worldNormal) {
+    vec3 L = normalize(light.position - worldPos);  // Both in world space!
+    vec3 V = normalize(uCamera.cameraPosition - worldPos);
+
+    float d = length(light.position - worldPos);
     float attenuation = 1.0 / (light.constant + light.linear * d + light.quadratic * d * d);
-    return CalcPBR(m, N, V, L, light.radiance * light.intensity) * attenuation;
+
+    return CalcPBR(material, worldNormal, V, L, light.radiance * light.intensity) * attenuation;
 }
 
-vec3 CalcSpotLight(LightData light, vec3 fragPos, vec3 N, vec3 V) {
-    vec3 L = normalize(light.position - fragPos);
+vec3 CalcSpotLight(LightData light, MaterialData material, vec3 worldPos, vec3 worldNormal) {
+    vec3 L = normalize(light.position - worldPos);
+    vec3 V = normalize(uCamera.cameraPosition - worldPos);
+
     float theta = dot(L, normalize(-light.direction));
     float epsilon = light.cutOff - light.outerCutOff;
     float spotFactor = clamp((theta - light.outerCutOff) / max(epsilon, 1e-5), 0.0, 1.0);
 
-    float d = length(light.position - fragPos);
+    float d = length(light.position - worldPos);
     float attenuation = 1.0 / (light.constant + light.linear * d + light.quadratic * d * d);
 
-    return CalcPBR(m, N, V, L, light.radiance * light.intensity) * attenuation * spotFactor;
+    return CalcPBR(material, worldNormal, V, L, light.radiance * light.intensity) * attenuation * spotFactor;
 }
 
 #endif

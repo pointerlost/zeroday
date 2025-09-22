@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "core/Logger.h"
-#include "Graphics/OpenGL/ssbo_types.h"
+#include "Graphics/OpenGL/GPU_buffers.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
 
 namespace Zeroday { struct MaterialSSBO; }
@@ -108,7 +108,7 @@ namespace opengl {
         static void UpdateLightComponent(const ecs::LightComponent* comp,         Zeroday::LightSSBO&     gpuData);
         static void UpdateCameraComponent(const ecs::CameraComponent* comp,       Zeroday::CameraSSBO&    gpuData);
 
-        static Zeroday::MaterialSSBO MakeGPUMaterialInstance(const std::shared_ptr<Zeroday::MaterialInstance> &inst);
+        static Zeroday::MaterialSSBO MakeGPUMaterialInstance(const Ref<Zeroday::MaterialInstance> &inst);
     };
 
 }

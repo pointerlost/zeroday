@@ -4,12 +4,12 @@
 #pragma once
 #include "systems.h"
 
-namespace ecs { class World; }
+namespace ecs { class Scene; }
 
 namespace ecs::systems {
 
     class TransformSystem final : public System<TransformSystem> {
     public:
-        void Update(World* world) override;
+        void Update(Scene* world) override;
     };
 }

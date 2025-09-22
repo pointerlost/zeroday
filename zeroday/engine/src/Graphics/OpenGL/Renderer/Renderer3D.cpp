@@ -1,4 +1,4 @@
-#include "Graphics/OpenGL/Renderer/Renderer.h"
+#include "Graphics/OpenGL/Renderer/Renderer3D.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
 #include "core/AssetManager.h"
 #include "core/Logger.h"

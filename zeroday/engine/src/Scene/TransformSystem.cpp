@@ -7,7 +7,7 @@
 
 namespace ecs::systems {
 
-    void TransformSystem::Update(World* world) {
+    void TransformSystem::Update(Scene* world) {
         auto* context = Services::GetRenderContext();
         auto& ers = context->GetEditorRenderState();
     }
