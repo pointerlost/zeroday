@@ -2,40 +2,35 @@
 // Created by pointerlost on 8/22/25.
 //
 #pragma once
-#include <glad/glad.h>
 #include "Scene/Entity.h"
-#include "Graphics/OpenGL/Macros.h"
 
-namespace opengl {
+namespace Zeroday::opengl {
 
     // unique for per-object
     struct RenderCommandMDI {
-        entt::entity entity  = INVALID_ENTITY;
-        GLuint VAO           = 0;
-        uint32_t indexCount  = UINT32_MAX;
-        uint32_t indexOffset = UINT32_MAX;
-        int materialIndex    = -1;
-        int transformIndex   = -1;
-        int subMeshIndex     = -1;
-        // storing visibility and mobility etc. for frustum culling or batches
-        ecs::EntityInfo entityInfo{};
+        uint vao             = 0;
+        uint materialIndex   = 0;
+        uint transformIndex  = 0;
+        uint indexCount      = 0;
+        uint indexOffset     = 0;
     };
+    static_assert(std::is_trivially_copyable_v<RenderCommandMDI>, "it's not!");
 
-    // OpenGL 4.6 specification, don't change the order!
+    // OpenGL 4.6 specification, the order is matter!
     struct DrawElementsIndirectCommand {
-        GLuint count         = 0; // number of indices
-        GLuint instanceCount = 0; // usually 1 for now
-        GLuint firstIndex    = 0; // index offset (in *indices*, not bytes)
-        GLuint baseVertex    = 0; // 0 if not using glDrawElementsBaseVertex
-        GLuint baseInstance  = 0; // index into our payload array (SSBO)
+        uint count         = 0; // number of indices
+        uint instanceCount = 0; // usually 1 for now
+        uint firstIndex    = 0; // index offset (in *indices*, not bytes)
+        uint baseVertex    = 0; // 0 if not using glDrawElementsBaseVertex
+        uint baseInstance  = 0; // index into our payload array (SSBO)
     };
 
     // Per-draw payload your shader will index with gl_BaseInstance
     struct DrawPayloadGPU {
         int transformIndex = -1;
         int materialIndex  = -1;
-        int meshID         = -1; // for debugging or LOD table
-        int pad            = -1; // keep std430 alignment happy
+        int meshId         = -1; // for debugging or LOD table
+        int EntityId       = -1;
     };
 
 }

@@ -5,7 +5,8 @@
 #include "Scene/Scene.h"
 
 
-namespace EDITOR {
+namespace Zeroday::Editor {
+
     Editor::Editor(EditorState *s) : state(s) {}
 
     void Editor::drawUI() {

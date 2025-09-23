@@ -3,7 +3,7 @@
 //
 #pragma once
 #include "Scene/Scene.h"
-#include "Editor/Panel/EditorPanel.h"
+#include "EditorPanel.h"
 
 
 namespace ecs {
@@ -14,9 +14,9 @@ namespace ecs {
     struct MaterialComponent;
     struct CameraComponent;
 }
-namespace EDITOR { struct EditorState; }
+namespace Zeroday::Editor { struct EditorState; }
 
-namespace EDITOR::UI {
+namespace Zeroday::Editor::UI {
 
     class InspectorPanel final : public EditorPanel {
     public:

@@ -2,22 +2,21 @@
 // Created by pointerlost on 8/13/25.
 //
 #pragma once
-#include "Scene/Entity.h"
+#include "entt/entt.hpp"
 
-// forward declarations
-namespace ecs { class Scene; }
+namespace Zeroday { class Scene; }
 
-namespace EDITOR {
+namespace Zeroday::Editor {
 
     struct EditorState {
-        bool isPlayMode    = false;    // false = editor mode
+        bool isPlayMode    = false; // false = editor mode
         bool showHierarchy = true;
         bool showInspector = true;
         bool showSceneView = true;
 
         entt::entity selectedEntity = {};
         entt::entity cameraEntity   = {};
-        ecs::Scene* world = nullptr;
+        Scene* world = nullptr;
 
         bool requestShutdown = false;
     };

@@ -11,32 +11,6 @@
 
 namespace opengl {
 
-    Zeroday::MaterialSSBO BufferUpdater::MakeGPUMaterialInstance(const Ref<Zeroday::MaterialInstance> &inst) {
-        Zeroday::MaterialSSBO gpu{};
-        gpu.baseColor = inst->getBaseColor();
-        gpu.metallic  = inst->getMetallic();
-        gpu.roughness = inst->getRoughness();
-        gpu.emissive  = inst->getEmissive();
-
-        // auto* texManager = Services::GetTextureManager();
-        // auto getHandle = [&](Graphics::MaterialTextureType type) -> uint64_t {
-        //     if (const auto tex = inst->getTexture(type))
-        //         return texManager->ensureBindlessHandle(tex);
-        //     return 0;
-        // };
-        //
-        // gpu.baseColorHandle    = getHandle(Graphics::MaterialTextureType::BaseColor);
-        // gpu.normalHandle       = getHandle(Graphics::MaterialTextureType::Normal);
-        // gpu.metallicHandle     = getHandle(Graphics::MaterialTextureType::Metallic);
-        // gpu.roughnessHandle    = getHandle(Graphics::MaterialTextureType::Roughness);
-        // gpu.emissiveHandle     = getHandle(Graphics::MaterialTextureType::Emissive);
-        // gpu.aoHandle           = getHandle(Graphics::MaterialTextureType::AmbientOcclusion);
-        // gpu.displacementHandle = getHandle(Graphics::MaterialTextureType::Displacement);
-        // gpu.heightHandle       = getHandle(Graphics::MaterialTextureType::Height);
-
-        return gpu;
-    }
-
     std::vector<ContiguousRange> BufferUpdater::FindContiguousRanges(const std::vector<uint32_t> &indices) {
         std::vector<ContiguousRange> ranges;
         if (indices.empty()) return ranges;
@@ -62,15 +36,9 @@ namespace opengl {
     }
 
     void BufferUpdater::UpdateTransformComponent(const ecs::TransformComponent *comp, Zeroday::TransformSSBO &gpuData) {
-        const auto modelMat = comp->transform->getModelMatrix();
-        const auto normalMat = glm::transpose(glm::inverse(glm::mat3(modelMat)));
-        gpuData.model = modelMat;
-        gpuData.normalMat = normalMat;
+
     }
 
-    void BufferUpdater::UpdateMaterialComponent(const ecs::MaterialComponent *comp, Zeroday::MaterialSSBO &gpuData) {
-        gpuData = MakeGPUMaterialInstance(comp->instance);
-    }
 
     void BufferUpdater::UpdateLightComponent(const ecs::LightComponent *comp, Zeroday::LightSSBO &gpuData) {
         auto& light = comp->light;

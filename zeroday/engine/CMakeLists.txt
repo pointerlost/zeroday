@@ -21,6 +21,7 @@ add_library(glad_local STATIC
     vendor/glad/src/glad.c
         include/core/UUID.h
         include/core/Base.h
+        include/Graphics/OpenGL/Renderer/SceneRenderer.h
 )
 
 # Include directories for local GLAD
@@ -55,15 +56,15 @@ add_library(ZeroDayEngine STATIC
     src/Scene/SceneObjectFactory.cpp
     src/Graphics/OpenGL/Transformations/Transformations.cpp
     src/Editor/Editor.cpp
-    src/Editor/Panel/EditorPanel.cpp
-    src/Editor/Panel/SceneHierarchyPanel.cpp
-    src/Editor/Panel/InspectorPanel.cpp
-    src/Editor/Panel/MenuBarPanel.cpp
+        src/Editor/EditorPanel.cpp
+        src/Editor/SceneHierarchyPanel.cpp
+        src/Editor/InspectorPanel.cpp
+        src/Editor/MenuBarPanel.cpp
     src/ImGui/ImGuiLayer.cpp
     src/ImGui/ImGuiScoped.cpp
     src/ImGui/ImGuiObjectState.cpp
     src/ImGui/TransformGizmo.cpp
-    src/Graphics/OpenGL/BufferManager.cpp
+        src/Graphics/OpenGL/Renderer/GPURenderer.cpp
     vendor/ImGuizmo/ImGuizmo.cpp
 
     # Header-only files (must be explicitly listed for IDE support)
@@ -71,11 +72,11 @@ add_library(ZeroDayEngine STATIC
     include/core/AssetManager.h
     include/Graphics/OpenGL/Shader.h
     include/Editor/Editor.h
-    include/Editor/Panel/EditorPanel.h
-    include/Editor/State/EditorState.h
-    include/Editor/Panel/SceneHierarchyPanel.h
-    include/Editor/Panel/InspectorPanel.h
-    include/Editor/Panel/MenuBarPanel.h
+        include/Editor/EditorPanel.h
+        include/Editor/EditorState.h
+        include/Editor/SceneHierarchyPanel.h
+        include/Editor/InspectorPanel.h
+        include/Editor/MenuBarPanel.h
     include/Graphics/OpenGL/Model/Model.h
     include/Graphics/OpenGL/Model/ModelLoader.h
         include/Graphics/OpenGL/GPU_buffers.h
@@ -109,7 +110,7 @@ add_library(ZeroDayEngine STATIC
     include/CallBack/CallBack.h
     include/Graphics/OpenGL/Mesh/MeshFactory.h
     include/Graphics/OpenGL/Mesh/MeshData3D.h
-    include/Graphics/OpenGL/BufferManager.h
+        include/Graphics/OpenGL/Renderer/GPURenderer.h
     src/Utility/buffer_updater.cpp
     include/Utility/buffer_updater.h
     include/core/Services.h
@@ -131,6 +132,9 @@ add_library(ZeroDayEngine STATIC
         src/Scene/Scene.cpp
         src/core/UUID.cpp
         src/Scene/Entity.cpp
+        src/Graphics/OpenGL/Renderer/SceneRenderer.cpp
+        src/Graphics/OpenGL/Material/material.cpp
+        src/Scene/Components.cpp
 )
 
 # Include directories

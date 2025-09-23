@@ -3,7 +3,7 @@
 
 struct GlobalSSBO {
     vec3 globalAmbient;
-    int activeLightCount;
+    float padding1;
 };
 
 layout(std430, binding = BINDING_PHASE_INPUT) buffer CPUGlobalBuffer {

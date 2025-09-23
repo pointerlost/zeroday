@@ -7,10 +7,12 @@
 
 #include "core/UUID.h"
 #include "Graphics/OpenGL/Camera/Camera.h"
+#include "Graphics/OpenGL/Lighting/Light.h"
+#include "Graphics/OpenGL/Material/material.h"
 #include "Graphics/OpenGL/Transformations/Transformations.h"
 
 namespace Zeroday {
-    class Light;
+    struct Light;
     struct Model;
     struct MeshData3D;
     struct MaterialInstance;
@@ -45,15 +47,34 @@ namespace Zeroday::Ecs {
 
 
     struct LightComponent {
-        std::shared_ptr<Light> m_light;
+        opengl::Light m_Light;
 
-        explicit LightComponent(std::shared_ptr<Light> light) : m_light(std::move(light)) {}
+        [[nodiscard]] LightSSBO ToGPUFormat() const { return m_Light.ToGPUFormat(); }
+
+        // Helper methods for easy setup
+        void SetAsDirectional(const glm::vec3& direction, const glm::vec3& color, float intensity) {
+            m_Light = opengl::Light::CreateDirectional(direction, color, intensity);
+        }
+
+        void SetAsPoint(const glm::vec3& position, const glm::vec3& color, float intensity) {
+            m_Light = opengl::Light::CreatePoint(position, color, intensity);
+        }
+
+        void SetAsSpot(const glm::vec3& position, const glm::vec3& direction,
+                      const glm::vec3& color, float intensity, float angle) {
+            m_Light = opengl::Light::CreateSpot(position, direction, color, intensity, angle);
+        }
+
+        // Constructors
+        explicit LightComponent(const opengl::Light& light) : m_Light(light) {}
         LightComponent() = default;
         LightComponent(const LightComponent&) = default;
     };
 
     struct MaterialComponent {
         std::shared_ptr<MaterialInstance> m_Instance;
+
+        [[nodiscard]] MaterialSSBO ToGPUFormat() const;
 
         explicit MaterialComponent(std::shared_ptr<MaterialInstance> material) : m_Instance(std::move(material)) {}
         MaterialComponent() = default;

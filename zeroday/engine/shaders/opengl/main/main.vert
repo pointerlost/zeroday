@@ -24,6 +24,10 @@ out vec3 vViewDir;
 flat out int vMaterialIndex;
 
 void main() {
+    ////////////////////////////////////////////////////////////////
+    // i have to pick a camera maybe default = 0, (need update!)
+    ////////////////////////////////////////////////////////////////
+
     // Get payload for this draw instance
     int payloadIndex = gl_BaseInstance;
     DrawPayloadGPU payload = payloads[payloadIndex];

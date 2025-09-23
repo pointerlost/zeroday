@@ -4,12 +4,10 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include "Panel/EditorPanel.h"
 
-namespace ecs          { class Scene;         }
-namespace EDITOR       { struct EditorState;  }
+namespace Zeroday::Editor { struct EditorState;  }
 
-namespace EDITOR {
+namespace Zeroday::Editor {
 
     class Editor {
     public:
@@ -23,7 +21,7 @@ namespace EDITOR {
         void drawUI();
 
     private:
-        std::vector<Scope<UI::EditorPanel>> panels;
+        std::vector<Scope<Zeroday::UI::EditorPanel>> panels;
 
         EditorState* state;
     };

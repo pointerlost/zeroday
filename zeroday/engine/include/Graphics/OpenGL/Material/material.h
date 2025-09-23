@@ -7,8 +7,14 @@
 #include <memory>
 #include <optional>
 #include "core/Base.h"
+#include "Graphics/OpenGL/GPU_buffers.h"
 
-namespace Zeroday { struct Texture;}
+namespace Zeroday {
+	namespace Ecs {
+		struct MaterialComponent;
+	}
+
+	struct Texture;}
 
 namespace Zeroday {
 
@@ -36,6 +42,8 @@ namespace Zeroday {
 
 	struct MaterialInstance {
 		Ref<Material> base = CreateRef<Material>();
+
+		MaterialSSBO ToGPUFormat();
 
 		void setBaseColor(glm::vec4 c) { overrideBaseColor    = c; }
 		void setMetallic(float m)      { overrideMetallic  = m; }

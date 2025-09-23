@@ -7,19 +7,18 @@
 #include <core/File.h>
 #include <nlohmann/json.hpp>
 
-namespace Zeroday::Asset {
+namespace Zeroday {
 
-    Zeroday::Shader* AssetManager::getShader(const std::string &name) {
+    Shader* AssetManager::GetShader(const std::string &name) {
         if (!g_shaders.contains(name)) {
-            Logger::Warn("[AssetManager::getShader] shader not found!");
+            Warn("[AssetManager::getShader] shader not found!");
             return {};
         }
         return &g_shaders[name];
     }
 
-    bool AssetManager::loadShader(const std::string &name, const std::string &vertPath, const std::string &fragPath) {
-
-        auto& file = Zeroday::File::get();
+    bool AssetManager::LoadShader(const std::string &name, const std::string &vertPath, const std::string &fragPath) {
+        auto& file = File::get();
 
         const auto fullVertPath = std::string(SHADERS_DIR) + "/" + vertPath;
         const auto fullFragPath = std::string(SHADERS_DIR) + "/" + fragPath;
@@ -39,7 +38,7 @@ namespace Zeroday::Asset {
         glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(vertexShader, 1024, nullptr, infoLog);
-            Logger::Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
+            Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
             return false;
         }
 
@@ -49,7 +48,7 @@ namespace Zeroday::Asset {
         glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(fragmentShader, 1024, nullptr, infoLog);
-            Logger::Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
+            Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
             return false;
         }
 
@@ -61,7 +60,7 @@ namespace Zeroday::Asset {
         if (!success)
         {
             glGetProgramInfoLog(shaderProgram, 1024, nullptr, infoLog);
-            Logger::Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
+            Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
             return false;
         }
 
@@ -69,7 +68,7 @@ namespace Zeroday::Asset {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
-        Zeroday::Shader instance;
+        Shader instance;
         instance.name = name;
         instance.program = shaderProgram;
         instance.cacheUniformLocations();
@@ -79,11 +78,10 @@ namespace Zeroday::Asset {
     }
 
     bool AssetManager::CompileComputeShader(const std::string& name, const std::string &filePath) {
-        auto& file = Zeroday::File::get();
+        auto& file = File::get();
 
         const auto fullPath = std::string(COMPUTE_SHADERS_DIR) + "/" + filePath;
-
-        const auto source = file.readFromFile(fullPath);
+        const auto source   = file.readFromFile(fullPath);
 
         int success = 0;
         char infoLog[1024];
@@ -96,7 +94,7 @@ namespace Zeroday::Asset {
         glGetShaderiv(computeShader, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(computeShader, 1024, nullptr, infoLog);
-            Logger::Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
+            Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
             return false;
         }
 
@@ -107,14 +105,14 @@ namespace Zeroday::Asset {
         if (!success)
         {
             glGetProgramInfoLog(shaderProgram, 1024, nullptr, infoLog);
-            Logger::Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
+            Error("[GLShaderProgram] Program linking error: " + std::string(infoLog));
             return false;
         }
 
         // clean to avoid GPU resource leaks
         glDeleteShader(computeShader);
 
-        Zeroday::Shader instance;
+        Shader instance;
         instance.name = name;
         instance.program = shaderProgram;
         instance.cacheUniformLocations();
@@ -123,10 +121,11 @@ namespace Zeroday::Asset {
         return true;
     }
 
-    bool AssetManager::loadAllShaders() {
+    bool AssetManager::LoadAllShaders() {
         const std::string configPath = SHADERS_CONFIG_PATH;
-        Logger::Info("Loading shaders from config: " + configPath);
-        auto& file = Zeroday::File::get();
+        Info("Loading shaders from config: " + configPath);
+
+        auto& file = File::get();
 
         try {
             std::string jsonContent  = file.readFromFile(configPath);
@@ -145,24 +144,24 @@ namespace Zeroday::Asset {
                     fragmentPath = shaderConfig["stages"].value("fragment", "unnamed");
                     computePath  = shaderConfig["stages"].value("compute",  "unnamed");
                 } else {
-                    Logger::Error("[ShaderManager::loadAllShaders] missing 'stages' array in shaders config!");
+                    Error("[ShaderManager::loadAllShaders] missing 'stages' array in shaders config!");
                     return false;
                 }
 
                 if (type == "COMPUTE" && !CompileComputeShader(name, computePath)) {
-                    Logger::Warn("Loading compute shader from " + name + " failed");
+                    Warn("Loading compute shader from " + name + " failed");
                     return false;
                 }
-                else if (!loadShader(name, vertexPath, fragmentPath)) {
-                    Logger::Error("Failed to load shader: " + name);
+                if (!LoadShader(name, vertexPath, fragmentPath)) {
+                    Error("Failed to load shader: " + name);
                     return false;
                 }
-                Logger::Info("Shader: " + name + " loaded successfully!");
+                Info("Shader: " + name + " loaded successfully!");
             }
             return true;
         }
         catch (...) {
-            Logger::Error("Failed to load shader config!");
+            Error("Failed to load shader config!");
             return false;
         }
     }

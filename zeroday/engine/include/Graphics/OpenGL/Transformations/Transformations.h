@@ -13,6 +13,9 @@ namespace Zeroday {
         Transform() = default;
         Transform(const Transform&) = default;
 
+        void SetPosition(const glm::vec3& position);
+        [[nodiscard]] const glm::vec3& GetPosition() const { return m_Position; }
+
         // Get Euler angles (degrees) - user friendly (for example UI)
         const glm::vec3& GetEulerRotation() const;
 

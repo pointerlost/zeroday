@@ -2,12 +2,12 @@
 // Created by pointerlost on 8/14/25.
 //
 #pragma once
-#include "Editor/Panel/EditorPanel.h"
+#include "EditorPanel.h"
 
 namespace Zeroday { class SceneObjectFactory; }
 namespace Zeroday { class RenderContext;      }
 
-namespace EDITOR::UI {
+namespace Editor::UI {
 
     class MenuBarPanel final : public EditorPanel {
     public:

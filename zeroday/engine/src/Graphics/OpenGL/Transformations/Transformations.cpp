@@ -2,8 +2,13 @@
 
 
 namespace Zeroday {
+    void Transform::SetPosition(const glm::vec3 &position) {
+        m_Position = position;
+        m_ViewMatrixDirty  = true;
+        m_ModelMatrixDirty = true;
+    }
 
-    const glm::vec3 & Transform::GetEulerRotation() const {
+    const glm::vec3& Transform::GetEulerRotation() const {
         if (m_EulerDirty) {
             m_CachedEuler = glm::degrees(glm::eulerAngles(m_Rotation));
             m_EulerDirty = false;

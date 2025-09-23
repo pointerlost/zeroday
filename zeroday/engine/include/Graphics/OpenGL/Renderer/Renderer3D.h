@@ -1,6 +1,8 @@
 #pragma once
-#include <iostream>
-#include <glm/ext.hpp>
+#include <memory>
+
+#include "GPURenderer.h"
+#include "core/Base.h"
 
 namespace Zeroday {
 	namespace Ecs { struct MaterialComponent; }
@@ -15,21 +17,15 @@ namespace Zeroday::opengl
 	class Renderer3D
 	{
 	public:
-		explicit Renderer3D(Scene* scene) : m_Scene(scene) {}
+		explicit Renderer3D(Scene* scene)
+			: m_Scene(scene), m_GPURenderer(CreateScope<GPURenderer>(scene)) {}
 
-		void BeginScene(const Camera& camera, const glm::mat4& viewMatrix);
-		void EndScene();
-
-		void Render();
-
-		void Submit(
-			const MeshData3D& meshData,
-			const std::string& subMeshName,
-			const glm::mat4& transform,
-			const Ecs::MaterialComponent& material
-		);
+		void Init()     { m_GPURenderer->Init();     }
+		void Render()   { m_GPURenderer->Render();   }
+		void Shutdown() { m_GPURenderer->Shutdown(); }
 
 	private:
 		Scene* m_Scene = nullptr;
+		std::unique_ptr<GPURenderer> m_GPURenderer = nullptr;
 	};
 }

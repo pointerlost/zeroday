@@ -1,14 +1,14 @@
 //
 // Created by pointerlost on 8/13/25.
 //
-#include "Editor/Panel/SceneHierarchyPanel.h"
+#include "../../include/Editor/SceneHierarchyPanel.h"
 #include <imgui.h>
 #include "core/EngineConfig.h"
-#include "Editor/State/EditorState.h"
+#include "../../include/Editor/EditorState.h"
 
 namespace Zeroday::Ecs { struct NameComponent; }
 
-namespace EDITOR::UI {
+namespace Editor::UI {
 
     void SceneHierarchyPanel::draw(EditorState &state) {
         ImGui::SetNextWindowPos({0, MainMenuBarHeight}, ImGuiCond_Always);

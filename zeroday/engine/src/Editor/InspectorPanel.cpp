@@ -1,8 +1,8 @@
 //
 // Created by pointerlost on 8/13/25.
 //
-#include "Editor/Panel/InspectorPanel.h"
-#include "Editor/State/EditorState.h"
+#include "../../include/Editor/InspectorPanel.h"
+#include "../../include/Editor/EditorState.h"
 #include "core/EngineConfig.h"
 #include <imgui.h>
 #include "glm/ext.hpp"
@@ -11,7 +11,7 @@
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Transformations/Transformations.h"
 
-namespace EDITOR::UI {
+namespace Zeroday::Editor::UI {
 
     void InspectorPanel::draw(EditorState &state) {
         const auto world = state.world;

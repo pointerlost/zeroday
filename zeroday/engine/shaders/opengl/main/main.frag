@@ -1,39 +1,45 @@
-#version 460 core
+#version 460
+#include "common/constants.glsl"
 
-#include "common/constant.glsl"
-#include "compute/pbr_calc.comp"
-#include "compute/lighting_calc.comp"
+// Material data
+layout(std430, binding = BINDING_PHASE_OUTPUT) readonly buffer MaterialBuffer {
+    MaterialSSBO materials[];
+};
 
+// Light data
+layout(std430, binding = BINDING_PHASE_OUTPUT) readonly buffer LightBuffer {
+    LightSSBO lights[];
+};
 
-// -------------------
-// Inputs / Outputs
-// -------------------
-in vec3 FragPos;
-in vec4 vWorldPos;
+// Global data
+layout(std430, binding = BINDING_PHASE_OUTPUT) readonly buffer GlobalBuffer {
+    GlobalSSBO global;
+};
+
+// Input from vertex shader
+in vec3 vFragPos;
+in vec3 vWorldPos;
 in vec3 vNormal;
 in vec2 vUV;
 in vec3 vViewDir;
+flat in int vMaterialIndex;
 
+// Output
+out vec4 FragColor;
 
-// -------------------
-// Main
-// -------------------
 void main() {
+    // Fetch material
+    MaterialSSBO material = materials[vMaterialIndex];
 
-    vec3 N = vNormal;
-    vec3 V = vViewDir;
+    // Basic lighting (you'll expand this with your PBR functions)
+    vec3 normal = normalize(vNormal);
+    vec3 viewDir = normalize(vViewDir);
 
-    vec3 result = m.emissive + globals[0].globalAmbient;
+    // Simple diffuse + ambient
+    vec3 ambient = global.globalAmbient * material.baseColor.rgb;
 
-    for (int i = 0; i < globals[0].activeLightCount; ++i) {
-        if (lights[i].type == 0)
-            result += CalcDirectionalLight(lights[i], N, V, m);
-        else if (lights[i].type == 1)
-            result += CalcPointLight(lights[i], FragPos, N, V, m);
-        else if (lights[i].type == 2)
-            result += CalcSpotLight(lights[i], FragPos, N, V, m);
-    }
+    // TODO: Add pbr calculations here!!!
+    vec3 lighting = ambient + material.emissive;
 
-    // simple tonemapping/clamp if desired (optional)
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(lighting, material.baseColor.a);
 }

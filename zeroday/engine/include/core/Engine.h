@@ -4,13 +4,13 @@
 #include "core/Window.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Editor/Editor.h"
-#include "Editor/State/EditorState.h"
+#include "../Editor/EditorState.h"
 #include "core/AssetManager.h"
 #include "Graphics/OpenGL/Renderer/Renderer3D.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Model/ModelLoader.h"
-#include "Graphics/OpenGL/BufferManager.h"
+#include "Graphics/OpenGL/Renderer/GPURenderer.h"
 #include "Graphics/OpenGL/Textures/TextureManager.h"
 #include "Scene/SceneObjectFactory.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
@@ -31,16 +31,15 @@ namespace Zeroday {
 		void GameStateLoop();
 
 	private:
-		Scope<EDITOR::EditorState> m_EditorState;
-		Scope<EDITOR::Editor> m_Editor;
+		Scope<EditoR::EditorState> m_EditorState;
+		Scope<EditoR::Editor> m_Editor;
 		Scope<Window> m_Window;
-		Scope<::opengl::BufferManager> m_GLBufferManager;
 		Scope<Scene> m_Scene;
 		Scope<opengl::Renderer3D> m_Renderer3D;
 		Scope<SceneObjectFactory> m_SceneObjectFactory;
 		Scope<UI::ImGuiLayer> m_ImGuiLayer;
 		Scope<MeshLibrary> g_MeshLibrary;
-		Scope<Asset::AssetManager> g_AssetManager;
+		Scope<AssetManager> g_AssetManager;
 		Scope<ModelLoader> g_ModelLoader;
 		Scope<MaterialLibrary> g_MaterialLibrary;
 		Scope<TextureManager> g_TextureManager;

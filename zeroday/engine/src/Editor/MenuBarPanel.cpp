@@ -1,14 +1,14 @@
 //
 // Created by pointerlost on 8/14/25.
 //
-#include "Editor/Panel/MenuBarPanel.h"
+#include "../../include/Editor/MenuBarPanel.h"
 #include <imgui.h>
 #include <core/Config.h>
 #include <nlohmann/detail/string_concat.hpp>
-#include "Editor/State/EditorState.h"
+#include "../../include/Editor/EditorState.h"
 #include "Scene/SceneObjectFactory.h"
 
-namespace EDITOR::UI {
+namespace Editor::UI {
 
     void MenuBarPanel::draw(EditorState &state) {
 

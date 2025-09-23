@@ -5,11 +5,11 @@
 #include <iostream>
 
 
-namespace EDITOR {
+namespace Editor {
     struct EditorState;
 }
 
-namespace EDITOR::UI {
+namespace Editor::UI {
 
     class EditorPanel {
     public:

@@ -3,65 +3,61 @@
 #include <glm/ext.hpp>
 #include <nlohmann/detail/meta/is_sax.hpp>
 #include "Light.h"
+#include "Graphics/OpenGL/Macros.h"
 
-namespace Zeroday {
+namespace Zeroday::opengl {
 
-	class Light {
-	public:
-		virtual ~Light() = default;
+    enum class LightType {
+        Directional = 0,
+        Point = 1,
+        Spot = 2,
+    };
 
-		void SetRadiance(const glm::vec3& diffuse) { m_Radiance = diffuse; }
-		[[nodiscard]] const glm::vec3& GetRadiance() const { return m_Radiance; }
+    class Light {
+    public:
+        explicit Light(LightType type = LightType::Point);
 
-		void SetIntensity(float i) { m_Intensity = i; }
-		[[nodiscard]] float GetIntensity() const { return m_Intensity; }
+        void SetType(LightType type) { m_Type = type; }
+        [[nodiscard]] LightType GetType() const { return m_Type; }
+        void SetPosition(const glm::vec3& position) { m_Position = position; }
+        [[nodiscard]] const glm::vec3& GetPosition() const { return m_Position; }
+        void SetDirection(const glm::vec3& direction) { m_Direction = glm::normalize(direction); }
+        [[nodiscard]] const glm::vec3& GetDirection() const { return m_Direction; }
+        void SetRadiance(const glm::vec3& radiance) { m_Radiance = radiance; }
+        [[nodiscard]] const glm::vec3& GetRadiance() const { return m_Radiance; }
+        void SetIntensity(float intensity) { m_Intensity = intensity; }
+        [[nodiscard]] float GetIntensity() const { return m_Intensity; }
+        void SetConstant(float constant) { m_Constant = constant; }
+        [[nodiscard]] float GetConstant() const { return m_Constant; }
+        void SetLinear(float linear) { m_Linear = linear; }
+        [[nodiscard]] float GetLinear() const { return m_Linear; }
+        void SetQuadratic(float quadratic) { m_Quadratic = quadratic; }
+        [[nodiscard]] float GetQuadratic() const { return m_Quadratic; }
+        void SetCutOff(float cutOff) { m_CutOff = cutOff; }
+        [[nodiscard]] float GetCutOff() const { return m_CutOff; }
+        void SetOuterCutOff(float outerCutOff) { m_OuterCutOff = outerCutOff; }
+        [[nodiscard]] float GetOuterCutOff() const { return m_OuterCutOff; }
 
-		virtual void SetPosition(const glm::vec3& position) = 0;
-		[[nodiscard]] virtual glm::vec3 GetPosition() const = 0;
+        static Light CreateDirectional(const glm::vec3& direction, const glm::vec3& color, float intensity);
 
-	protected:
-		glm::vec3 m_Radiance = glm::vec3(1.0);
-		float m_Intensity = 1.0f;
-	};
+        static Light CreatePoint(const glm::vec3& position, const glm::vec3& color, float intensity);
 
-	class DirectionalLight final : public Light {
-	public:
-		void SetDirection(const glm::vec3& direction) { m_Direction = direction; }
-		[[nodiscard]] const glm::vec3& GetDirection() const { return m_Direction; }
+        static Light CreateSpot(const glm::vec3& position, const glm::vec3& direction,
+                                const glm::vec3& color, float intensity, float angle);
 
-		void SetPosition(const glm::vec3&) override {} // Directional lights don't have position
-		[[nodiscard]] glm::vec3 GetPosition() const override { return glm::vec3(0.0f); } // default
+        [[nodiscard]] LightSSBO ToGPUFormat() const;
 
-	private:
-		glm::vec3 m_Direction = glm::vec3(0.0, 0.0, 1.0);
-	};
-
-	class PointLight : public Light {
-	public:
-		void SetPosition(const glm::vec3& position) override { m_Position = position; }
-		[[nodiscard]] glm::vec3 GetPosition() const override { return m_Position; }
-
-		void SetConstant(float constant) { m_Constant = constant; }
-		void SetLinear(float linear) { m_Linear = linear; }
-		void SetQuadratic(float quadratic) { m_Quadratic = quadratic; }
-
-	private:
-		glm::vec3 m_Position = glm::vec3(0.0);
-		float m_Constant = 1.0f;
-		float m_Linear = 0.014f;
-		float m_Quadratic = 0.0007f;
-	};
-
-	class SpotLight final : public PointLight {
-	public:
-		void SetCutOff(float cutOff) { m_CutOff = cutOff; }
-		void SetOuterCutOff(float outerCutOff) { m_OuterCutOff = outerCutOff; }
-		void SetDirection(const glm::vec3& direction) { m_Direction = direction; }
-
-	private:
-		glm::vec3 m_Direction = glm::vec3(0.0, 0.0, 1.0);
-		float m_CutOff = static_cast<float>(glm::cos(glm::radians(12.5)));
-		float m_OuterCutOff = static_cast<float>(glm::cos(glm::radians(17.5)));
-	};
+    private:
+        LightType m_Type = LightType::Point; // 0=directional, 1=point, 2=spot
+        glm::vec3 m_Position  = glm::vec3(0.0f);
+        glm::vec3 m_Direction = glm::vec3(0.0f, -1.0f, 0.0f);
+        glm::vec3 m_Radiance  = glm::vec3(1.0f);
+        float m_Intensity = 1.0f;
+        float m_Constant  = 1.0f;
+        float m_Linear    = 0.09f;
+        float m_Quadratic = 0.032f;
+        float m_CutOff      = glm::cos(glm::radians(12.5f));
+        float m_OuterCutOff = glm::cos(glm::radians(17.5f));
+    };
 
 }

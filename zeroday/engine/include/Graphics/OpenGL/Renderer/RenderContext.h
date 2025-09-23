@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderState.h"
 
-namespace opengl
+namespace Zeroday::opengl
 {
 	class RenderContext
 	{
