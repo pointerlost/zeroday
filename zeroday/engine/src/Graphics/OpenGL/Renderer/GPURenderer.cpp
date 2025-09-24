@@ -113,13 +113,9 @@ namespace Zeroday::opengl {
 
     void GPURenderer::Render() {
         if (!m_Scene) return;
-
         // Extract + Upload (CPU -> GPU)
         CollectSceneData();
-
         BindBuffers();
-
-        // 4. Render
         RenderFrame();
     }
 
@@ -175,7 +171,7 @@ namespace Zeroday::opengl {
     }
 
     void GPURenderer::RenderFrame() {
-        AssetManager::GetShader("MAIN")->bind();
+        AssetManager::GetShader("main")->bind();
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_IndirectCommandBuffer.GetHandle());
         glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr,
                                    m_RenderCommandsOfPerEntity.GetCount(), 0);

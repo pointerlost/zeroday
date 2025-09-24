@@ -4,58 +4,8 @@
       "name": "main",
       "type": "GLSL",
       "stages": {
-        "vertex": "opengl/main.vert",
-        "fragment": "opengl/main.frag"
-      }
-    },
-    {
-      "name": "command_generation",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/command_generation.comp"
-      }
-    },
-    {
-      "name": "camera_data",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/camera_update.comp"
-      }
-    },
-    {
-      "name": "common",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/common.comp"
-      }
-    },
-    {
-      "name": "light_update",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/light_update.comp"
-      }
-    },
-    {
-      "name": "material_update",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/material_update.comp"
-      }
-    },
-    {
-      "name": "transform_update",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/transform_compute.comp"
-      }
-    },
-    {
-      "name": "debug",
-      "type": "GLSL",
-      "stages": {
-        "vertex":   "opengl/debug/debug.vert",
-        "fragment": "opengl/debug/debug.frag"
+        "vertex": "opengl/main/main.vert",
+        "fragment": "opengl/main/main.frag"
       }
     }
   ]

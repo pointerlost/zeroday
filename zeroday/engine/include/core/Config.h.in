@@ -2,11 +2,10 @@
 
 // Shaders folder
 #define SHADERS_DIR "@SHADERS_DIR@"
-#define COMPUTE_SHADERS_DIR "@COMPUTE_SHADERS_DIR@"
 
 // Assets folder
 #define ASSETS_DIR "@ASSETS_DIR@"
-#define MATERIAL_JSON_PATH "@ASSETS_DIR@/materialJSON/materials.json"
+#define MATERIAL_JSON_PATH "@MATERIAL_JSON_PATH@"
 #define MODEL_DIR "@MODEL_DIR@"
 
 // Shader config path

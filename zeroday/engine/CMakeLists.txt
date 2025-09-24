@@ -19,9 +19,6 @@ endif()
 
 add_library(glad_local STATIC
     vendor/glad/src/glad.c
-        include/core/UUID.h
-        include/core/Base.h
-        include/Graphics/OpenGL/Renderer/SceneRenderer.h
 )
 
 # Include directories for local GLAD
@@ -40,7 +37,7 @@ add_library(ZeroDayEngine STATIC
     src/Graphics/OpenGL/Model/Model.cpp
     src/Graphics/OpenGL/Model/ModelLoader.cpp
     src/Graphics/OpenGL/Renderer/RenderContext.cpp
-        src/Graphics/OpenGL/Renderer/Renderer3D.cpp
+    src/Graphics/OpenGL/Renderer/Renderer3D.cpp
     src/Graphics/OpenGL/Renderer/RenderState.cpp
     src/Graphics/OpenGL/Lighting/Light.cpp
     src/Graphics/OpenGL/Material/material_lib.cpp
@@ -56,15 +53,15 @@ add_library(ZeroDayEngine STATIC
     src/Scene/SceneObjectFactory.cpp
     src/Graphics/OpenGL/Transformations/Transformations.cpp
     src/Editor/Editor.cpp
-        src/Editor/EditorPanel.cpp
-        src/Editor/SceneHierarchyPanel.cpp
-        src/Editor/InspectorPanel.cpp
-        src/Editor/MenuBarPanel.cpp
+    src/Editor/EditorPanel.cpp
+    src/Editor/SceneHierarchyPanel.cpp
+    src/Editor/InspectorPanel.cpp
+    src/Editor/MenuBarPanel.cpp
     src/ImGui/ImGuiLayer.cpp
     src/ImGui/ImGuiScoped.cpp
     src/ImGui/ImGuiObjectState.cpp
     src/ImGui/TransformGizmo.cpp
-        src/Graphics/OpenGL/Renderer/GPURenderer.cpp
+    src/Graphics/OpenGL/Renderer/GPURenderer.cpp
     vendor/ImGuizmo/ImGuizmo.cpp
 
     # Header-only files (must be explicitly listed for IDE support)
@@ -72,20 +69,20 @@ add_library(ZeroDayEngine STATIC
     include/core/AssetManager.h
     include/Graphics/OpenGL/Shader.h
     include/Editor/Editor.h
-        include/Editor/EditorPanel.h
-        include/Editor/EditorState.h
-        include/Editor/SceneHierarchyPanel.h
-        include/Editor/InspectorPanel.h
-        include/Editor/MenuBarPanel.h
+    include/Editor/EditorPanel.h
+    include/Editor/EditorState.h
+    include/Editor/SceneHierarchyPanel.h
+    include/Editor/InspectorPanel.h
+    include/Editor/MenuBarPanel.h
     include/Graphics/OpenGL/Model/Model.h
     include/Graphics/OpenGL/Model/ModelLoader.h
-        include/Graphics/OpenGL/GPU_buffers.h
+    include/Graphics/OpenGL/GPU_buffers.h
     include/Graphics/OpenGL/Macros.h
     include/Graphics/OpenGL/Renderer/RenderCommand.h
     include/Graphics/OpenGL/Renderer/RenderState.h
     include/Graphics/OpenGL/Material/material.h
     include/Graphics/OpenGL/Renderer/RenderContext.h
-        include/Graphics/OpenGL/Renderer/Renderer3D.h
+    include/Graphics/OpenGL/Renderer/Renderer3D.h
     include/Graphics/OpenGL/Lighting/Light.h
     include/Scene/SceneObjectFactory.h
     include/Graphics/OpenGL/Textures/TextureManager.h
@@ -110,8 +107,8 @@ add_library(ZeroDayEngine STATIC
     include/CallBack/CallBack.h
     include/Graphics/OpenGL/Mesh/MeshFactory.h
     include/Graphics/OpenGL/Mesh/MeshData3D.h
-        include/Graphics/OpenGL/Renderer/GPURenderer.h
-        include/core/Services.h
+    include/Graphics/OpenGL/Renderer/GPURenderer.h
+    include/core/Services.h
     src/core/Services.cpp
     include/Scene/systems.h
     include/Scene/transform_system.h
@@ -122,17 +119,20 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Camera/Camera.h
     src/Graphics/OpenGL/Camera/Camera.cpp
     src/core/Logger.cpp
-        include/Scene/Scene.h
+    include/Scene/Scene.h
     include/Scene/Components.h
     include/Scene/Entity.h
     include/core/Assert.h
     include/core/Compat.h
-        src/Scene/Scene.cpp
-        src/core/UUID.cpp
-        src/Scene/Entity.cpp
-        src/Graphics/OpenGL/Renderer/SceneRenderer.cpp
-        src/Graphics/OpenGL/Material/material.cpp
-        src/Scene/Components.cpp
+    src/Scene/Scene.cpp
+    src/core/UUID.cpp
+    src/Scene/Entity.cpp
+    src/Graphics/OpenGL/Renderer/SceneRenderer.cpp
+    src/Graphics/OpenGL/Material/material.cpp
+    src/Scene/Components.cpp
+    include/core/UUID.h
+    include/core/Base.h
+    include/Graphics/OpenGL/Renderer/SceneRenderer.h
 )
 
 # Include directories
@@ -173,12 +173,12 @@ add_custom_command(TARGET ZeroDayEngine POST_BUILD
 )
 
 # Configure engine config files
-set(SHADERS_DIR "${CMAKE_CURRENT_BINARY_DIR}/shaders")
-set(COMPUTE_SHADERS_DIR "${SHADERS_DIR}/computeOpenGL")
-set(ASSETS_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets")
-set(TEXTURES_DIR "${ASSETS_DIR}/textures")
-set(MODEL_DIR "${ASSETS_DIR}/models")
-set(SHADERS_CONFIG_PATH "${SHADERS_DIR}/config/shaders.json")
+set(SHADERS_DIR "${CMAKE_CURRENT_BINARY_DIR}/shaders/")
+set(ASSETS_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets/")
+set(TEXTURES_DIR "${ASSETS_DIR}textures/")
+set(MODEL_DIR "${ASSETS_DIR}models/")
+set(SHADERS_CONFIG_PATH "${SHADERS_DIR}config/shaders.json")
+set(MATERIAL_JSON_PATH "${ASSETS_DIR}materialJSON/")
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Config.h.in

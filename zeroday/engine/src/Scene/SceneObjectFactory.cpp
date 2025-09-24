@@ -86,7 +86,7 @@ namespace Zeroday
 		// world.AddComponent(entity, std::move(nComp));
 		// world.AddComponent(entity, cameraComp);
 
-		// return entity;
+		return Entity{};
     }
 
     Entity SceneObjectFactory::CreateModel(const std::string &path) const {

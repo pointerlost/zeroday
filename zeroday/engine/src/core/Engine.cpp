@@ -5,6 +5,8 @@
 #include <Input/Input.h>
 #include "core/Services.h"
 #include "Editor/InspectorPanel.h"
+#include "Editor/MenuBarPanel.h"
+#include "Editor/SceneHierarchyPanel.h"
 #include "Scene/SceneObjectFactory.h"
 
 namespace Zeroday {
@@ -39,7 +41,7 @@ namespace Zeroday {
 
 	bool Engine::InitResources() {
 		// Load materials
-		if (!g_MaterialLibrary->CreateMaterials(MATERIAL_JSON_PATH)) {
+		if (!g_MaterialLibrary->CreateMaterials(std::string(MATERIAL_JSON_PATH) + "materials.json")) {
 			Error("[Engine::initResources] loadMaterialFromJSON function is not working correctly!");
 			return false;
 		}
@@ -186,21 +188,20 @@ namespace Zeroday {
 	}
 
 	void Engine::InitEditor() {
-		// m_EditorState = CreateScope<EDITOR::EditorState>();
-		//
-		// const ecs::Entity editorCamera = m_SceneObjectFactory->CreateCamera(ecs::CameraMode::Orbit, ecs::PERSPECTIVE);
-		// m_Scene->GetComponent<ecs::NameComponent>(editorCamera)->name = "Editor Camera";
-		//
-		// m_EditorState->cameraEntity = editorCamera;
-		// m_EditorState->world = m_Scene.get();
-		//
-		// m_Editor = CreateScope<EDITOR::Editor>(m_EditorState.get());
-		// // need update !!?
-		// m_Editor->addPanel(CreateScope<EDITOR::UI::InspectorPanel>());
-		// m_Editor->addPanel(CreateScope<EDITOR::UI::SceneHierarchyPanel>());
-		// m_Editor->addPanel(CreateScope<EDITOR::UI::MenuBarPanel>(m_SceneObjectFactory.get()));
-		//
-		// Info("[Engine::InitEditor] Editor initialized successfully!]");
+		m_EditorState = CreateScope<Editor::EditorState>();
+
+		Entity editorCamera = m_SceneObjectFactory->CreateCamera(CameraMode::Perspective);
+
+		m_EditorState->cameraEntity = editorCamera;
+		m_EditorState->world = m_Scene.get();
+
+		m_Editor = CreateScope<Editor::Editor>(m_EditorState.get());
+		// need update !!?
+		m_Editor->addPanel(CreateScope<Editor::UI::InspectorPanel>());
+		m_Editor->addPanel(CreateScope<Editor::UI::SceneHierarchyPanel>());
+		m_Editor->addPanel(CreateScope<Editor::UI::MenuBarPanel>(m_SceneObjectFactory.get()));
+
+		Info("[Engine::InitEditor] Editor initialized successfully!]");
 	}
 
 	void Engine::InitImGui()

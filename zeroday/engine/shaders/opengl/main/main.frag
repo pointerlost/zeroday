@@ -1,20 +1,7 @@
 #version 460
+
 #include "common/constants.glsl"
-
-// Material data
-layout(std430, binding = BINDING_PHASE_OUTPUT) readonly buffer MaterialBuffer {
-    MaterialSSBO materials[];
-};
-
-// Light data
-layout(std430, binding = BINDING_PHASE_OUTPUT) readonly buffer LightBuffer {
-    LightSSBO lights[];
-};
-
-// Global data
-layout(std430, binding = BINDING_PHASE_OUTPUT) readonly buffer GlobalBuffer {
-    GlobalSSBO global;
-};
+#include "core/buffers.glsl"
 
 // Input from vertex shader
 in vec3 vFragPos;
@@ -36,7 +23,7 @@ void main() {
     vec3 viewDir = normalize(vViewDir);
 
     // Simple diffuse + ambient
-    vec3 ambient = global.globalAmbient * material.baseColor.rgb;
+    vec3 ambient = uGlobal.globalAmbient * material.baseColor.rgb;
 
     // TODO: Add pbr calculations here!!!
     vec3 lighting = ambient + material.emissive;

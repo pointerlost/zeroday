@@ -1,7 +1,5 @@
-#version 460
-layout(local_size_x = 64) in;
-
-#include "common/constants.glsl"
+#ifndef COMMAND_GENERATION_GLSL
+#define COMMAND_GENERATION_GLSL
 
 // Metadata table (per entity)
 struct RenderCommandMDI {
@@ -41,12 +39,4 @@ layout(std430, binding = 2) buffer DrawPayloads {
     DrawPayloadGPU payloads[];
 };
 
-void main() {
-    uint entityIndex = gl_GlobalInvocationID.x;
-
-    // Draw ALL entities (no culling check yet!)
-    if (entityIndex >= MAX_ENTITIES) return;
-
-    // Each entity gets its own draw command
-    uint commandIndex = entityIndex;
-}
+#endif
