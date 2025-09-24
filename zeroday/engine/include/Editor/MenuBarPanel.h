@@ -5,16 +5,15 @@
 #include "EditorPanel.h"
 
 namespace Zeroday { class SceneObjectFactory; }
-namespace Zeroday { class RenderContext;      }
 
-namespace Editor::UI {
+namespace Zeroday::Editor::UI {
 
     class MenuBarPanel final : public EditorPanel {
     public:
-        explicit MenuBarPanel(Zeroday::SceneObjectFactory* objectFactory) : sceneObjectFactory(objectFactory) {}
-        void draw(EditorState& state) override;
+        explicit MenuBarPanel(SceneObjectFactory* objectFactory) : sceneObjectFactory(objectFactory) {}
+        void Draw(EditorState& state) override;
 
     private:
-        Zeroday::SceneObjectFactory* sceneObjectFactory;
+        SceneObjectFactory* sceneObjectFactory;
     };
 }

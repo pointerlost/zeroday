@@ -4,6 +4,10 @@
 #pragma once
 
 namespace Zeroday {
+    namespace Editor {
+        struct EditorState;
+    }
+
     class AssetManager;
     class MaterialLibrary;
     class MeshLibrary;
@@ -27,7 +31,7 @@ namespace Zeroday::Services {
     ModelLoader *GetModelLoader();
     opengl::RenderContext *GetRenderContext();
     TextureManager *GetTextureManager();
-    EditoR::EditorState *GetEditorState();
+    Editor::EditorState *GetEditorState();
 
     // Service registration
     void RegisterMaterialLibrary(MaterialLibrary *lib);
@@ -36,5 +40,5 @@ namespace Zeroday::Services {
     void RegisterModelLoader(ModelLoader *loader);
     void RegisterRenderContext(opengl::RenderContext *rc);
     void RegisterTextureManager(TextureManager *mngr);
-    void RegisterEditorState(EditoR::EditorState *state);
+    void RegisterEditorState(Editor::EditorState *state);
 }

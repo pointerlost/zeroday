@@ -1,19 +1,8 @@
 #version 460
+
+#include "core/buffers.glsl"
+#include "core/attributes.glsl"
 #include "common/constants.glsl"
-#include "common/attributes.glsl"
-
-// Draw payload (from compute shader)
-layout(std430, binding = BINDING_PAYLOADS) readonly buffer DrawPayloads {
-    DrawPayloadGPU payloads[];
-};
-
-// Transform data (updated by compute shader)
-layout(std430, binding = BINDING_PHASE_OUTPUT) readonly buffer TransformBuffer {
-    TransformSSBO transforms[];
-};
-
-// Camera data
-#include "common/camera_data.glsl"
 
 // Output to fragment shader
 out vec3 vFragPos;
@@ -24,10 +13,6 @@ out vec3 vViewDir;
 flat out int vMaterialIndex;
 
 void main() {
-    ////////////////////////////////////////////////////////////////
-    // i have to pick a camera maybe default = 0, (need update!)
-    ////////////////////////////////////////////////////////////////
-
     // Get payload for this draw instance
     int payloadIndex = gl_BaseInstance;
     DrawPayloadGPU payload = payloads[payloadIndex];
@@ -47,7 +32,7 @@ void main() {
     vUV = aUV;
 
     // Calculate view direction (world space)
-    vViewDir = normalize(uCamera.cameraPosition - vWorldPos);
+    vViewDir = normalize(uCamera.position - vWorldPos);
 
     // Set material index for fragment shader
     vMaterialIndex = payload.materialIndex;

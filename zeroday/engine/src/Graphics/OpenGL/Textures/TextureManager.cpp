@@ -18,32 +18,32 @@ namespace Zeroday
 	TextureManager::TextureManager()
 	{
 		// Modern PBR default textures (1x1 pixel)
-		m_defaultTextures[MaterialTextureType::BaseColor]        = CreateDefaultTexture("default_basecolor", 255, 255, 255 );
-		m_defaultTextures[MaterialTextureType::Normal]           = CreateDefaultTexture("default_normal",    128, 128, 255 );
-		m_defaultTextures[MaterialTextureType::Roughness]        = CreateDefaultTexture("default_roughness", 255, 255, 255 );
-		m_defaultTextures[MaterialTextureType::Metallic]         = CreateDefaultTexture("default_metallic",    0,   0,   0 );
-		m_defaultTextures[MaterialTextureType::AmbientOcclusion] = CreateDefaultTexture("default_ao",        255, 255, 255 );
-		m_defaultTextures[MaterialTextureType::Emissive]         = CreateDefaultTexture("default_emissive",    0,   0,   0 );
+		m_DefaultTextures[opengl::MaterialTextureType::BaseColor]        = CreateDefaultTexture("default_basecolor", 255, 255, 255 );
+		m_DefaultTextures[opengl::MaterialTextureType::Normal]           = CreateDefaultTexture("default_normal",    128, 128, 255 );
+		m_DefaultTextures[opengl::MaterialTextureType::Roughness]        = CreateDefaultTexture("default_roughness", 255, 255, 255 );
+		m_DefaultTextures[opengl::MaterialTextureType::Metallic]         = CreateDefaultTexture("default_metallic",    0,   0,   0 );
+		m_DefaultTextures[opengl::MaterialTextureType::AmbientOcclusion] = CreateDefaultTexture("default_ao",        255, 255, 255 );
+		m_DefaultTextures[opengl::MaterialTextureType::Emissive]         = CreateDefaultTexture("default_emissive",    0,   0,   0 );
 
 		// add to maps
-		for (auto &tex: m_defaultTextures | std::views::values) {
+		for (auto &tex: m_DefaultTextures | std::views::values) {
 			if (tex) {
-				m_allTextures.push_back(tex);
-				m_nameMap[tex->name] = tex;
+				m_AllTextures.push_back(tex);
+				m_NameMap[tex->m_Name] = tex;
 			}
 		}
 	}
 
 	TextureManager::~TextureManager() {
 		// Note: ensure this runs on GL thread or call releaseAll manually on shutdown
-		releaseAll();
+		ReleaseAll();
 	}
 
-	Ref<Texture> TextureManager::load(const std::string& name, const std::string &path) {
-		if (const auto it  = m_pathMap.find(path); it != m_pathMap.end()) return it->second;
+	Ref<Texture> TextureManager::Load(const std::string& name, const std::string &path) {
+		if (const auto it  = m_PathMap.find(path); it != m_PathMap.end()) return it->second;
 
-		if (const auto itn = m_nameMap.find(name); itn != m_nameMap.end()) {
-			m_pathMap[path] = itn->second;
+		if (const auto itn = m_NameMap.find(name); itn != m_NameMap.end()) {
+			m_PathMap[path] = itn->second;
 			return itn->second;
 		}
 
@@ -51,8 +51,8 @@ namespace Zeroday
 		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
 		if (!data) {
-			Logger::Warn("Failed to load texture: " + path);
-			return GetDefaultTexture(MaterialTextureType::BaseColor);
+			Warn("Failed to load texture: " + path);
+			return GetDefaultTexture(opengl::MaterialTextureType::BaseColor);
 		}
 
 		const GLenum format = (channels == 4) ? GL_RGBA : (channels == 3) ? GL_RGB : GL_RED;
@@ -73,100 +73,100 @@ namespace Zeroday
 		stbi_image_free(data);
 
 		auto tex = CreateRef<Texture>();
-		tex->name = name;
-		tex->glID = texID;
+		tex->m_Name = name;
+		tex->m_GLId = texID;
 
 		if (GLAD_GL_ARB_bindless_texture && GLAD_GL_ARB_gpu_shader_int64) {
 			if (const uint64_t handle = glGetTextureHandleARB(texID)) {
 				glMakeTextureHandleResidentARB(handle);
-				tex->bindlessHandle = handle;
-				tex->resident = true;
-				residentHandles.insert(handle);
+				tex->m_BindlessHandle = handle;
+				tex->m_Resident = true;
+				m_ResidentHandles.insert(handle);
 			}
 		}
 
-		m_nameMap[name] = tex;
-		m_pathMap[path] = tex;
-		m_allTextures.push_back(tex);
+		m_NameMap[name] = tex;
+		m_PathMap[path] = tex;
+		m_AllTextures.push_back(tex);
 		return tex;
 	}
 
-	Ref<Texture> TextureManager::getTextureWithName(const std::string &name) {
-		if (!m_nameMap.contains(name)) {
-			Logger::Warn("Texture \"" + name + "\" not found.");
+	Ref<Texture> TextureManager::GetTextureWithName(const std::string &name) {
+		if (!m_NameMap.contains(name)) {
+			Warn("Texture \"" + name + "\" not found.");
 			return nullptr;
 		}
-		return m_nameMap[name];
+		return m_NameMap[name];
 	}
 
-	Ref<Texture> TextureManager::getTextureWithPath(const std::string &path) {
-		if (!m_pathMap.contains(path)) {
-			Logger::Warn("Texture \"" + path + "\" not found.");
+	Ref<Texture> TextureManager::GetTextureWithPath(const std::string &path) {
+		if (!m_PathMap.contains(path)) {
+			Warn("Texture \"" + path + "\" not found.");
 			return nullptr;
 		}
-		return m_pathMap[path];
+		return m_PathMap[path];
 	}
 
-	Ref<Texture> TextureManager::GetDefaultTexture(MaterialTextureType type) {
-		if (const auto it = m_defaultTextures.find(type); it != m_defaultTextures.end())
+	Ref<Texture> TextureManager::GetDefaultTexture(opengl::MaterialTextureType type) {
+		if (const auto it = m_DefaultTextures.find(type); it != m_DefaultTextures.end())
 			return it->second;
-		return m_defaultTextures[MaterialTextureType::BaseColor];
+		return m_DefaultTextures[opengl::MaterialTextureType::BaseColor];
 	}
 
-	uint64_t TextureManager::ensureBindlessHandle(Ref<Texture> tex) {
-		if (!tex || tex->bindlessHandle) return tex ? tex->bindlessHandle : 0;
+	uint64_t TextureManager::EnsureBindlessHandle(Ref<Texture> tex) {
+		if (!tex || tex->m_BindlessHandle) return tex ? tex->m_BindlessHandle : 0;
 		if (!GLAD_GL_ARB_bindless_texture || !GLAD_GL_ARB_gpu_shader_int64) return 0;
-		if (!glIsTexture(tex->glID)) return 0;
+		if (!glIsTexture(tex->m_GLId)) return 0;
 
-		const uint64_t handle = glGetTextureHandleARB(tex->glID);
+		const uint64_t handle = glGetTextureHandleARB(tex->m_GLId);
 		if (!handle) return 0;
 
 		glMakeTextureHandleResidentARB(handle);
-		tex->bindlessHandle = handle;
-		tex->resident = true;
-		residentHandles.insert(handle);
+		tex->m_BindlessHandle = handle;
+		tex->m_Resident = true;
+		m_ResidentHandles.insert(handle);
 		return handle;
 	}
 
-	uint64_t TextureManager::getBindlessHandle(Ref<Texture> tex) const {
-		return tex ? tex->bindlessHandle : 0;
+	uint64_t TextureManager::GetBindlessHandle(Ref<Texture> tex) const {
+		return tex ? tex->m_BindlessHandle : 0;
 	}
 
-    void TextureManager::releaseTexture(const Ref<Texture> &tex) {
+    void TextureManager::ReleaseTexture(const Ref<Texture> &tex) {
 		if (!tex) return;
 
-		if (tex->resident && tex->bindlessHandle) {
-			glMakeTextureHandleNonResidentARB(tex->bindlessHandle);
-			residentHandles.erase(tex->bindlessHandle);
-			tex->bindlessHandle = 0;
-			tex->resident = false;
+		if (tex->m_Resident && tex->m_BindlessHandle) {
+			glMakeTextureHandleNonResidentARB(tex->m_BindlessHandle);
+			m_ResidentHandles.erase(tex->m_BindlessHandle);
+			tex->m_BindlessHandle = 0;
+			tex->m_Resident = false;
 		}
 
-		if (tex->glID) {
-			glDeleteTextures(1, &tex->glID);
-			tex->glID = 0;
+		if (tex->m_GLId) {
+			glDeleteTextures(1, &tex->m_GLId);
+			tex->m_GLId = 0;
 		}
 
-		if (!tex->name.empty()) m_nameMap.erase(tex->name);
-		std::erase_if(m_allTextures,
+		if (!tex->m_Name.empty()) m_NameMap.erase(tex->m_Name);
+		std::erase_if(m_AllTextures,
 		              [&](const Ref<Texture>& t){ return t.get() == tex.get(); });
     }
 
-    void TextureManager::releaseAll() {
-		for (const auto h : residentHandles)
+    void TextureManager::ReleaseAll() {
+		for (const auto h : m_ResidentHandles)
 			if (h) glMakeTextureHandleNonResidentARB(h);
-		residentHandles.clear();
+		m_ResidentHandles.clear();
 
-		for (const auto& tex : m_allTextures)
-			if (tex && tex->glID) glDeleteTextures(1, &tex->glID);
+		for (const auto& tex : m_AllTextures)
+			if (tex && tex->m_GLId) glDeleteTextures(1, &tex->m_GLId);
 
-		m_allTextures.clear();
-		m_nameMap.clear();
-		m_pathMap.clear();
-		m_defaultTextures.clear();
+		m_AllTextures.clear();
+		m_NameMap.clear();
+		m_PathMap.clear();
+		m_DefaultTextures.clear();
     }
 
-    void TextureManager::loadFromFolder(const std::string &folderName, const std::string &folderPath) {
+    void TextureManager::LoadFromFolder(const std::string &folderName, const std::string &folderPath) {
 		namespace fs = std::filesystem;
 
 		if (!fs::exists(folderPath) || !fs::is_directory(folderPath)) {
@@ -174,14 +174,14 @@ namespace Zeroday
 			return;
 		}
 
-		std::unordered_map<std::string, MaterialTextureType> filenameMap = {
-			{"basecolor", MaterialTextureType::BaseColor},
-			{"albedo",    MaterialTextureType::BaseColor},
-			{"normal",    MaterialTextureType::Normal},
-			{"roughness", MaterialTextureType::Roughness},
-			{"metallic",  MaterialTextureType::Metallic},
-			{"ao",        MaterialTextureType::AmbientOcclusion},
-			{"emissive",  MaterialTextureType::Emissive}
+		std::unordered_map<std::string, opengl::MaterialTextureType> filenameMap = {
+			{"basecolor", opengl::MaterialTextureType::BaseColor},
+			{"albedo",    opengl::MaterialTextureType::BaseColor},
+			{"normal",    opengl::MaterialTextureType::Normal},
+			{"roughness", opengl::MaterialTextureType::Roughness},
+			{"metallic",  opengl::MaterialTextureType::Metallic},
+			{"ao",        opengl::MaterialTextureType::AmbientOcclusion},
+			{"emissive",  opengl::MaterialTextureType::Emissive}
 		};
 
 		for (auto &entry : fs::directory_iterator(folderPath)) {
@@ -194,15 +194,15 @@ namespace Zeroday
 			for (auto &[key, type] : filenameMap) {
 				if (lower.find(key) != std::string::npos) {
 					std::string texName = folderName + "_" + key; // e.g., Asphalt031_basecolor
-					(void)load(texName, entry.path().string());
+					(void)Load(texName, entry.path().string());
 				}
 			}
 		}
     }
 
     Ref<Texture> TextureManager::CreateDefaultTexture(const std::string &debugName,
-                                                                  unsigned char r, unsigned char g,
-                                                                  unsigned char b, unsigned char a) {
+                                                    unsigned char r, unsigned char g,
+                                                    unsigned char b, unsigned char a) {
 		GLuint texID = 0;
 		glGenTextures(1, &texID);
 		glBindTexture(GL_TEXTURE_2D, texID);
@@ -216,15 +216,15 @@ namespace Zeroday
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		auto tex = CreateRef<Texture>();
-		tex->name = debugName;
-		tex->glID = texID;
+		tex->m_Name = debugName;
+		tex->m_GLId = texID;
 
 		if (GLAD_GL_ARB_bindless_texture && GLAD_GL_ARB_gpu_shader_int64) {
 			if (const uint64_t handle = glGetTextureHandleARB(texID)) {
 				glMakeTextureHandleResidentARB(handle);
-				tex->bindlessHandle = handle;
-				tex->resident = true;
-				residentHandles.insert(handle);
+				tex->m_BindlessHandle = handle;
+				tex->m_Resident = true;
+				m_ResidentHandles.insert(handle);
 			}
 		}
 

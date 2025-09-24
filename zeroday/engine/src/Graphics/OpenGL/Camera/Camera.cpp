@@ -13,6 +13,16 @@ namespace Zeroday {
         return m_View;
     }
 
+    void Camera::SetProjectionMatrix(float fov, float near, float far) {
+        m_PerspectiveFOV = fov;
+        m_PerspectiveNear = near;
+        m_PerspectiveFar = far;
+    }
+
+    void Camera::SetViewMatrix(const glm::mat4 &view) {
+        m_View = view;
+    }
+
     void Camera::CalculateProjection() {
         if (m_Mode == CameraMode::Perspective) {
             m_Projection = glm::perspective(glm::radians(m_PerspectiveFOV), m_AspectRatio, m_PerspectiveNear, m_PerspectiveFar);

@@ -4,7 +4,8 @@
 #include <imgui_impl_opengl3.h>
 #include <Input/Input.h>
 #include "core/Services.h"
-#include "../../include/Editor/InspectorPanel.h"
+#include "Editor/InspectorPanel.h"
+#include "Scene/SceneObjectFactory.h"
 
 namespace Zeroday {
 
@@ -45,10 +46,8 @@ namespace Zeroday {
 
 		Info("[Engine::initResources] Materials loaded successfully!");
 
-		// Load shaders
-		if (!g_AssetManager->LoadAllShaders()) {
-			Error("[Engine::initResources] loadAllShaders FAILED!");
-		}
+		// Load Shaders
+		m_Renderer3D->Init();
 
 		Info("[Engine::initResources] Shaders loaded successfully!");
 
@@ -124,7 +123,7 @@ namespace Zeroday {
 	}
 
 	void Engine::InitWorld() {
-		m_Scene = CreateScope<ecs::Scene>();
+		m_Scene = CreateScope<Scene>();
 
 		Info("[Engine::InitWorld] World initialized successfully!");
 	}
@@ -169,8 +168,7 @@ namespace Zeroday {
 		Info("[Engine::InitModel] Model Loader initialized successfully!]");
 	}
 
-	void Engine::InitRender()
-	{
+	void Engine::InitRender() {
 		g_RenderContext = CreateScope<opengl::RenderContext>();
 
 		Info("[Engine::InitRender] RenderContext initialized successfully!");
@@ -250,7 +248,7 @@ namespace Zeroday {
 	}
 
 	void Engine::CleanupPhase() {
-		m_Scene->CleanResources();
+		// m_Scene->Cl();
 		glfwRenderEventStuff();
 	}
 }

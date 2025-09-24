@@ -1,0 +1,52 @@
+#version 460
+layout(local_size_x = 64) in;
+
+#include "common/constants.glsl"
+
+// Metadata table (per entity)
+struct RenderCommandMDI {
+    uint vao;
+    uint materialIndex;
+    uint transformIndex;
+    uint indexCount;
+    uint indexOffset;
+};
+
+struct DrawElementsIndirectCommand {
+    uint count;
+    uint instanceCount;
+    uint firstIndex;
+    uint baseVertex;
+    uint baseInstance;
+};
+
+struct DrawPayloadGPU {
+    int transformIndex;
+    int materialIndex;
+    int meshId;
+    int entityId;
+};
+
+layout(std430, binding = 0) buffer EntityDataBuffer {
+    RenderCommandMDI entities[];
+};
+
+// Indirect draw commands (one per entity)
+layout(std430, binding = 1) buffer IndirectCommands {
+    DrawElementsIndirectCommand commands[];
+};
+
+// Draw payloads (per draw call data)
+layout(std430, binding = 2) buffer DrawPayloads {
+    DrawPayloadGPU payloads[];
+};
+
+void main() {
+    uint entityIndex = gl_GlobalInvocationID.x;
+
+    // Draw ALL entities (no culling check yet!)
+    if (entityIndex >= MAX_ENTITIES) return;
+
+    // Each entity gets its own draw command
+    uint commandIndex = entityIndex;
+}

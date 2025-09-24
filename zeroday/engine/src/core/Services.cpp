@@ -5,9 +5,12 @@
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 #include "core/AssetManager.h"
-#include "../../include/Editor/EditorState.h"
 #include "Graphics/OpenGL/Model/ModelLoader.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
+
+namespace Zeroday::Editor {
+    struct EditorState;
+}
 
 namespace {
     // Static service pointers
@@ -17,7 +20,7 @@ namespace {
     Zeroday::ModelLoader* g_ModelLoader         = nullptr;
     Zeroday::opengl::RenderContext* g_RenderContext = nullptr;
     Zeroday::TextureManager* g_TextureManager       = nullptr;
-    Zeroday::EditoR::EditorState* g_EditorState     = nullptr;
+    Zeroday::Editor::EditorState* g_EditorState     = nullptr;
 }
 
 namespace Zeroday::Services {
@@ -28,7 +31,7 @@ namespace Zeroday::Services {
     ModelLoader *GetModelLoader()         { return g_ModelLoader;     }
     opengl::RenderContext *GetRenderContext() { return g_RenderContext;   }
     TextureManager  *GetTextureManager()      { return g_TextureManager;  }
-    EditoR::EditorState *GetEditorState()     { return g_EditorState;     }
+    Editor::EditorState *GetEditorState()     { return g_EditorState;     }
 
     void RegisterMaterialLibrary(MaterialLibrary* lib)    { g_MaterialLibrary = lib;    }
     void RegisterMeshLibrary(MeshLibrary   *lib)          { g_MeshLibrary     = lib;    }
@@ -36,5 +39,5 @@ namespace Zeroday::Services {
     void RegisterModelLoader(ModelLoader   *loader)       { g_ModelLoader     = loader; }
     void RegisterRenderContext(opengl::RenderContext *rc) { g_RenderContext   = rc;     }
     void RegisterTextureManager(TextureManager *mngr)     { g_TextureManager  = mngr;   }
-    void RegisterEditorState(EditoR::EditorState* state)  { g_EditorState     = state;  }
+    void RegisterEditorState(Editor::EditorState* state)  { g_EditorState     = state;  }
 }

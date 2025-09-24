@@ -8,12 +8,14 @@
 #include <unordered_set>
 #include <glad/glad.h>
 
+#include "core/Base.h"
 
 namespace Zeroday {
-    enum class MaterialTextureType;
+    struct Texture;
+    namespace opengl {
+        enum class MaterialTextureType;
+    }
 }
-
-namespace Zeroday { struct Texture; }
 
 namespace Zeroday {
 
@@ -22,39 +24,39 @@ namespace Zeroday {
         TextureManager();
         ~TextureManager();
 
-        [[nodiscard]] Ref<Texture> load(const std::string& name, const std::string& path);
-        Ref<Texture> GetDefaultTexture(MaterialTextureType type);
+        [[nodiscard]] Ref<Texture> Load(const std::string& name, const std::string& path);
+        Ref<Texture> GetDefaultTexture(opengl::MaterialTextureType type);
 
-        Ref<Texture> getTextureWithName(const std::string& name);
-        Ref<Texture> getTextureWithPath(const std::string& path);
+        Ref<Texture> GetTextureWithName(const std::string& name);
+        Ref<Texture> GetTextureWithPath(const std::string& path);
 
         // Bindless helpers (exposed but manager handles residency for you)
         // Returns the bindless handle (0 on failure)
-        uint64_t ensureBindlessHandle(Ref<Texture> tex);
-        uint64_t getBindlessHandle(Ref<Texture> tex) const;
+        uint64_t EnsureBindlessHandle(Ref<Texture> tex);
+        uint64_t GetBindlessHandle(Ref<Texture> tex) const;
 
         // Release a single texture (makes handle non-resident and deletes GL texture)
         // Must be called on GL context thread
-        void releaseTexture(const Ref<Texture>& tex);
+        void ReleaseTexture(const Ref<Texture>& tex);
         // Release all GPU resources
-        void releaseAll();
+        void ReleaseAll();
 
-        void loadFromFolder(const std::string& folderName, const std::string& folderPath);
+        void LoadFromFolder(const std::string& folderName, const std::string& folderPath);
 
     private:
-        std::unordered_map<std::string, Ref<Texture>> m_nameMap; // name -> texture (for UI stuff)
-        std::unordered_map<std::string, Ref<Texture>> m_pathMap; // file path -> texture
-        std::vector<Ref<Texture>> m_allTextures;
+        std::unordered_map<std::string, Ref<Texture>> m_NameMap; // name -> texture (for UI stuff)
+        std::unordered_map<std::string, Ref<Texture>> m_PathMap; // file path -> texture
+        std::vector<Ref<Texture>> m_AllTextures;
 
-        std::unordered_map<MaterialTextureType, Ref<Texture>> m_defaultTextures;
+        std::unordered_map<opengl::MaterialTextureType, Ref<Texture>> m_DefaultTextures;
 
         // track resident handles for safety (registered in ensureBindlessHandle)
         // Use this list to make the handle on the GPU non-resident
         // when the texture is being erased or releaseAll() is called.
-        std::unordered_set<uint64_t> residentHandles;
+        std::unordered_set<uint64_t> m_ResidentHandles;
 
         Ref<Texture> CreateDefaultTexture(const std::string& debugName,
-                                                      unsigned char r, unsigned char g,
-                                                      unsigned char b, unsigned char a = 255);
+                                        unsigned char r, unsigned char g,
+                                        unsigned char b, unsigned char a = 255);
     };
 }

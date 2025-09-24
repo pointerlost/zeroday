@@ -4,7 +4,9 @@
 #pragma once
 #include "entt/entt.hpp"
 
-namespace Zeroday { class Scene; }
+namespace Zeroday {
+    class Scene;
+}
 
 namespace Zeroday::Editor {
 

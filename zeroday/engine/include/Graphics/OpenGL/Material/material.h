@@ -16,7 +16,7 @@ namespace Zeroday {
 
 	struct Texture;}
 
-namespace Zeroday {
+namespace Zeroday::opengl {
 
 	enum class MaterialTextureType {
 		BaseColor,
@@ -41,53 +41,53 @@ namespace Zeroday {
 	};
 
 	struct MaterialInstance {
-		Ref<Material> base = CreateRef<Material>();
+		Ref<Material> m_Base = CreateRef<Material>();
 
 		MaterialSSBO ToGPUFormat();
 
-		void setBaseColor(glm::vec4 c) { overrideBaseColor    = c; }
-		void setMetallic(float m)      { overrideMetallic  = m; }
-		void setRoughness(float r)     { overrideRoughness = r; }
-		void setEmissive(glm::vec3 e)  { overrideEmissive     = e; }
-		void setTexture(MaterialTextureType type, Ref<Texture> tex) {
-			overrideTextures[type] = std::move(tex);
+		void SetBaseColor(glm::vec4 c) { m_OverrideBaseColor    = c; }
+		void SetMetallic(float m)      { m_OverrideMetallic  = m; }
+		void SetRoughness(float r)     { m_OverrideRoughness = r; }
+		void SetEmissive(glm::vec3 e)  { m_OverrideEmissive     = e; }
+		void SetTexture(MaterialTextureType type, Ref<Texture> tex) {
+			m_OverrideTextures[type] = std::move(tex);
 		}
 
-		glm::vec4 getBaseColor() const {
-			return overrideBaseColor.value_or(base->baseColor);
+		glm::vec4 GetBaseColor() const {
+			return m_OverrideBaseColor.value_or(m_Base->baseColor);
 		}
-		float getMetallic() const {
-			return overrideMetallic.value_or(base->metallic);
+		float GetMetallic() const {
+			return m_OverrideMetallic.value_or(m_Base->metallic);
 		}
-		float getRoughness() const {
-			return overrideRoughness.value_or(base->roughness);
+		float GetRoughness() const {
+			return m_OverrideRoughness.value_or(m_Base->roughness);
 		}
-		glm::vec3 getEmissive() const {
-			return overrideEmissive.value_or(base->emissive);
+		glm::vec3 GetEmissive() const {
+			return m_OverrideEmissive.value_or(m_Base->emissive);
 		}
 
 		Ref<Texture> getTexture(MaterialTextureType type) const {
-			if (const auto it = overrideTextures.find(type); it != overrideTextures.end())
+			if (const auto it = m_OverrideTextures.find(type); it != m_OverrideTextures.end())
 				return it->second;
-			if (const auto it = base->textures.find(type); it != base->textures.end())
+			if (const auto it = m_Base->textures.find(type); it != m_Base->textures.end())
 				return it->second;
 			return nullptr;
 		}
 
 		void resetOverrides() {
-			overrideBaseColor.reset();
-			overrideMetallic.reset();
-			overrideRoughness.reset();
-			overrideEmissive.reset();
-			overrideTextures.clear();
+			m_OverrideBaseColor.reset();
+			m_OverrideMetallic.reset();
+			m_OverrideRoughness.reset();
+			m_OverrideEmissive.reset();
+			m_OverrideTextures.clear();
 		}
 
 	private:
-		std::optional<glm::vec4> overrideBaseColor;
-		std::optional<float>     overrideMetallic;
-		std::optional<float>     overrideRoughness;
-		std::optional<glm::vec3> overrideEmissive;
-		std::unordered_map<MaterialTextureType, Ref<Texture>> overrideTextures;
+		std::optional<glm::vec4> m_OverrideBaseColor;
+		std::optional<float>     m_OverrideMetallic;
+		std::optional<float>     m_OverrideRoughness;
+		std::optional<glm::vec3> m_OverrideEmissive;
+		std::unordered_map<MaterialTextureType, Ref<Texture>> m_OverrideTextures;
 	};
 
 }

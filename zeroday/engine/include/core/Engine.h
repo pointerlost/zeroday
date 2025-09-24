@@ -4,13 +4,12 @@
 #include "core/Window.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Editor/Editor.h"
-#include "../Editor/EditorState.h"
+#include "Editor/EditorState.h"
 #include "core/AssetManager.h"
 #include "Graphics/OpenGL/Renderer/Renderer3D.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Model/ModelLoader.h"
-#include "Graphics/OpenGL/Renderer/GPURenderer.h"
 #include "Graphics/OpenGL/Textures/TextureManager.h"
 #include "Scene/SceneObjectFactory.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
@@ -31,8 +30,8 @@ namespace Zeroday {
 		void GameStateLoop();
 
 	private:
-		Scope<EditoR::EditorState> m_EditorState;
-		Scope<EditoR::Editor> m_Editor;
+		Scope<Editor::EditorState> m_EditorState;
+		Scope<Editor::Editor> m_Editor;
 		Scope<Window> m_Window;
 		Scope<Scene> m_Scene;
 		Scope<opengl::Renderer3D> m_Renderer3D;
@@ -43,7 +42,7 @@ namespace Zeroday {
 		Scope<ModelLoader> g_ModelLoader;
 		Scope<MaterialLibrary> g_MaterialLibrary;
 		Scope<TextureManager> g_TextureManager;
-		Scope<::opengl::RenderContext> g_RenderContext;
+		Scope<opengl::RenderContext> g_RenderContext;
 
 		void InitWindow();
 		void InitCallBack();

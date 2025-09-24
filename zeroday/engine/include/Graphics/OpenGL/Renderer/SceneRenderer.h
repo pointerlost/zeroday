@@ -3,16 +3,13 @@
 //
 #pragma once
 #include <vector>
+#include "Graphics/OpenGL/GPU_buffers.h"
 
 namespace Zeroday {
     class Scene;
 
     namespace opengl {
         struct RenderCommandMDI;
-        struct MaterialSSBO;
-        struct LightSSBO;
-        struct TransformSSBO;
-        struct CameraUBO;
     }
 }
 
@@ -24,9 +21,7 @@ namespace Zeroday::opengl {
         std::vector<MaterialSSBO> materials;
         std::vector<LightSSBO> lights;
         std::vector<RenderCommandMDI> renderCommands;
-        std::vector<CameraUBO> cameras;
-
-        int mainCameraIndex = 0;
+        CameraUBO camera;
     };
 
     class SceneRenderer {

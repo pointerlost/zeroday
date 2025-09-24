@@ -1,12 +1,8 @@
 #pragma once
-#include <memory>
 #include <unordered_map>
-#include <glad/glad.h>
 #include <nlohmann/json.hpp>
-
 #include "material.h"
 
-// Forward declaration
 namespace Zeroday
 {
 	class TextureManager;
@@ -23,13 +19,13 @@ namespace Zeroday {
 	public:
 		[[nodiscard]] bool CreateMaterials(const std::string& filePath);
 
-		[[nodiscard]] Ref<MaterialInstance> CreateInstance(const std::string& name);
+		[[nodiscard]] Ref<opengl::MaterialInstance> CreateInstance(const std::string& name);
 
-		[[nodiscard]] Ref<Material> GetMaterialByName(const std::string& name);
+		[[nodiscard]] Ref<opengl::Material> GetMaterialByName(const std::string& name);
 
-		[[nodiscard]] Ref<Material> GetDefaultMaterial() const;
+		[[nodiscard]] Ref<opengl::Material> GetDefaultMaterial() const;
 
 	private:
-		std::unordered_map<std::string, Ref<Material>> m_materials;
+		std::unordered_map<std::string, Ref<opengl::Material>> m_materials;
 	};
 }

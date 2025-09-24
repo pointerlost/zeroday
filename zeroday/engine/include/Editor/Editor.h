@@ -2,10 +2,13 @@
 // Created by pointerlost on 8/13/25.
 //
 #pragma once
-#include <memory>
 #include <vector>
+#include "EditorPanel.h"
+#include "core/Base.h"
 
-namespace Zeroday::Editor { struct EditorState;  }
+namespace Zeroday::Editor {
+    struct EditorState;
+}
 
 namespace Zeroday::Editor {
 
@@ -21,7 +24,7 @@ namespace Zeroday::Editor {
         void drawUI();
 
     private:
-        std::vector<Scope<Zeroday::UI::EditorPanel>> panels;
+        std::vector<Scope<UI::EditorPanel>> panels;
 
         EditorState* state;
     };

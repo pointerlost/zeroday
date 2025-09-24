@@ -6,6 +6,10 @@
 #include "Graphics/OpenGL/Macros.h"
 
 namespace Zeroday::opengl {
+    struct LightSSBO;
+}
+
+namespace Zeroday::opengl {
 
     enum class LightType {
         Directional = 0,

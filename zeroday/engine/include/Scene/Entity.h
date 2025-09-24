@@ -4,10 +4,9 @@
 #pragma once
 #include "Components.h"
 #include "core/Assert.h"
-#include "entt/entt.hpp"
 #include "Scene.h"
 
-namespace Zeroday::Ecs {
+namespace Zeroday {
     struct IDComponent;
 }
 
@@ -48,8 +47,8 @@ namespace Zeroday {
         operator entt::entity() const { return m_Handle; }
         operator uint32_t() const { return static_cast<uint32_t>(m_Handle); }
 
-        UUID GetUUID() { return GetComponent<Ecs::IDComponent>().ID; }
-        const std::string& GetName() { return GetComponent<Ecs::NameComponent>().name; }
+        UUID GetUUID() { return GetComponent<IDComponent>().ID; }
+        const std::string& GetName() { return GetComponent<NameComponent>().name; }
 
         [[nodiscard]] bool operator==(const Entity& other) const {
             return m_Handle == other.m_Handle && m_Scene == other.m_Scene;

@@ -55,7 +55,7 @@ namespace Zeroday
             if (mat.contains("metallic"))  metallic  = mat["metallic"].get<float>();
             if (mat.contains("roughness")) roughness = mat["roughness"].get<float>();
 
-            const auto material = CreateRef<Material>();
+            const auto material = CreateRef<opengl::Material>();
             material->name      = name;
             material->baseColor = baseColor;
             material->emissive  = emissive;
@@ -68,7 +68,7 @@ namespace Zeroday
         return true;
     }
 
-    Ref<Material> MaterialLibrary::GetMaterialByName(const std::string &name) {
+    Ref<opengl::Material> MaterialLibrary::GetMaterialByName(const std::string &name) {
         if (!m_materials.contains(name)) {
             Warn("Material \"" + name + "\" not found! but returning fallback\n");
             // return default material
@@ -77,23 +77,23 @@ namespace Zeroday
         return m_materials.at(name);
     }
 
-    Ref<Material> MaterialLibrary::GetDefaultMaterial() const {
+    Ref<opengl::Material> MaterialLibrary::GetDefaultMaterial() const {
         auto textureManager = Services::GetTextureManager();
 
-        static Ref<Material> fallback = [textureManager]{
-            auto mat = CreateRef<Material>();
+        static Ref<opengl::Material> fallback = [textureManager]{
+            auto mat = CreateRef<opengl::Material>();
             mat->name      = "default";
             mat->baseColor = glm::vec4(1.0f);
             mat->emissive  = glm::vec3(0.0f);
             mat->metallic  = 0.0f;
             mat->roughness = 1.0f;
 
-            mat->textures[MaterialTextureType::BaseColor]        = textureManager->GetDefaultTexture(MaterialTextureType::BaseColor);
-            mat->textures[MaterialTextureType::Normal]           = textureManager->GetDefaultTexture(MaterialTextureType::Normal);
-            mat->textures[MaterialTextureType::Roughness]        = textureManager->GetDefaultTexture(MaterialTextureType::Roughness);
-            mat->textures[MaterialTextureType::Metallic]         = textureManager->GetDefaultTexture(MaterialTextureType::Metallic);
-            mat->textures[MaterialTextureType::AmbientOcclusion] = textureManager->GetDefaultTexture(MaterialTextureType::AmbientOcclusion);
-            mat->textures[MaterialTextureType::Emissive]         = textureManager->GetDefaultTexture(MaterialTextureType::Emissive);
+            mat->textures[opengl::MaterialTextureType::BaseColor]        = textureManager->GetDefaultTexture(opengl::MaterialTextureType::BaseColor);
+            mat->textures[opengl::MaterialTextureType::Normal]           = textureManager->GetDefaultTexture(opengl::MaterialTextureType::Normal);
+            mat->textures[opengl::MaterialTextureType::Roughness]        = textureManager->GetDefaultTexture(opengl::MaterialTextureType::Roughness);
+            mat->textures[opengl::MaterialTextureType::Metallic]         = textureManager->GetDefaultTexture(opengl::MaterialTextureType::Metallic);
+            mat->textures[opengl::MaterialTextureType::AmbientOcclusion] = textureManager->GetDefaultTexture(opengl::MaterialTextureType::AmbientOcclusion);
+            mat->textures[opengl::MaterialTextureType::Emissive]         = textureManager->GetDefaultTexture(opengl::MaterialTextureType::Emissive);
 
             Info("Default Material added!");
             return mat;
@@ -101,11 +101,11 @@ namespace Zeroday
         return fallback;
     }
 
-    Ref<MaterialInstance> MaterialLibrary::CreateInstance(const std::string &name)
+    Ref<opengl::MaterialInstance> MaterialLibrary::CreateInstance(const std::string &name)
     {
         const auto base = GetMaterialByName(name);
-        auto instance  = CreateRef<MaterialInstance>();
-        instance->base = base;
+        auto instance  = CreateRef<opengl::MaterialInstance>();
+        instance->m_Base = base;
         return instance;
     }
 }

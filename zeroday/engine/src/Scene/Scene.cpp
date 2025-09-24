@@ -20,42 +20,42 @@ namespace Zeroday {
     }
 
     template<>
-    void Scene::OnComponentAdded<Ecs::IDComponent>(Entity entity, Ecs::IDComponent& component)
+    void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
     {
     }
 
     template<>
-    void Scene::OnComponentAdded<Ecs::CameraComponent>(Entity entity, Ecs::CameraComponent& component)
+    void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
     {
     }
 
     template<>
-    void Scene::OnComponentAdded<Ecs::TransformComponent>(Entity entity, Ecs::TransformComponent& component)
+    void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
     {
     }
 
     template<>
-    void Scene::OnComponentAdded<Ecs::LightComponent>(Entity entity, Ecs::LightComponent& component)
+    void Scene::OnComponentAdded<LightComponent>(Entity entity, LightComponent& component)
     {
     }
 
     template<>
-    void Scene::OnComponentAdded<Ecs::MaterialComponent>(Entity entity, Ecs::MaterialComponent& component)
+    void Scene::OnComponentAdded<MaterialComponent>(Entity entity, MaterialComponent& component)
     {
     }
 
     template<>
-    void Scene::OnComponentAdded<Ecs::MeshComponent>(Entity entity, Ecs::MeshComponent& component)
+    void Scene::OnComponentAdded<MeshComponent>(Entity entity, MeshComponent& component)
     {
     }
 
     template<>
-    void Scene::OnComponentAdded<Ecs::ModelComponent>(Entity entity, Ecs::ModelComponent& component)
+    void Scene::OnComponentAdded<ModelComponent>(Entity entity, ModelComponent& component)
     {
     }
 
     template<>
-    void Scene::OnComponentAdded<Ecs::NameComponent>(Entity entity, Ecs::NameComponent& component)
+    void Scene::OnComponentAdded<NameComponent>(Entity entity, NameComponent& component)
     {
     }
 
@@ -65,9 +65,9 @@ namespace Zeroday {
 
     Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name) {
         Entity entity = { m_Registry.create(), this };
-        entity.AddComponent<Ecs::IDComponent>(uuid);
-        entity.AddComponent<Ecs::TransformComponent>();
-        auto& tag = entity.AddComponent<Ecs::NameComponent>();
+        entity.AddComponent<IDComponent>(uuid);
+        entity.AddComponent<TransformComponent>();
+        auto& tag = entity.AddComponent<NameComponent>();
         tag.name = name.empty() ? "Entity" : name;
 
         m_Entities[uuid] = entity;
@@ -79,4 +79,5 @@ namespace Zeroday {
         m_Entities.erase(entity.GetUUID());
         m_Registry.destroy(entity);
     }
+
 }

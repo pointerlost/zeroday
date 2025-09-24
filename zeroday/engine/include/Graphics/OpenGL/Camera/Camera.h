@@ -33,6 +33,9 @@ namespace Zeroday {
         [[nodiscard]] const glm::mat4& GetProjectionMatrix() const;
         [[nodiscard]] const glm::mat4& GetViewMatrix() const;
 
+        void SetProjectionMatrix(float fov, float near, float far);
+        void SetViewMatrix(const glm::mat4& view);
+
     private:
         float m_PerspectiveFOV  = glm::radians(45.0f);
         float m_PerspectiveNear = 0.01f, m_PerspectiveFar = 1000.0f;

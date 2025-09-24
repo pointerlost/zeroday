@@ -4,6 +4,8 @@
 #include <Graphics/OpenGL/Transformations/Transformations.h>
 #include <Graphics/OpenGL/Lighting/Light.h>
 
+#include "core/Base.h"
+
 namespace Input
 {
 	std::shared_ptr<IInputComponent> InputComponentFactory::createObjectComponent(InputType type, std::shared_ptr<Zeroday::Transform> transform)

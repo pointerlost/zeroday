@@ -122,47 +122,49 @@ namespace Zeroday {
     }
 
     bool AssetManager::LoadAllShaders() {
+        bool overallSuccess = true;
+
         const std::string configPath = SHADERS_CONFIG_PATH;
         Info("Loading shaders from config: " + configPath);
 
         auto& file = File::get();
 
-        try {
-            std::string jsonContent  = file.readFromFile(configPath);
-            auto config = nlohmann::json::parse(jsonContent);
+        std::string jsonContent  = file.readFromFile(configPath);
+        auto config = nlohmann::json::parse(jsonContent);
 
-            if (!config.contains("shaders")) {
-                throw std::runtime_error("Missing 'shaders' array in config");
+        if (!config.contains("shaders")) {
+            throw std::runtime_error("Missing 'shaders' array in config");
+        }
+
+        for (auto& shaderConfig : config["shaders"]) {
+            std::string name     = shaderConfig.value("name", "unnamed");
+            std::string type     = shaderConfig.value("type", "unnamed");
+            std::string vertexPath, fragmentPath, computePath;
+            if (shaderConfig.contains("stages")) {
+                vertexPath   = shaderConfig["stages"].value("vertex",   "unnamed");
+                fragmentPath = shaderConfig["stages"].value("fragment", "unnamed");
+                computePath  = shaderConfig["stages"].value("compute",  "unnamed");
+            } else {
+                Error("[ShaderManager::loadAllShaders] missing 'stages' array in shaders config!");
+                return false;
             }
 
-            for (auto& shaderConfig : config["shaders"]) {
-                std::string name     = shaderConfig.value("name", "unnamed");
-                std::string type     = shaderConfig.value("type", "unnamed");
-                std::string vertexPath, fragmentPath, computePath;
-                if (shaderConfig.contains("stages")) {
-                    vertexPath   = shaderConfig["stages"].value("vertex",   "unnamed");
-                    fragmentPath = shaderConfig["stages"].value("fragment", "unnamed");
-                    computePath  = shaderConfig["stages"].value("compute",  "unnamed");
-                } else {
-                    Error("[ShaderManager::loadAllShaders] missing 'stages' array in shaders config!");
-                    return false;
+            if (type == "COMPUTE") {
+                if (!CompileComputeShader(name, computePath)) {
+                    Error("Failed to load compute shader: " + name);
+                    overallSuccess = false;
+                    continue; // Skip to next shader
                 }
-
-                if (type == "COMPUTE" && !CompileComputeShader(name, computePath)) {
-                    Warn("Loading compute shader from " + name + " failed");
-                    return false;
-                }
+            } else {
                 if (!LoadShader(name, vertexPath, fragmentPath)) {
                     Error("Failed to load shader: " + name);
-                    return false;
+                    overallSuccess = false;
+                    continue;
                 }
-                Info("Shader: " + name + " loaded successfully!");
             }
-            return true;
+            Info("Shader: " + name + " loaded successfully!");
         }
-        catch (...) {
-            Error("Failed to load shader config!");
-            return false;
-        }
+
+        return overallSuccess;
     }
 }

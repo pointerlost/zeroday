@@ -14,9 +14,9 @@ namespace Zeroday::opengl {
         ExtractResult result;
 
         const auto view = scene->GetAllEntitiesWith<
-            Ecs::TransformComponent,
-            Ecs::MeshComponent,
-            Ecs::MaterialComponent
+            TransformComponent,
+            MeshComponent,
+            MaterialComponent
         >();
 
         for (auto [entity, transform, mesh, material] : view.each()) {
@@ -56,7 +56,7 @@ namespace Zeroday::opengl {
     }
 
     void SceneRenderer::ExtractLights(Scene* scene, ExtractResult& result) {
-        auto view = scene->GetAllEntitiesWith<Ecs::LightComponent, Ecs::TransformComponent>();
+        auto view = scene->GetAllEntitiesWith<LightComponent, TransformComponent>();
         for (auto [entity, lightComp, transform] : view.each()) {
             LightSSBO gpuLight = lightComp.ToGPUFormat();
             gpuLight.position = transform.m_Transform.GetPosition();
@@ -70,7 +70,7 @@ namespace Zeroday::opengl {
     }
 
     void SceneRenderer::ExtractCamera(Scene *scene, ExtractResult &result) {
-        auto view = scene->GetAllEntitiesWith<Ecs::CameraComponent, Ecs::TransformComponent>();
+        auto view = scene->GetAllEntitiesWith<CameraComponent, TransformComponent>();
 
         for (auto [entity, cameraComp, transform] : view.each()) {
             CameraUBO camera;
@@ -80,9 +80,7 @@ namespace Zeroday::opengl {
             camera.projection     = cameraComp.m_Camera.GetProjectionMatrix();
             camera.viewProjection = camera.projection * camera.view;
 
-            result.cameras.push_back(camera);
+            result.camera = camera;
         }
-
-        result.mainCameraIndex = 0;
     }
 }

@@ -17,11 +17,11 @@ namespace Zeroday::opengl {
     static_assert(std::is_trivially_copyable_v<TransformSSBO>);
     /********************************************************************************/
 
-    struct GlobalSSBO {
+    struct GlobalUBO {
         glm::vec3 globalAmbient = glm::vec3(0.1f);
         float padding1 = 0.0f;
     };
-    static_assert(sizeof(GlobalSSBO) % 16 == 0);
+    static_assert(sizeof(GlobalUBO) % 16 == 0);
     /********************************************************************************/
 
     struct LightSSBO {

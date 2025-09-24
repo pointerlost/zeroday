@@ -5,14 +5,14 @@
 #include "Graphics/OpenGL/GPU_buffers.h"
 #include "Scene/Components.h"
 
-namespace Zeroday {
+namespace Zeroday::opengl {
 
     MaterialSSBO MaterialInstance::ToGPUFormat() {
         MaterialSSBO gpu{};
-        gpu.baseColor = getBaseColor();
-        gpu.metallic  = getMetallic();
-        gpu.roughness = getRoughness();
-        gpu.emissive  = getEmissive();
+        gpu.baseColor = GetBaseColor();
+        gpu.metallic  = GetMetallic();
+        gpu.roughness = GetRoughness();
+        gpu.emissive  = GetEmissive();
 
         // auto* texManager = Services::GetTextureManager();
         // auto getHandle = [&](Graphics::MaterialTextureType type) -> uint64_t {

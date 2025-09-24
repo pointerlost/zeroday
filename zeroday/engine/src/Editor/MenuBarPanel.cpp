@@ -1,16 +1,16 @@
 //
 // Created by pointerlost on 8/14/25.
 //
-#include "../../include/Editor/MenuBarPanel.h"
+#include "Editor/MenuBarPanel.h"
 #include <imgui.h>
 #include <core/Config.h>
 #include <nlohmann/detail/string_concat.hpp>
-#include "../../include/Editor/EditorState.h"
+#include "Editor/EditorState.h"
 #include "Scene/SceneObjectFactory.h"
 
-namespace Editor::UI {
+namespace Zeroday::Editor::UI {
 
-    void MenuBarPanel::draw(EditorState &state) {
+    void MenuBarPanel::Draw(EditorState &state) {
 
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("SCENE")) {
@@ -37,20 +37,20 @@ namespace Editor::UI {
 
                     if (ImGui::BeginMenu("Create Light")) {
                         if (ImGui::MenuItem("Point Light")) {
-                            (void)sceneObjectFactory->CreateLight(LIGHTING::LightType::Point);
+                            (void)sceneObjectFactory->CreateLight(opengl::LightType::Point);
                         }
                         if (ImGui::MenuItem("Spot Light")) {
-                            (void)sceneObjectFactory->CreateLight(LIGHTING::LightType::Spot);
+                            (void)sceneObjectFactory->CreateLight(opengl::LightType::Spot);
                         }
                         if (ImGui::MenuItem("Directional Light")) {
-                            (void)sceneObjectFactory->CreateLight(LIGHTING::LightType::Directional);
+                            (void)sceneObjectFactory->CreateLight(opengl::LightType::Directional);
                         }
                         ImGui::EndMenu();
                     }
 
                     if (ImGui::BeginMenu("Create Camera")) {
                         if (ImGui::MenuItem("Perspective (3D)")) {
-                            (void)sceneObjectFactory->CreateCamera(ecs::CameraMode::Primary, ecs::PERSPECTIVE);
+                            (void)sceneObjectFactory->CreateCamera(CameraMode::Perspective);
                         }
                         ImGui::EndMenu();
                     }

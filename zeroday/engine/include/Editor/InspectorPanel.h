@@ -6,30 +6,28 @@
 #include "EditorPanel.h"
 
 
-namespace ecs {
-    struct NameComponent;
-    struct TransformComponent;
-    struct LightComponent;
-    struct MeshComponent;
-    struct MaterialComponent;
+namespace Zeroday {
     struct CameraComponent;
+    struct LightComponent;
+    struct MaterialComponent;
+    struct TransformComponent;
+    struct NameComponent;
 }
-namespace Zeroday::Editor { struct EditorState; }
 
 namespace Zeroday::Editor::UI {
 
     class InspectorPanel final : public EditorPanel {
     public:
-        void draw(EditorState& state) override;
+        void Draw(EditorState& state) override;
 
     private:
         // Component based UI design
-        void drawComponentUI(ecs::NameComponent& comp);
-        void drawComponentUI(ecs::TransformComponent& comp);
-        void drawComponentUI(ecs::MaterialComponent& comp);
-        void drawComponentUI(ecs::LightComponent& comp);
-        void drawComponentUI(ecs::CameraComponent& comp);
+        void drawComponentUI(NameComponent& comp);
+        void drawComponentUI(TransformComponent& comp);
+        void drawComponentUI(MaterialComponent& comp);
+        void drawComponentUI(LightComponent& comp);
+        void drawComponentUI(CameraComponent& comp);
 
-        bool deleteEntity(ecs::NameComponent& comp, EditorState& state);
+        bool deleteEntity(NameComponent& comp, EditorState& state);
     };
 }

@@ -1,6 +1,8 @@
 #include "Graphics/OpenGL/Lighting/Light.h"
+#include "Graphics/OpenGL/GPU_buffers.h"
 
 namespace Zeroday::opengl {
+
     Light::Light(LightType type) {
     }
 

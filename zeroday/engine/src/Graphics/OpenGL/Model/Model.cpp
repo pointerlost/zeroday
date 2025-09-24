@@ -3,8 +3,5 @@
 //
 #include "Graphics/OpenGL/Model/Model.h"
 
-
 namespace Zeroday {
-
-
 }

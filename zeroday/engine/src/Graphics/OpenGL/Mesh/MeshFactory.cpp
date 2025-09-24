@@ -2,8 +2,7 @@
 #include <Graphics/OpenGL/Mesh/MeshData3D.h>
 #include "core/Logger.h"
 #include "Math/Math.h"
-#define USE_MATH_DEFINES
-#include <cmath>
+#include "core/Base.h"
 
 namespace Zeroday
 {

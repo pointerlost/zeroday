@@ -9,88 +9,87 @@
 
 namespace Zeroday
 {
-	SceneObjectFactory::SceneObjectFactory(ecs::Scene& w) : world(w) {}
+	SceneObjectFactory::SceneObjectFactory(Scene& scene) : m_Scene(scene) {}
 
-    ecs::Entity SceneObjectFactory::CreatePrimitiveObject(const std::string& meshName) const
+    Entity SceneObjectFactory::CreatePrimitiveObject(const std::string& meshName) const
     {
-		auto* matLib = Services::GetMaterialLibrary();
-		auto* meshLib  = Services::GetMeshLibrary();
-
-		ecs::NameComponent nc;
-
-    	const ecs::Entity entity = world.CreateEntity();
-    	const auto& meshData = meshLib->GetMeshData3D();
-
-		ecs::TransformComponent tc;
-		tc.transform = CreateRef<Transform>();
-
-		ecs::MaterialComponent matC;
-		matC.instance = matLib->CreateInstance("wood");
-
-	    ecs::MeshComponent meshC;
-    	// create default mesh properties
-    	meshC.meshData    = meshData;
-    	meshC.subMeshName = meshName;
-
-		world.AddComponent(entity, std::move(nc));
-		world.AddComponent(entity, std::move(tc));
-    	world.AddComponent(entity, std::move(matC));
-    	world.AddComponent(entity, std::move(meshC));
-
-    	return entity;
+		// auto* matLib = Services::GetMaterialLibrary();
+		// auto* meshLib  = Services::GetMeshLibrary();
+	 //
+		// NameComponent nc;
+	 //
+  //   	const Entity entity = world.CreateEntity();
+  //   	const auto& meshData = meshLib->GetMeshData3D();
+	 //
+		// TransformComponent tc;
+		// tc.m_Transform = CreateRef<Transform>();
+	 //
+		// MaterialComponent matC;
+		// matC.m_Instance = matLib->CreateInstance("wood");
+	 //
+	 //    MeshComponent meshC;
+  //   	// create default mesh properties
+  //   	meshC.meshData    = meshData;
+  //   	meshC.subMeshName = meshName;
+	 //
+		// world.AddComponent(entity, std::move(nc));
+		// world.AddComponent(entity, std::move(tc));
+  //   	world.AddComponent(entity, std::move(matC));
+  //   	world.AddComponent(entity, std::move(meshC));
+	 //
+  //   	return entity;
     }
 
-    ecs::Entity SceneObjectFactory::CreateLight(LIGHTING::LightType type, const std::string& meshName) const
-	{
-		auto* matLib = Services::GetMaterialLibrary();
-		auto* meshLib  = Services::GetMeshLibrary();
-
-    	const ecs::Entity entity = world.CreateEntity();
-    	const auto& meshData = meshLib->GetMeshData3D();
-
-		ecs::NameComponent nc;
-
-		ecs::TransformComponent tc;
-		tc.transform = CreateRef<Transform>();
-
-		ecs::MaterialComponent matC;
-		matC.instance->base = matLib->GetMaterialByName("lightSource");
-
-		ecs::LightComponent lc;
-		lc.light = CreateRef<LIGHTING::Light>(type);
-
-    	// create default mesh properties
-		ecs::MeshComponent meshC;
-    	meshC.meshData = meshData;
-    	meshC.subMeshName = meshName;
-
-		world.AddComponent(entity, std::move(nc));
-		world.AddComponent(entity, std::move(tc));
-    	world.AddComponent(entity, std::move(meshC));
-    	world.AddComponent(entity, std::move(matC));
-		world.AddComponent(entity, std::move(lc));
-
-    	return entity;
+    Entity SceneObjectFactory::CreateLight(opengl::LightType type, const std::string& meshName) const {
+		// auto* matLib = Services::GetMaterialLibrary();
+		// auto* meshLib  = Services::GetMeshLibrary();
+	 //
+  //   	Entity entity = world.CreateEntity();
+  //   	const auto& meshData = meshLib->GetMeshData3D();
+	 //
+		// NameComponent nc;
+	 //
+		// TransformComponent tc;
+		// tc.m_Transform = Transform{};
+	 //
+		// MaterialComponent matC;
+		// matC.m_Instance->m_Base = matLib->GetMaterialByName("lightSource");
+	 //
+		// LightComponent lc;
+		// lc.m_Light = opengl::Light{};
+	 //
+  //   	// create default mesh properties
+		// MeshComponent meshC{};
+  //   	meshC.meshData = meshData;
+  //   	meshC.subMeshName = meshName;
+	 //
+		// world.AddComponent(entity, std::move(nc));
+		// world.AddComponent(entity, std::move(tc));
+  //   	world.AddComponent(entity, std::move(meshC));
+  //   	world.AddComponent(entity, std::move(matC));
+		// world.AddComponent(entity, std::move(lc));
+	 //
+  //   	return entity;
     }
 
-    ecs::Entity SceneObjectFactory::CreateCamera(ecs::CameraType type) {
-		ecs::Entity entity = world.CreateEntity();
+    Entity SceneObjectFactory::CreateCamera(CameraMode mode) {
+		// Entity entity = scene.CreateEntity();
 
-		ecs::NameComponent nComp;
+		// NameComponent nComp;
 
-		ecs::TransformComponent tComp;
-		tComp.transform = CreateRef<Transform>();
+		// TransformComponent tComp;
+		// tComp.m_Transform = Transform{};
 
-		ecs::CameraComponent cameraComp(type);
+		// CameraComponent cameraComp{};
 
-		world.AddComponent(entity, std::move(tComp));
-		world.AddComponent(entity, std::move(nComp));
-		world.AddComponent(entity, cameraComp);
+		// world.AddComponent(entity, std::move(tComp));
+		// world.AddComponent(entity, std::move(nComp));
+		// world.AddComponent(entity, cameraComp);
 
-		return entity;
+		// return entity;
     }
 
-    ecs::Entity SceneObjectFactory::CreateModel(const std::string &path) const {
+    Entity SceneObjectFactory::CreateModel(const std::string &path) const {
 		// auto* modelLoader   = Services::GetModelLoader();
 		// auto* matLib        = Services::GetMaterialLibrary();
 

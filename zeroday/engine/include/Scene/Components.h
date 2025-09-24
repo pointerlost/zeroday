@@ -4,7 +4,6 @@
 #pragma once
 #include <memory>
 #include <utility>
-
 #include "core/UUID.h"
 #include "Graphics/OpenGL/Camera/Camera.h"
 #include "Graphics/OpenGL/Lighting/Light.h"
@@ -15,10 +14,12 @@ namespace Zeroday {
     struct Light;
     struct Model;
     struct MeshData3D;
-    struct MaterialInstance;
+    namespace opengl {
+        struct MaterialInstance;
+    }
 }
 
-namespace Zeroday::Ecs {
+namespace Zeroday {
 
     struct TransformComponent {
         Transform m_Transform;
@@ -49,7 +50,7 @@ namespace Zeroday::Ecs {
     struct LightComponent {
         opengl::Light m_Light;
 
-        [[nodiscard]] LightSSBO ToGPUFormat() const { return m_Light.ToGPUFormat(); }
+        [[nodiscard]] opengl::LightSSBO ToGPUFormat() const { return m_Light.ToGPUFormat(); }
 
         // Helper methods for easy setup
         void SetAsDirectional(const glm::vec3& direction, const glm::vec3& color, float intensity) {
@@ -72,11 +73,11 @@ namespace Zeroday::Ecs {
     };
 
     struct MaterialComponent {
-        std::shared_ptr<MaterialInstance> m_Instance;
+        std::shared_ptr<opengl::MaterialInstance> m_Instance;
 
-        [[nodiscard]] MaterialSSBO ToGPUFormat() const;
+        [[nodiscard]] opengl::MaterialSSBO ToGPUFormat() const;
 
-        explicit MaterialComponent(std::shared_ptr<MaterialInstance> material) : m_Instance(std::move(material)) {}
+        explicit MaterialComponent(std::shared_ptr<opengl::MaterialInstance> material) : m_Instance(std::move(material)) {}
         MaterialComponent() = default;
         MaterialComponent(const MaterialComponent&) = default;
     };

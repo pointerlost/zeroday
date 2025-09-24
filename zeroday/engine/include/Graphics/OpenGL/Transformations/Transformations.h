@@ -64,6 +64,7 @@ namespace Zeroday {
         void Translate(const glm::vec3& translation);
         void SetScale(const glm::vec3& newScale);
         void SetScale(float uniformScale);
+        glm::vec3 GetScale() const { return m_Scale; }
 
     private:
         // storage

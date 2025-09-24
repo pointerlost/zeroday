@@ -7,14 +7,12 @@
 #include <memory>
 #include "Graphics/OpenGL/Material/material.h"
 
-
-// forwards
-namespace Zeroday {
+namespace Zeroday::opengl {
     struct SubMeshInfo;
     struct MeshData3D;
 }
 
-namespace Zeroday {
+namespace Zeroday::opengl {
 
     struct MeshEntry {
         MeshData3D* meshData;

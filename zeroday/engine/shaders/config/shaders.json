@@ -9,80 +9,45 @@
       }
     },
     {
-      "name": "batch_builder",
+      "name": "command_generation",
       "type": "COMPUTE",
       "stages": {
-        "compute": "opengl/common/batch_builder.comp"
+        "compute": "opengl/compute/command_generation.comp"
       }
     },
     {
       "name": "camera_data",
       "type": "COMPUTE",
       "stages": {
-        "compute": "opengl/common/camera_data.comp"
+        "compute": "opengl/compute/camera_update.comp"
       }
     },
     {
       "name": "common",
       "type": "COMPUTE",
       "stages": {
-        "compute": "opengl/common/common.comp"
+        "compute": "opengl/compute/common.comp"
       }
     },
     {
-      "name": "dirty_tracker",
+      "name": "light_update",
       "type": "COMPUTE",
       "stages": {
-        "compute": "opengl/common/dirty_tracker.comp"
+        "compute": "opengl/compute/light_update.comp"
       }
     },
     {
-      "name": "light_data",
+      "name": "material_update",
       "type": "COMPUTE",
       "stages": {
-        "compute": "opengl/common/light_data.comp"
+        "compute": "opengl/compute/material_update.comp"
       }
     },
     {
-      "name": "material_data",
+      "name": "transform_update",
       "type": "COMPUTE",
       "stages": {
-        "compute": "opengl/common/material_data.comp"
-      }
-    },
-    {
-      "name": "transform_data",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/common/transform_data.comp"
-      }
-    },
-    {
-      "name": "frustum_cull",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/frustum_cull.comp"
-      }
-    },
-    {
-      "name": "lighting_calc",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/lighting_calc.comp"
-      }
-    },
-    {
-      "name": "pbr_calc",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/compute/pbr_calc.comp"
-      }
-    },
-    {
-      "name": "attributes",
-      "type": "COMPUTE",
-      "stages": {
-        "compute": "opengl/core/attributes.comp"
+        "compute": "opengl/compute/transform_compute.comp"
       }
     },
     {

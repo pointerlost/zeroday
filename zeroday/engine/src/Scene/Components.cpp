@@ -2,15 +2,16 @@
 // Created by pointerlost on 9/23/25.
 //
 #include "Scene/Components.h"
+#include "Graphics/OpenGL/Material/material.h"
 
-namespace Zeroday::Ecs {
+namespace Zeroday {
 
-    MaterialSSBO MaterialComponent::ToGPUFormat() const {
+    opengl::MaterialSSBO MaterialComponent::ToGPUFormat() const {
         if (m_Instance) {
             return m_Instance->ToGPUFormat();
         }
         // Return default material if no instance
-        MaterialSSBO defaultMat;
+        opengl::MaterialSSBO defaultMat;
         defaultMat.baseColor = glm::vec4(1.0f);
         defaultMat.metallic = 0.0f;
         defaultMat.roughness = 0.5f;

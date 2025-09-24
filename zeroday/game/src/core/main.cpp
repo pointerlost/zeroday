@@ -1,9 +1,9 @@
 #include "core/main.h"
-#include "core/Logger.h"
+#include <memory>
 
 int main()
 {
-	const auto engine = CreateScope<Zeroday::Engine>();
+	const auto engine = Zeroday::CreateScope<Zeroday::Engine>();
 
 	try {
 		// init engine pointers
@@ -11,17 +11,17 @@ int main()
 
 		// init resources
 		if (!engine->InitResources()) {
-			Logger::Error("Failed to initialize resources!");
+			Zeroday::Error("Failed to initialize resources!");
 			return -1;
 		}
 
 		// start the engine
 		if (!engine->Run()) {
-			Logger::Error("Engine run failed or stopped because of some reasons!");
+			Zeroday::Error("Engine run failed or stopped because of some reasons!");
 			return -1;
 		}
 	} catch (const std::exception& e) {
-		Logger::Error("Engine source loading encountered a problem! Error: " + std::string(e.what()));
+		Zeroday::Error("Engine source loading encountered a problem! Error: " + std::string(e.what()));
 		return -1;
 	}
 

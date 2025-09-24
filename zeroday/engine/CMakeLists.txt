@@ -111,9 +111,7 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Mesh/MeshFactory.h
     include/Graphics/OpenGL/Mesh/MeshData3D.h
         include/Graphics/OpenGL/Renderer/GPURenderer.h
-    src/Utility/buffer_updater.cpp
-    include/Utility/buffer_updater.h
-    include/core/Services.h
+        include/core/Services.h
     src/core/Services.cpp
     include/Scene/systems.h
     include/Scene/transform_system.h
