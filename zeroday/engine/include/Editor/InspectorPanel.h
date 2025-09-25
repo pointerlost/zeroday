@@ -2,7 +2,6 @@
 // Created by pointerlost on 8/13/25.
 //
 #pragma once
-#include "Scene/Scene.h"
 #include "EditorPanel.h"
 
 
@@ -28,6 +27,6 @@ namespace Zeroday::Editor::UI {
         void drawComponentUI(LightComponent& comp);
         void drawComponentUI(CameraComponent& comp);
 
-        bool deleteEntity(NameComponent& comp, EditorState& state);
+        bool DeleteEntity(NameComponent& comp, EditorState& state);
     };
 }

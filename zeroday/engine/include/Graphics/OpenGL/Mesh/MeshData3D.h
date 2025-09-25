@@ -2,78 +2,72 @@
 #include <vector>
 #include <memory>
 #include <glm/glm.hpp>
-#include <functional>
 #include <unordered_map>
+#include "glad/glad.h"
 
 
 namespace Zeroday {
 
-	struct Vertex
-	{
-		glm::vec3 position;
-		glm::vec3 normal;
-		glm::vec2 UV;
-	};
+    struct Vertex {
+        glm::vec3 m_Position;
+        glm::vec3 m_Normal;
+        glm::vec2 UV;
+    };
 
-	struct SubMeshInfo
-	{
-		uint32_t vertexOffset;
-		uint32_t indexOffset;
-		uint32_t vertexCount;
-		uint32_t indexCount;
+    struct SubMeshInfo {
+        uint32_t m_VertexOffset;
+        uint32_t m_IndexOffset;
+        uint32_t m_VertexCount;
+        uint32_t m_IndexCount;
+    };
 
-		// VAO ownership
-		uint32_t VAO;
-	};
+    class MeshData {
+    public:
+        // Add proper constructor/destructor
+        MeshData() = default;
+        ~MeshData() { Cleanup(); }
 
-	class MeshData
-	{
-	public:
-		[[nodiscard]] SubMeshInfo& AddMesh(std::vector<Vertex> v, std::vector<uint32_t> i, const std::string& name);
+        // Disable copying (or implement proper resource management)
+        MeshData(const MeshData&) = delete;
+        MeshData& operator=(const MeshData&) = delete;
 
-		void createVAO(const std::string& subMeshName);
-		void uploadToGPU();
+        [[nodiscard]] SubMeshInfo& AddMesh(std::vector<Vertex> v, std::vector<uint32_t> i, const std::string& name);
+        void UploadToGPU();
+        void CreateUniversalVAO();
+        void Cleanup();
 
-		[[nodiscard]] SubMeshInfo& getMeshInfo(const std::string& name) { return objectInfo.at(name); };
+        [[nodiscard]] SubMeshInfo& getMeshInfo(const std::string& name) {
+            return objectInfo.at(name);
+        }
 
-		[[nodiscard]] uint32_t getVBO() const { return VBO; };
-		[[nodiscard]] uint32_t getEBO() const { return EBO; };
+        [[nodiscard]] GLuint GetUniversalVAO() const { return m_UniversalVAO; }
+        [[nodiscard]] uint32_t getVBO() const { return m_VBO; }
+        [[nodiscard]] uint32_t getEBO() const { return m_EBO; }
 
-		void setVBO(uint32_t vbo) { VBO = vbo; };
-		void setEBO(uint32_t ebo) { EBO = ebo; };
+        [[nodiscard]] const std::vector<Vertex>& getVertices() const { return all_Vertices; }
+        [[nodiscard]] const std::vector<uint32_t>& getIndices() const { return all_Indices; }
 
-		[[nodiscard]] const std::vector<SubMeshInfo>& getSubMeshInfos() const { return subMeshInfos; };
-		[[nodiscard]] const std::vector<Vertex>& getVertices()          const { return all_Vertices; };
-		[[nodiscard]] const std::vector<uint32_t>& getIndices()         const { return all_Indices;  };
+    private:
+        GLuint m_UniversalVAO = 0;
+        uint32_t m_VBO = 0;
+        uint32_t m_EBO = 0;
 
-	protected:
-		std::vector<Vertex> all_Vertices;
-		std::vector<uint32_t> all_Indices;
-		std::vector<SubMeshInfo> subMeshInfos;
-		std::unordered_map<std::string, SubMeshInfo> objectInfo;
+        std::vector<Vertex> all_Vertices;
+        std::vector<uint32_t> all_Indices;
+        std::unordered_map<std::string, SubMeshInfo> objectInfo;
+    };
 
-		uint32_t VBO = 0;
-		uint32_t EBO = 0;
+    class MeshData3D : public MeshData {
+    public:
+        ~MeshData3D() { Cleanup(); }
+        void AddMesh3DToMeshData(const std::string& name, std::vector<Vertex>& v, std::vector<uint32_t>& i);
 
-		// these counts storting for memory allocation in GPU when the engine is started
-		size_t maxVertices = 0;
-		size_t maxIndices  = 0;
+        [[nodiscard]] uint32_t getIndexCount(const std::string& name) {
+            return getMeshInfo(name).m_IndexCount;
+        }
 
-		// these counts storing for new memory allocations in GPU memory,
-		// when the maxVertices and maxIndices counts are insufficient
-		size_t currVertexCount = 0;
-		size_t currIndexCount  = 0;
-	};
-
-	struct MeshData3D : public MeshData
-	{
-	public:
-		~MeshData3D();
-
-		void AddMesh3DToMeshData(const std::string& name, std::vector<Vertex>& v, std::vector<uint32_t>& i);
-
-		[[nodiscard]] uint32_t getIndexCount(const std::string& name)  const { return objectInfo.at(name).indexCount; };
-		[[nodiscard]] uint32_t getIndexOffSet(const std::string& name) const { return objectInfo.at(name).indexOffset; };
-	};
-	
+        [[nodiscard]] uint32_t getIndexOffSet(const std::string& name) {
+            return getMeshInfo(name).m_IndexOffset;
+        }
+    };
 }

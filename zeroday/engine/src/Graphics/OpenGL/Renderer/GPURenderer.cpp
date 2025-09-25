@@ -7,6 +7,8 @@
 #include "core/AssetManager.h"
 #include "core/Logger.h"
 #include "core/Services.h"
+#include "Graphics/OpenGL/Mesh/MeshData3D.h"
+#include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 
 namespace Zeroday::opengl {
 
@@ -122,6 +124,8 @@ namespace Zeroday::opengl {
     void GPURenderer::CollectSceneData() {
         auto extracted = SceneRenderer::ExtractRenderables(m_Scene);
 
+        m_CurrentLightCount = extracted.lights.size();
+
         // Use persistent mapping for frequent updates
         {
             void* transformData = m_TransformBuffer.BeginUpdate();
@@ -133,6 +137,12 @@ namespace Zeroday::opengl {
             void* materialData = m_MaterialBuffer.BeginUpdate();
             memcpy(materialData, extracted.materials.data(), extracted.materials.size() * sizeof(MaterialSSBO));
             m_MaterialBuffer.EndUpdate(extracted.materials.size() * sizeof(MaterialSSBO));
+        }
+
+        {
+            void* lightData = m_LightBuffer.BeginUpdate();
+            memcpy(lightData, extracted.lights.data(), extracted.lights.size() * sizeof(LightSSBO));
+            m_LightBuffer.EndUpdate(extracted.lights.size() * sizeof(LightSSBO));
         }
 
         // Generate commands/payloads directly into mapped memory
@@ -171,9 +181,35 @@ namespace Zeroday::opengl {
     }
 
     void GPURenderer::RenderFrame() {
-        AssetManager::GetShader("main")->bind();
+        auto shader = AssetManager::GetShader("main");
+
+        shader->Bind();
+        shader->SetUint("uLightCount", m_CurrentLightCount);
+
+        auto meshData = Services::GetMeshLibrary()->GetMeshData3D();
+
+        const GLuint universalVAO = meshData->GetUniversalVAO();
+        if (universalVAO == 0) {
+            Error("Universal VAO not created!");
+            return;
+        }
+
+        glBindVertexArray(universalVAO);
+
+        // Check for OpenGL errors
+        GLenum err;
+        while ((err = glGetError()) != GL_NO_ERROR) {
+            Error("OpenGL error before draw: " + std::to_string(err));
+        }
+
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_IndirectCommandBuffer.GetHandle());
-        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr,
-                                   m_RenderCommandsOfPerEntity.GetCount(), 0);
+        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, m_RenderCommandsOfPerEntity.GetCount(), 0);
+
+        // Check for OpenGL errors after draw
+        while ((err = glGetError()) != GL_NO_ERROR) {
+            Error("OpenGL error after draw: " + std::to_string(err));
+        }
+
+        glBindVertexArray(0);
     }
 }

@@ -11,7 +11,7 @@ namespace Zeroday {
 
     MeshLibrary::MeshLibrary() : meshData3D(CreateRef<MeshData3D>()),
                                  meshFactory(CreateRef<MeshFactory>()) {
-        meshFactory->setupMeshes(meshData3D);
+        meshFactory->SetupMeshes(meshData3D);
     }
 }
 

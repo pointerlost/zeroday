@@ -1,13 +1,17 @@
 #version 460
 
 #include "core/buffers.glsl"
-#include "core/attributes.glsl"
 #include "common/constants.glsl"
 #include "common/command_generation.glsl"
 
+layout(location = 0) in vec3 aPosition;
+layout(location = 1) in vec3 aNormal;
+layout(location = 2) in vec2 aUV;
+
 // Output to fragment shader
-out vec3 vFragPos;
-out vec3 vViewDir;
+out vec3 vFragPos; // for lighting
+out vec2 vUV;
+out vec3 vNormal;
 flat out int vMaterialIndex;
 
 void main() {
@@ -20,21 +24,13 @@ void main() {
 
     // Transform to world space
     vec4 worldPos = transform.modelMatrix * vec4(aPosition, 1.0);
-    vWorldPos = worldPos.xyz;
-    vFragPos = worldPos.xyz;
+    vFragPos  = worldPos.xyz;
 
     // Transform normal
     vNormal = mat3(transform.normalMatrix) * aNormal;
-
-    // Pass through UV
     vUV = aUV;
-
-    // Calculate view direction (world space)
-    vViewDir = normalize(uCamera.position - vWorldPos);
-
-    // Set material index for fragment shader
     vMaterialIndex = payload.materialIndex;
 
-    // Final position - use efficient viewProjection matrix
-    gl_Position = GetViewProj() * worldPos;
+    // Final position
+    gl_Position = uCamera.viewProjection * worldPos;
 }

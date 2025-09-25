@@ -1,4 +1,5 @@
 #include "core/File.h"
+#include <fstream>
 #include "core/Logger.h"
 
 namespace Zeroday

@@ -85,6 +85,8 @@ namespace Zeroday::opengl {
 
         GPUBuffer<GlobalUBO, BufferType::UBO> m_GlobalBuffer;
         GPUBuffer<CameraUBO, BufferType::UBO> m_CameraBuffer;
+
+        uint32_t m_CurrentLightCount = 0;
     };
 
 }

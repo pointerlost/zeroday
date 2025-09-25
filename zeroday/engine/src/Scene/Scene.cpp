@@ -64,11 +64,14 @@ namespace Zeroday {
     }
 
     Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name) {
+        if (m_Entities.contains(uuid)) {
+            Warn("Entity already exists!");
+            return m_Entities[uuid];
+        }
         Entity entity = { m_Registry.create(), this };
         entity.AddComponent<IDComponent>(uuid);
         entity.AddComponent<TransformComponent>();
-        auto& tag = entity.AddComponent<NameComponent>();
-        tag.name = name.empty() ? "Entity" : name;
+        entity.AddComponent<NameComponent>().name = name.empty() ? CreateUniqueName() : name;
 
         m_Entities[uuid] = entity;
 
@@ -80,4 +83,32 @@ namespace Zeroday {
         m_Registry.destroy(entity);
     }
 
+    Entity Scene::GetEntityWithUUID(UUID uuid) {
+        if (m_Entities.contains(uuid)) {
+            return m_Entities[uuid];
+        }
+        ZD_WARN("Entity does not exist! returning a new one!");
+        Warn("Entity does not exist! returning a new one!");
+        return Entity{};
+    }
+
+    std::string Scene::CreateUniqueName() {
+        std::string readNumbers;
+        static std::string lastUsedName = "Entity";
+        const std::string name = lastUsedName;
+
+        int i = static_cast<int>(name.size()) - 1;
+        while (i >= 0 && std::isdigit(name[i])) {
+            readNumbers.push_back(name[i]);
+            --i;
+        }
+
+        std::string baseName = name.substr(0, i + 1);
+        int number = readNumbers.empty() ? 1 : std::stoi(readNumbers) + 1;
+        baseName += std::to_string(number);
+
+        lastUsedName = baseName;
+
+        return baseName;
+    }
 }

@@ -48,7 +48,6 @@ namespace Zeroday {
 		void InitCallBack();
 		void InitAssetManager();
 		void InitWorld();
-		void InitOpenGLBufferState();
 		void InitModel();
 		void InitTexture();
 		void InitMaterial();

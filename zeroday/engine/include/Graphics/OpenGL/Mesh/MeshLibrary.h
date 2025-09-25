@@ -5,12 +5,11 @@
 #include <memory>
 
 namespace Zeroday {
-
-    // forward declarations
-    struct MeshData3D;
     class MeshFactory;
+    struct MeshData3D;
+}
 
-    /* *  MESH LIBRARY * */
+namespace Zeroday {
 
     class MeshLibrary {
     public:

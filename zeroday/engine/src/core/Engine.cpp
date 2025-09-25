@@ -7,6 +7,7 @@
 #include "Editor/InspectorPanel.h"
 #include "Editor/MenuBarPanel.h"
 #include "Editor/SceneHierarchyPanel.h"
+#include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Scene/SceneObjectFactory.h"
 
 namespace Zeroday {
@@ -75,7 +76,6 @@ namespace Zeroday {
 			InitWindow();
 			InitCallBack();
 			InitWorld();
-			InitOpenGLBufferState();
 			InitAssetManager();
 			InitTexture();
 			InitMaterial();
@@ -95,8 +95,8 @@ namespace Zeroday {
 		}
 	}
 
-    void Engine::EditorStateLoop(GLFWwindow* glfwWin)
-    {
+    void Engine::EditorStateLoop(GLFWwindow* glfwWin) {
+
 		while (!glfwWindowShouldClose(glfwWin) && !m_EditorState->requestShutdown)
 		{
 			UpdatePhase();
@@ -106,8 +106,7 @@ namespace Zeroday {
 		}
     }
 
-    void Engine::InitWindow()
-    {
+    void Engine::InitWindow() {
         m_Window = CreateScope<Window>();
 
 		if (!m_Window->initResources()) {
@@ -130,41 +129,31 @@ namespace Zeroday {
 		Info("[Engine::InitWorld] World initialized successfully!");
 	}
 
-	void Engine::InitOpenGLBufferState() {
-		// m_GLBufferManager = CreateScope<opengl::BufferManager>();
-
-		// Logger::Info("[Engine::InitOpenGLBufferState] glBufferManager initialized successfully!");
-	}
-
 	void Engine::InitAssetManager() {
 		g_AssetManager = CreateScope<AssetManager>();
 
 		Info("[Engine::InitAssetManager] AssetManager initialized successfully!");
 	}
 
-	void Engine::InitTexture()
-	{
+	void Engine::InitTexture() {
 		g_TextureManager = CreateScope<TextureManager>();
 
 		Info("[Engine::InitTexture] TextureManager initialized successfully!");
 	}
 
-	void Engine::InitMaterial()
-	{
+	void Engine::InitMaterial() {
 		g_MaterialLibrary = CreateScope<MaterialLibrary>();
 
 		Info("[Engine::InitMaterial] MaterialLibrary initialized successfully!");
 	}
 
-	void Engine::InitMesh()
-	{
+	void Engine::InitMesh() {
 		g_MeshLibrary = CreateScope<MeshLibrary>();
 
 		Info("[Engine::InitMesh] MeshLibrary initialized successfully!");
 	}
 
-	void Engine::InitModel()
-	{
+	void Engine::InitModel() {
 		g_ModelLoader = CreateScope<ModelLoader>();
 
 		Info("[Engine::InitModel] Model Loader initialized successfully!]");
@@ -180,8 +169,7 @@ namespace Zeroday {
 		Info("[Engine::InitRender] RendererManager initialized successfully!");
 	}
 
-	void Engine::InitScene()
-	{
+	void Engine::InitScene() {
 		m_SceneObjectFactory = CreateScope<SceneObjectFactory>(*m_Scene);
 
 		Info("SceneObjectFactory initialized successfully!");
@@ -190,10 +178,16 @@ namespace Zeroday {
 	void Engine::InitEditor() {
 		m_EditorState = CreateScope<Editor::EditorState>();
 
-		Entity editorCamera = m_SceneObjectFactory->CreateCamera(CameraMode::Perspective);
+		Info("[Engine::InitEditor] Editor initialized successfully!");
+
+		Entity editorCamera = m_SceneObjectFactory->CreateCamera(CameraMode::Perspective, "Editor Camera");
+		if (!editorCamera) {
+			Error("[Engine::InitEditor] Failed to create editor camera!");
+			return;
+		}
 
 		m_EditorState->cameraEntity = editorCamera;
-		m_EditorState->world = m_Scene.get();
+		m_EditorState->scene = m_Scene.get();
 
 		m_Editor = CreateScope<Editor::Editor>(m_EditorState.get());
 		// need update !!?
@@ -204,21 +198,18 @@ namespace Zeroday {
 		Info("[Engine::InitEditor] Editor initialized successfully!]");
 	}
 
-	void Engine::InitImGui()
-	{
+	void Engine::InitImGui() {
 		m_ImGuiLayer = CreateScope<UI::ImGuiLayer>(m_Window->getGLFWwindow(), m_SceneObjectFactory.get());
 
 		Info("[Engine::InitImGui] ImGuiLayer initialized successfully!");
 	}
 
-	void Engine::OpenGLSetUpResources() noexcept
-	{
+	void Engine::OpenGLSetUpResources() noexcept {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 	}
 
-	void Engine::OpenGLRenderStuff() noexcept
-	{
+	void Engine::OpenGLRenderStuff() noexcept {
 		// Screen Color
 		glClearColor(0.04f, 0.05f, 0.06f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -249,7 +240,6 @@ namespace Zeroday {
 	}
 
 	void Engine::CleanupPhase() {
-		// m_Scene->Cl();
 		glfwRenderEventStuff();
 	}
 }

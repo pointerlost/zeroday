@@ -2,7 +2,7 @@
 // Created by pointerlost on 8/13/25.
 //
 #pragma once
-#include "entt/entt.hpp"
+#include "Scene/Entity.h"
 
 namespace Zeroday {
     class Scene;
@@ -16,9 +16,9 @@ namespace Zeroday::Editor {
         bool showInspector = true;
         bool showSceneView = true;
 
-        entt::entity selectedEntity = {};
-        entt::entity cameraEntity   = {};
-        Scene* world = nullptr;
+        Entity selectedEntity = {};
+        Entity cameraEntity   = {};
+        Scene* scene = nullptr;
 
         bool requestShutdown = false;
     };

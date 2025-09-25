@@ -4,9 +4,8 @@
 #pragma once
 #include <iostream>
 #include <unordered_map>
-#include "entt/entt.hpp"
 #include "core/UUID.h"
-
+#include "entt/entt.hpp"
 
 namespace Zeroday { class Entity; }
 
@@ -26,15 +25,17 @@ namespace Zeroday {
             return m_Registry.view<Components...>();
         }
 
+        Entity GetEntityWithUUID(UUID uuid);
+        size_t GetEntityCount() const { return m_Entities.size(); }
 
     private:
         template <typename T>
         void OnComponentAdded(Entity entity, T& component);
 
+        std::string CreateUniqueName();
     private:
         entt::registry m_Registry;
-
-        std::unordered_map<UUID ,entt::entity> m_Entities;
+        std::unordered_map<UUID ,Entity> m_Entities;
 
         friend class Entity;
     };

@@ -87,9 +87,9 @@ namespace Zeroday {
         glDeleteShader(fragmentShader);
 
         Shader instance;
-        instance.name = name;
-        instance.program = shaderProgram;
-        instance.cacheUniformLocations();
+        instance.m_Name = name;
+        instance.m_Program = shaderProgram;
+        instance.CacheUniformLocations();
 
         g_shaders[name] = std::move(instance);
         return true;
@@ -135,9 +135,9 @@ namespace Zeroday {
         glDeleteShader(computeShader);
 
         Shader instance;
-        instance.name = name;
-        instance.program = shaderProgram;
-        instance.cacheUniformLocations();
+        instance.m_Name = name;
+        instance.m_Program = shaderProgram;
+        instance.CacheUniformLocations();
 
         g_shaders[name] = std::move(instance);
         return true;

@@ -16,13 +16,18 @@ namespace Zeroday::Editor::UI {
 
         ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoResize);
 
-        // for (auto& [entity, nameComp] : state.world->getStorage<NameComponent>().GetAll()) {
-        //     if (ImGui::Button(nameComp.name.c_str())) {
-        //         state.selectedEntity = entity;
-        //     } else if (ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered() && !ImGui::IsWindowHovered()) {
-        //         state.selectedEntity = -1;
-        //     }
-        // }
+        auto view = state.scene->GetAllEntitiesWith<NameComponent>();
+        for (auto [enttEntity, nameComp] : view.each()) {
+
+            // Create entity as Entity (we have Entity so for editor we will use type-casting)
+            const Entity entity(enttEntity, state.scene);
+
+            if (ImGui::Button(nameComp.name.c_str())) {
+                state.selectedEntity = entity;
+            } else if (ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered() && !ImGui::IsWindowHovered()) {
+                state.selectedEntity = Entity{};
+            }
+        }
 
         ImGui::End();
     }

@@ -1,16 +1,15 @@
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include <cstring>
+#include <ranges>
 #include <glad/glad.h>
-
 #include "core/Logger.h"
 
 namespace Zeroday {
 
-    void MeshData::uploadToGPU()
-    {
+    void MeshData::UploadToGPU() {
         // Create and upload VBO
-        glGenBuffers(1, &VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glGenBuffers(1, &m_VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferData(GL_ARRAY_BUFFER,
                      all_Vertices.size() * sizeof(Vertex),
                      all_Vertices.data(),
@@ -18,8 +17,8 @@ namespace Zeroday {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // Create and upload EBO
-        glGenBuffers(1, &EBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glGenBuffers(1, &m_EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                      all_Indices.size() * sizeof(uint32_t),
                      all_Indices.data(),
@@ -27,47 +26,12 @@ namespace Zeroday {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    void MeshData::createVAO(const std::string& subMeshName)
-    {
-        auto& subMesh = getMeshInfo(subMeshName);
-
-        if (subMesh.VAO != 0) return;
-
-        glGenVertexArrays(1, &subMesh.VAO);
-        glBindVertexArray(subMesh.VAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-        // Position attribute
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                             reinterpret_cast<void*>(offsetof(Vertex, position)));
-
-        // Normal attribute
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                             reinterpret_cast<void*>(offsetof(Vertex, normal)));
-
-        // UV attribute
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                             reinterpret_cast<void*>(offsetof(Vertex, UV)));
-
-        Info("Created VAO: " + std::to_string(subMesh.VAO) +
-                     " for submesh: " + subMeshName);
-
-        // Unbind VAO
-        glBindVertexArray(0);
-    }
-
-    SubMeshInfo& MeshData::AddMesh(std::vector<Vertex> v, std::vector<uint32_t> i, const std::string& name)
-    {
+    SubMeshInfo& MeshData::AddMesh(std::vector<Vertex> v, std::vector<uint32_t> i, const std::string& name) {
         SubMeshInfo info{};
-        info.vertexOffset = all_Vertices.size();
-        info.indexOffset = all_Indices.size();
-        info.vertexCount = v.size();
-        info.indexCount = i.size();
+        info.m_VertexOffset = all_Vertices.size();
+        info.m_IndexOffset = all_Indices.size();
+        info.m_VertexCount = v.size();
+        info.m_IndexCount = i.size();
 
         // Add vertices
         all_Vertices.insert(all_Vertices.end(), v.begin(), v.end());
@@ -76,36 +40,66 @@ namespace Zeroday {
         all_Indices.reserve(all_Indices.size() + i.size());
         for (const auto idx : i)
         {
-            all_Indices.push_back(idx + info.vertexOffset);
+            all_Indices.push_back(idx + info.m_VertexOffset);
         }
 
-        subMeshInfos.push_back(info);
         objectInfo[name] = info;
-        createVAO(name);
 
-        return subMeshInfos.back();
+        return objectInfo[name];
     }
 
-    MeshData3D::~MeshData3D()
-    {
-        for (auto& info : subMeshInfos)
-        {
-            if (info.VAO != 0)
-            {
-                glDeleteVertexArrays(1, &info.VAO);
-                info.VAO = 0;
-            }
+    void MeshData::CreateUniversalVAO() {
+        if (m_UniversalVAO != 0) {
+            glDeleteVertexArrays(1, &m_UniversalVAO);
         }
 
-        // Consider also deleting VBO and EBO here if appropriate
-        glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
+        glCreateVertexArrays(1, &m_UniversalVAO);
+
+        // direct state access
+        // Bind VBO to VAO's vertex buffer binding point
+        glVertexArrayVertexBuffer(m_UniversalVAO, 0, m_VBO, 0, sizeof(Vertex));
+
+        // Bind EBO to VAO
+        glVertexArrayElementBuffer(m_UniversalVAO, m_EBO);
+
+        // Set up vertex attributes
+        // Position (location = 0)
+        glEnableVertexArrayAttrib(m_UniversalVAO, 0);
+        glVertexArrayAttribFormat(m_UniversalVAO, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, m_Position));
+        glVertexArrayAttribBinding(m_UniversalVAO, 0, 0);
+
+        // Normal (location = 1)
+        glEnableVertexArrayAttrib(m_UniversalVAO, 1);
+        glVertexArrayAttribFormat(m_UniversalVAO, 1, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, m_Normal));
+        glVertexArrayAttribBinding(m_UniversalVAO, 1, 0);
+
+        // UV (location = 2)
+        glEnableVertexArrayAttrib(m_UniversalVAO, 2);
+        glVertexArrayAttribFormat(m_UniversalVAO, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, UV));
+        glVertexArrayAttribBinding(m_UniversalVAO, 2, 0);
+
+        Info("Created Universal VAO: " + std::to_string(m_UniversalVAO) +
+             " with " + std::to_string(all_Vertices.size()) + " vertices");
+    }
+
+    void MeshData::Cleanup() {
+        if (m_UniversalVAO != 0) {
+            glDeleteVertexArrays(1, &m_UniversalVAO);
+            m_UniversalVAO = 0;
+        }
+        if (m_VBO != 0) {
+            glDeleteBuffers(1, &m_VBO);
+            m_VBO = 0;
+        }
+        if (m_EBO != 0) {
+            glDeleteBuffers(1, &m_EBO);
+            m_EBO = 0;
+        }
     }
 
     void MeshData3D::AddMesh3DToMeshData(const std::string& name,
-                                                std::vector<Vertex>& v,
-                                                std::vector<uint32_t>& i)
-    {
+                                        std::vector<Vertex>& v,
+                                        std::vector<uint32_t>& i) {
         (void)AddMesh(std::move(v), std::move(i), name);
     }
 

@@ -6,7 +6,7 @@
 namespace Zeroday {
 
     Entity::Entity(entt::entity handle, Scene *scene)
-        : m_Handle(handle), m_Scene(scene)
-    {
+        : m_Handle(handle), m_Scene(scene) {
+        ZD_ASSERT(m_Scene, "Scene cannot be nullptr!");
     }
 }

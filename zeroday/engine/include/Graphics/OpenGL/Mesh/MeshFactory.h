@@ -13,20 +13,20 @@ namespace Zeroday
 	public:
 		MeshFactory();
 
-		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> createTriangle();
-		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> createSquare();
-		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> createCube();
-		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> createCircle();
-		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> createSphere();
+		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> CreateTriangle();
+		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> CreateSquare();
+		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> CreateCube();
+		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> CreateCircle();
+		static std::pair<std::vector<Vertex>, std::vector<uint32_t>> CreateSphere();
 
-		std::pair<std::vector<Vertex>, std::vector<uint32_t>> createMeshObject(const std::string &name);
+		std::pair<std::vector<Vertex>, std::vector<uint32_t>> CreateMeshObject(const std::string &name);
 
-		void setupMeshes(const std::shared_ptr<MeshData3D>& meshData);
+		void SetupMeshes(const std::shared_ptr<MeshData3D>& meshData);
 
 		// add cube, sphere, etc.
 	private:
 		std::unordered_map<std::string, std::function<std::pair<std::vector<Vertex>, std::vector<uint32_t>>()>> meshObjects;
 
-		void addObjectsIntoMap();
+		void AddObjectsIntoMap();
 	};
 }

@@ -39,11 +39,10 @@ namespace Zeroday::opengl {
 
             // Fill command for per-entity
             RenderCommandMDI cmd;
-            cmd.vao = meshInfo.VAO;
             cmd.materialIndex  = materialIndex;
             cmd.transformIndex = transformIndex;
-            cmd.indexCount     = meshInfo.indexCount;
-            cmd.indexOffset    = meshInfo.indexOffset;
+            cmd.indexCount     = meshInfo.m_IndexCount;
+            cmd.indexOffset    = meshInfo.m_IndexOffset;
             result.renderCommands.push_back(cmd);
         }
 

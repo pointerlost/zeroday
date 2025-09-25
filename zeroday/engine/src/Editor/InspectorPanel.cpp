@@ -4,6 +4,7 @@
 #include "Editor/InspectorPanel.h"
 #include "core/EngineConfig.h"
 #include <imgui.h>
+#include "Editor/EditorState.h"
 #include "glm/ext.hpp"
 #include "Scene/Scene.h"
 #include "Graphics/OpenGL/Lighting/Light.h"
@@ -11,36 +12,48 @@
 #include "Graphics/OpenGL/Transformations/Transformations.h"
 #include "Scene/Components.h"
 #include "Graphics/OpenGL/Material/material.h"
+#include "Scene/Entity.h"
 
 namespace Zeroday::Editor::UI {
 
     void InspectorPanel::Draw(EditorState &state) {
-        // const auto world = state.world;
-        //
-        // float inspectorX = InspectorWidth;
-        // float inspectorY = InspectorHeight;
-        // ImGui::SetNextWindowPos({SCR_WIDTH - InspectorWidth, MainMenuBarHeight}, ImGuiCond_Always);
-        // ImGui::SetNextWindowSize({inspectorX, inspectorY}, ImGuiCond_Always);
-        //
-        // ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize);
-        //
-        // auto* nameComp         = world->GetComponent<ecs::NameComponent>(state.selectedEntity);
-        // auto* transformComp= world->GetComponent<ecs::TransformComponent>(state.selectedEntity);
-        // auto* matComp        = world->GetComponent<ecs::MaterialComponent>(state.selectedEntity);
-        // auto* lightComp         = world->GetComponent<ecs::LightComponent>(state.selectedEntity);
-        // auto* camComp        = world->GetComponent<ecs::CameraComponent>(state.selectedEntity);
-        //
-        // if (nameComp && deleteEntity(*nameComp, state)) {
-        //     ImGui::End();
-        //     return;
-        // }
-        // if (nameComp)      drawComponentUI(*nameComp);
-        // if (transformComp) drawComponentUI(*transformComp);
-        // if (camComp)       drawComponentUI(*camComp);
-        // if (lightComp)     drawComponentUI(*lightComp);
-        // if (matComp)       drawComponentUI(*matComp);
-        //
-        // ImGui::End();
+        auto scene = state.scene;
+
+        float inspectorX = InspectorWidth;
+        float inspectorY = InspectorHeight;
+        ImGui::SetNextWindowPos({SCR_WIDTH - InspectorWidth, MainMenuBarHeight}, ImGuiCond_Always);
+        ImGui::SetNextWindowSize({inspectorX, inspectorY}, ImGuiCond_Always);
+
+        ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoResize);
+
+        if (!state.selectedEntity.IsValid()) {
+            ImGui::End();
+            return;
+        }
+
+        Entity entity = scene->GetEntityWithUUID(state.selectedEntity.GetUUID());
+
+        auto [nameComp, transformComp, materialComp, lightComp, cameraComp]
+        = entity.TryGetAllComponents<NameComponent, TransformComponent, MaterialComponent, LightComponent, CameraComponent>();
+
+        if (nameComp && DeleteEntity(*nameComp, state)) {
+            ImGui::End();
+            return;
+        }
+
+        drawComponentUI(*nameComp);
+        drawComponentUI(*transformComp);
+        if (materialComp) {
+            drawComponentUI(*materialComp);
+        }
+        if (entity.HasComponent<CameraComponent>()) {
+            drawComponentUI(*cameraComp);
+        }
+        if (entity.HasComponent<LightComponent>()) {
+            drawComponentUI(*lightComp);
+        }
+
+        ImGui::End();
     }
 
     void InspectorPanel::drawComponentUI(NameComponent &comp) {
@@ -225,7 +238,7 @@ namespace Zeroday::Editor::UI {
         ImGui::PopID();
     }
 
-    bool InspectorPanel::deleteEntity(NameComponent &comp, EditorState &state) {
+    bool InspectorPanel::DeleteEntity(NameComponent &comp, EditorState &state) {
         ImGui::PushID("Delete");
         static bool deleteWindowOpen = false;
         bool deleted = false;
@@ -244,12 +257,11 @@ namespace Zeroday::Editor::UI {
                 ImGui::Dummy(ImVec2(0, 20));
 
                 if (ImGui::Button("Yes", ImVec2(162, 50))) {
-                    // deleteWindowOpen = false;
-                    // if (state.cameraEntity != state.selectedEntity) {
-                    //     deleted = true;
-                    //     state.world->RemoveEntity(state.selectedEntity);
-                    //     state.selectedEntity = -1;
-                    // }
+                    deleteWindowOpen = false;
+                    if (state.cameraEntity != state.selectedEntity) {
+                        deleted = true;
+                        state.scene->DestroyEntity(state.scene->GetEntityWithUUID(state.selectedEntity.GetUUID()));
+                    }
                 }
 
                 ImGui::SameLine();

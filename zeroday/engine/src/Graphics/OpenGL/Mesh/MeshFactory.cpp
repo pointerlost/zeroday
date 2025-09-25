@@ -6,13 +6,11 @@
 
 namespace Zeroday
 {
-	MeshFactory::MeshFactory()
-	{
-		addObjectsIntoMap();
-	};
+	MeshFactory::MeshFactory() {
+		AddObjectsIntoMap();
+	}
 
-	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::createTriangle()
-	{
+	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::CreateTriangle() {
 		std::vector<Vertex> vertices =
 		{
 			{ glm::vec3(-0.5f, 0.5f, 0.0f),    glm::vec3{0.0, 0.0, 1.0},   glm::vec2{0.0, 1.0},    /* top left   */  },
@@ -30,9 +28,7 @@ namespace Zeroday
 		return std::make_pair(vertices, indices);
 	}
 
-
-	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::createSquare()
-	{
+	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::CreateSquare() {
 		std::vector<Vertex> vertices =
 		{
 			{ glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(0.0, 0.0, -1.0),  glm::vec3(1.0, 1.0, 0.0) /* top left   */  },
@@ -50,9 +46,7 @@ namespace Zeroday
 		return std::make_pair(vertices, indices);
 	}
 
-
-	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::createCube()
-	{
+	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::CreateCube() {
 		std::vector<Vertex> vertices =
 		{	// Vertices						                       Normal						  Color						     TexCoords
 			
@@ -117,8 +111,7 @@ namespace Zeroday
 		return std::make_pair(vertices, indices);
 	}
 
-	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::createCircle()
-	{
+	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::CreateCircle() {
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 		constexpr int segmentCount = 30;
@@ -154,9 +147,7 @@ namespace Zeroday
 		return std::make_pair(vertices, indices);
 	}
 
-
-	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::createSphere()
-	{
+	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::CreateSphere() {
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 
@@ -200,11 +191,9 @@ namespace Zeroday
 		}
 
 		return std::make_pair(vertices, indices);
-	};
+	}
 
-
-	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::createMeshObject(const std::string &name)
-	{
+	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::CreateMeshObject(const std::string &name) {
 		if (const auto it = meshObjects.find(name); it != meshObjects.end()) {
 			return it->second();
 		}
@@ -212,28 +201,32 @@ namespace Zeroday
 		return{};
 	}
 
-	void MeshFactory::setupMeshes(const Ref<MeshData3D>& meshData) {
+	void MeshFactory::SetupMeshes(const Ref<MeshData3D>& meshData) {
 
-		const auto addMeshObject = [&](const std::string &name) {
-			auto [vertices, indices] = createMeshObject(name);
+		const auto AddMeshObject = [&](const std::string &name) {
+			auto [vertices, indices] = CreateMeshObject(name);
 			meshData->AddMesh3DToMeshData(name, vertices, indices);
 		};
 
-		addMeshObject("triangle");
-		addMeshObject("square");
-		addMeshObject("cube");
-		addMeshObject("circle");
-		addMeshObject("sphere");
+		AddMeshObject("triangle");
+		AddMeshObject("square");
+		AddMeshObject("cube");
+		AddMeshObject("circle");
+		AddMeshObject("sphere");
+
+		// Creation VBO, EBO
+		meshData->UploadToGPU();
+		meshData->CreateUniversalVAO();
 
 		Info("[MeshFactory::setupMeshes] successful!");
 	}
 
-	void MeshFactory::addObjectsIntoMap()
+	void MeshFactory::AddObjectsIntoMap()
 	{
-		meshObjects["triangle"] = createTriangle;
-		meshObjects["square"]   = createSquare;
-		meshObjects["cube"]     = createCube;
-		meshObjects["circle"]   = createCircle;
-		meshObjects["sphere"]	= createSphere;
+		meshObjects["triangle"] = CreateTriangle;
+		meshObjects["square"]   = CreateSquare;
+		meshObjects["cube"]     = CreateCube;
+		meshObjects["circle"]   = CreateCircle;
+		meshObjects["sphere"]   = CreateSphere;
 	}
 }

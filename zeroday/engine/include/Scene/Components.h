@@ -41,6 +41,7 @@ namespace Zeroday {
     struct CameraComponent {
         Camera m_Camera;
 
+        explicit CameraComponent(CameraMode mode) : m_Camera(mode) {}
         explicit CameraComponent(const Camera& cam) : m_Camera(cam) {}
         CameraComponent() = default;
         CameraComponent(const CameraComponent&) = default;
@@ -68,6 +69,7 @@ namespace Zeroday {
 
         // Constructors
         explicit LightComponent(const opengl::Light& light) : m_Light(light) {}
+        explicit LightComponent(opengl::LightType type) : m_Light(type) {}
         LightComponent() = default;
         LightComponent(const LightComponent&) = default;
     };

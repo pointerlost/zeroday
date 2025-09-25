@@ -1,0 +1,69 @@
+{
+  "materials": [
+    {
+      "name": "wood",
+      "baseColor": [0.6, 0.4, 0.2, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.6,
+      "emissive": [0.0, 0.0, 0.0],
+      "baseColorTexture": ["wood_diffuse.png"]
+    },
+    {
+      "name": "venus",
+      "baseColor": [0.7, 0.7, 0.7, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.5,
+      "emissive": [0.05, 0.05, 0.05],
+      "baseColorTexture": ["venus.jpg"]
+    },
+    {
+      "name": "plastic",
+      "baseColor": [0.4, 0.4, 0.4, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.4,
+      "emissive": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "glass",
+      "baseColor": [0.3, 0.3, 0.3, 0.5],
+      "metallic": 0.0,
+      "roughness": 0.05,
+      "emissive": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "brick",
+      "baseColor": [0.7, 0.1, 0.1, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.8,
+      "emissive": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "marble",
+      "baseColor": [0.9, 0.9, 0.9, 1.0],
+      "metallic": 0.1,
+      "roughness": 0.3,
+      "emissive": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "asphalt",
+      "baseColor": [0.2, 0.2, 0.2, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.9,
+      "emissive": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "leather",
+      "baseColor": [0.4, 0.2, 0.1, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.7,
+      "emissive": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "gold",
+      "baseColor": [0.751, 0.606, 0.226, 1.0],
+      "metallic": 1.0,
+      "roughness": 0.2,
+      "emissive": [0.0, 0.0, 0.0]
+    }
+  ]
+}

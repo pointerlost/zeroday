@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include "entt/entt.hpp"
 
-inline constexpr uint32_t INVALID_ENTITY = entt::null;
+inline constexpr auto INVALID_ENTITY = entt::null;
 
 inline constexpr int MAX_ENTITIES = 262144; // do it power of two, easy for allocation
 inline constexpr int MAX_LIGHTS = 4096;

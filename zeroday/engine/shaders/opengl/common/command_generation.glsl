@@ -3,7 +3,6 @@
 
 // Metadata table (per entity)
 struct RenderCommandMDI {
-    uint vao;
     uint materialIndex;
     uint transformIndex;
     uint indexCount;

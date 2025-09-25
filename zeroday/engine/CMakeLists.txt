@@ -110,13 +110,7 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Renderer/GPURenderer.h
     include/core/Services.h
     src/core/Services.cpp
-    include/Scene/systems.h
-    include/Scene/transform_system.h
-    include/Scene/material_system.h
-    include/Scene/light_system.h
-    include/Scene/camera_system.h
-    src/Scene/TransformSystem.cpp
-    include/Graphics/OpenGL/Camera/Camera.h
+        include/Graphics/OpenGL/Camera/Camera.h
     src/Graphics/OpenGL/Camera/Camera.cpp
     src/core/Logger.cpp
     include/Scene/Scene.h
@@ -178,7 +172,7 @@ set(ASSETS_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets/")
 set(TEXTURES_DIR "${ASSETS_DIR}textures/")
 set(MODEL_DIR "${ASSETS_DIR}models/")
 set(SHADERS_CONFIG_PATH "${SHADERS_DIR}config/shaders.json")
-set(MATERIAL_JSON_PATH "${ASSETS_DIR}materialJSON/")
+set(MATERIAL_JSON_PATH "${ASSETS_DIR}json/")
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Config.h.in

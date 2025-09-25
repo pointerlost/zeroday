@@ -2,13 +2,10 @@
 // Created by pointerlost on 9/19/25.
 //
 #pragma once
+#include <typeindex>
 #include "Components.h"
 #include "core/Assert.h"
 #include "Scene.h"
-
-namespace Zeroday {
-    struct IDComponent;
-}
 
 namespace Zeroday {
 
@@ -38,9 +35,23 @@ namespace Zeroday {
         }
 
         template<typename T>
+        [[nodiscard]] T* TryGetComponent() {
+            return m_Scene->m_Registry.try_get<T>(m_Handle);
+        }
+
+        template<typename... Components>
+        auto TryGetAllComponents() {
+            return std::make_tuple(TryGetComponent<Components>()...);
+        }
+
+        template<typename T>
         void RemoveComponent() {
             ZD_ASSERT(HasComponent<T>(), "Entity does not have component!");
             m_Scene->m_Registry.remove<T>(m_Handle);
+        }
+
+        [[nodiscard]] bool IsValid() const {
+            return m_Handle != entt::null && m_Scene != nullptr;
         }
 
         [[nodiscard]] operator bool() const { return m_Handle != entt::null; }
