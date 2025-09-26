@@ -13,14 +13,17 @@ namespace Zeroday::opengl {
     ExtractResult SceneRenderer::ExtractRenderables(Scene *scene) {
         ExtractResult result;
 
-        const auto view = scene->GetAllEntitiesWith<
-            TransformComponent,
-            MeshComponent,
-            MaterialComponent
-        >();
+        const auto view = scene->GetAllEntitiesWith<TransformComponent, MeshComponent, MaterialComponent>();
+
+        // Track which entities we've processed to avoid duplicates
+        std::set<entt::entity> processedEntities;
 
         for (auto [entity, transform, mesh, material] : view.each()) {
-            ExtractResult renderable;
+            // Skip if already processed (in case entity has multiple relevant components)
+            if (processedEntities.contains(entity)) {
+                continue;
+            }
+            processedEntities.insert(entity);
 
             TransformSSBO transformData;
             glm::mat4 modelMatrix = transform.m_Transform.GetModelMatrix();
@@ -34,10 +37,8 @@ namespace Zeroday::opengl {
             result.materials.push_back(materialData);
             uint32_t materialIndex = result.materials.size() - 1;
 
-            // get mesh info for renderable entity
             const auto& meshInfo = mesh.meshData->getMeshInfo(mesh.subMeshName);
 
-            // Fill command for per-entity
             RenderCommandMDI cmd;
             cmd.materialIndex  = materialIndex;
             cmd.transformIndex = transformIndex;
@@ -46,9 +47,7 @@ namespace Zeroday::opengl {
             result.renderCommands.push_back(cmd);
         }
 
-        // Extract lights to upload GPU
         ExtractLights(scene, result);
-        // Extract cameras to upload GPU
         ExtractCamera(scene, result);
 
         return result;

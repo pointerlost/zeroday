@@ -41,22 +41,22 @@ namespace Zeroday::Editor::UI {
             return;
         }
 
-        drawComponentUI(*nameComp);
-        drawComponentUI(*transformComp);
+        DrawComponentUI(*nameComp);
+        DrawComponentUI(*transformComp);
         if (materialComp) {
-            drawComponentUI(*materialComp);
+            DrawComponentUI(*materialComp);
         }
         if (entity.HasComponent<CameraComponent>()) {
-            drawComponentUI(*cameraComp);
+            DrawComponentUI(*cameraComp);
         }
         if (entity.HasComponent<LightComponent>()) {
-            drawComponentUI(*lightComp);
+            DrawComponentUI(*lightComp);
         }
 
         ImGui::End();
     }
 
-    void InspectorPanel::drawComponentUI(NameComponent &comp) {
+    void InspectorPanel::DrawComponentUI(NameComponent &comp) {
         char buffer[128];
         strncpy( buffer, comp.name.c_str(), sizeof(buffer) );
 
@@ -67,7 +67,7 @@ namespace Zeroday::Editor::UI {
         }
     }
 
-    void InspectorPanel::drawComponentUI(TransformComponent &comp) {
+    void InspectorPanel::DrawComponentUI(TransformComponent &comp) {
         ImGui::PushID("Transform");
         auto& transform = comp.m_Transform;
 
@@ -84,7 +84,7 @@ namespace Zeroday::Editor::UI {
         ImGui::PopID();
     }
 
-    void InspectorPanel::drawComponentUI(MaterialComponent &comp) {
+    void InspectorPanel::DrawComponentUI(MaterialComponent &comp) {
         ImGui::PushID("Material");
         auto& material = comp.m_Instance;
 
@@ -121,7 +121,7 @@ namespace Zeroday::Editor::UI {
         ImGui::PopID();
     }
 
-    void InspectorPanel::drawComponentUI(LightComponent &comp) {
+    void InspectorPanel::DrawComponentUI(LightComponent &comp) {
         ImGui::PushID("Light");
         auto& light = comp.m_Light;
 
@@ -218,7 +218,7 @@ namespace Zeroday::Editor::UI {
         ImGui::PopID();
     }
 
-    void InspectorPanel::drawComponentUI(CameraComponent &comp) {
+    void InspectorPanel::DrawComponentUI(CameraComponent &comp) {
         ImGui::PushID("Camera");
 
         if (ImGui::CollapsingHeader("View")) {

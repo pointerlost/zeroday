@@ -20,7 +20,6 @@ struct DrawElementsIndirectCommand {
 struct DrawPayloadGPU {
     int transformIndex;
     int materialIndex;
-    int meshId;
     int entityId;
 };
 

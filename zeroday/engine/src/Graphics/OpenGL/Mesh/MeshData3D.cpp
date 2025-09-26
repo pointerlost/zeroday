@@ -29,22 +29,17 @@ namespace Zeroday {
     SubMeshInfo& MeshData::AddMesh(std::vector<Vertex> v, std::vector<uint32_t> i, const std::string& name) {
         SubMeshInfo info{};
         info.m_VertexOffset = all_Vertices.size();
-        info.m_IndexOffset = all_Indices.size();
+        info.m_IndexOffset = all_Indices.size();  // This is the BYTE offset divided by sizeof(uint32_t)
         info.m_VertexCount = v.size();
         info.m_IndexCount = i.size();
 
         // Add vertices
         all_Vertices.insert(all_Vertices.end(), v.begin(), v.end());
 
-        // Add indices with offset adjustment
-        all_Indices.reserve(all_Indices.size() + i.size());
-        for (const auto idx : i)
-        {
-            all_Indices.push_back(idx + info.m_VertexOffset);
-        }
+        // Add indices without offset adjustment
+        all_Indices.insert(all_Indices.end(), i.begin(), i.end());
 
         objectInfo[name] = info;
-
         return objectInfo[name];
     }
 

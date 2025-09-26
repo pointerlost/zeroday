@@ -21,11 +21,11 @@ namespace Zeroday::Editor::UI {
 
     private:
         // Component based UI design
-        void drawComponentUI(NameComponent& comp);
-        void drawComponentUI(TransformComponent& comp);
-        void drawComponentUI(MaterialComponent& comp);
-        void drawComponentUI(LightComponent& comp);
-        void drawComponentUI(CameraComponent& comp);
+        void DrawComponentUI(NameComponent& comp);
+        void DrawComponentUI(TransformComponent& comp);
+        void DrawComponentUI(MaterialComponent& comp);
+        void DrawComponentUI(LightComponent& comp);
+        void DrawComponentUI(CameraComponent& comp);
 
         bool DeleteEntity(NameComponent& comp, EditorState& state);
     };

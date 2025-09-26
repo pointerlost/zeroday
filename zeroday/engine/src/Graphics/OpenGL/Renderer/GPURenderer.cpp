@@ -126,7 +126,7 @@ namespace Zeroday::opengl {
 
         m_CurrentLightCount = extracted.lights.size();
 
-        // Use persistent mapping for frequent updates
+        // persistent mapping for frequent updates
         {
             void* transformData = m_TransformBuffer.BeginUpdate();
             memcpy(transformData, extracted.transforms.data(), extracted.transforms.size() * sizeof(TransformSSBO));
@@ -152,8 +152,23 @@ namespace Zeroday::opengl {
 
             for (uint i = 0; i < extracted.renderCommands.size(); i++) {
                 auto& cmd = extracted.renderCommands[i];
-                commands[i] = {cmd.indexCount, 1, cmd.indexOffset, 0, i};
-                payloads[i] = {(int)cmd.transformIndex, (int)cmd.materialIndex, (int)cmd.vao, (int)i};
+
+                // CORRECTED: Convert index offset to BYTE offset
+                uint32_t firstIndexByteOffset = cmd.indexOffset * sizeof(uint32_t);
+
+                commands[i] = {
+                    cmd.indexCount,         // number of indices (36, 4704)
+                    1,                      // instance count
+                    firstIndexByteOffset,   // BYTE offset into index buffer ← THIS IS CRITICAL
+                    0,                      // base vertex
+                    i                       // base instance
+                };
+
+                payloads[i] = {
+                    (int)cmd.transformIndex,
+                    (int)cmd.materialIndex,
+                    (int)i
+                };
             }
 
             m_IndirectCommandBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawElementsIndirectCommand));
@@ -176,39 +191,29 @@ namespace Zeroday::opengl {
         m_TransformBuffer.Bind(3);
         m_MaterialBuffer.Bind(4);
         m_LightBuffer.Bind(5);
-        m_GlobalBuffer.Bind(6);
-        m_CameraBuffer.Bind(7);
+        m_CameraBuffer.Bind(6);
+        m_GlobalBuffer.Bind(7);
     }
 
     void GPURenderer::RenderFrame() {
+        auto extracted = SceneRenderer::ExtractRenderables(m_Scene);
         auto shader = AssetManager::GetShader("main");
 
         shader->Bind();
         shader->SetUint("uLightCount", m_CurrentLightCount);
+        std::cout << m_CurrentLightCount << "\n";
 
         auto meshData = Services::GetMeshLibrary()->GetMeshData3D();
 
-        const GLuint universalVAO = meshData->GetUniversalVAO();
+        GLuint universalVAO = meshData->GetUniversalVAO();
         if (universalVAO == 0) {
             Error("Universal VAO not created!");
             return;
         }
 
         glBindVertexArray(universalVAO);
-
-        // Check for OpenGL errors
-        GLenum err;
-        while ((err = glGetError()) != GL_NO_ERROR) {
-            Error("OpenGL error before draw: " + std::to_string(err));
-        }
-
         glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_IndirectCommandBuffer.GetHandle());
-        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, m_RenderCommandsOfPerEntity.GetCount(), 0);
-
-        // Check for OpenGL errors after draw
-        while ((err = glGetError()) != GL_NO_ERROR) {
-            Error("OpenGL error after draw: " + std::to_string(err));
-        }
+        glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, extracted.renderCommands.size(), 0);
 
         glBindVertexArray(0);
     }

@@ -9,7 +9,7 @@ layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aUV;
 
 // Output to fragment shader
-out vec3 vFragPos; // for lighting
+out vec3 vFragPos;
 out vec2 vUV;
 out vec3 vNormal;
 flat out int vMaterialIndex;

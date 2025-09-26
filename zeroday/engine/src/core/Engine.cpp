@@ -56,6 +56,14 @@ namespace Zeroday {
 
 		m_ImGuiLayer->Init(m_Window->getGLFWwindow());
 
+		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Point);
+		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Directional);
+		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Spot);
+
+		(void)m_SceneObjectFactory->CreatePrimitiveObject("cube");
+		(void)m_SceneObjectFactory->CreatePrimitiveObject("sphere");
+		(void)m_SceneObjectFactory->CreatePrimitiveObject("triangle");
+
 		Info("Engine initResources successful!");
 
 		return true;
@@ -75,14 +83,13 @@ namespace Zeroday {
 		try {
 			InitWindow();
 			InitCallBack();
-			InitWorld();
 			InitAssetManager();
 			InitTexture();
 			InitMaterial();
 			InitMesh();
 			InitModel();
-			InitRender();
 			InitScene();
+			InitRender();
 			InitEditor();
 			InitImGui();
 			InitServices();
@@ -123,12 +130,6 @@ namespace Zeroday {
 		Info("[Engine::InitCallBack] initialized successfully!");
 	}
 
-	void Engine::InitWorld() {
-		m_Scene = CreateScope<Scene>();
-
-		Info("[Engine::InitWorld] World initialized successfully!");
-	}
-
 	void Engine::InitAssetManager() {
 		g_AssetManager = CreateScope<AssetManager>();
 
@@ -159,6 +160,16 @@ namespace Zeroday {
 		Info("[Engine::InitModel] Model Loader initialized successfully!]");
 	}
 
+	void Engine::InitScene() {
+		m_Scene = CreateScope<Scene>();
+
+		Info("[Engine::InitWorld] World initialized successfully!");
+
+		m_SceneObjectFactory = CreateScope<SceneObjectFactory>(*m_Scene);
+
+		Info("SceneObjectFactory initialized successfully!");
+	}
+
 	void Engine::InitRender() {
 		g_RenderContext = CreateScope<opengl::RenderContext>();
 
@@ -167,12 +178,6 @@ namespace Zeroday {
 		m_Renderer3D = CreateScope<opengl::Renderer3D>(m_Scene.get());
 
 		Info("[Engine::InitRender] RendererManager initialized successfully!");
-	}
-
-	void Engine::InitScene() {
-		m_SceneObjectFactory = CreateScope<SceneObjectFactory>(*m_Scene);
-
-		Info("SceneObjectFactory initialized successfully!");
 	}
 
 	void Engine::InitEditor() {

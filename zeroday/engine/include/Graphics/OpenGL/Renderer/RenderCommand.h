@@ -8,7 +8,6 @@ namespace Zeroday::opengl {
 
     // unique for per-object
     struct RenderCommandMDI {
-        uint vao             = 0;
         uint materialIndex   = 0;
         uint transformIndex  = 0;
         uint indexCount      = 0;
@@ -25,12 +24,11 @@ namespace Zeroday::opengl {
         uint baseInstance  = 0; // index into our payload array (SSBO)
     };
 
-    // Per-draw payload your shader will index with gl_BaseInstance
+    // Per-draw payload shader will access index with gl_BaseInstance
     struct DrawPayloadGPU {
-        int transformIndex = -1;
-        int materialIndex  = -1;
-        int meshId         = -1; // for debugging or LOD table
-        int EntityId       = -1;
+        int transformIndex = 0;
+        int materialIndex  = 0;
+        int EntityId       = 0;
     };
 
 }
