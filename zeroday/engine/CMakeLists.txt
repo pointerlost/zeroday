@@ -110,7 +110,7 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Renderer/GPURenderer.h
     include/core/Services.h
     src/core/Services.cpp
-        include/Graphics/OpenGL/Camera/Camera.h
+    include/Graphics/OpenGL/Camera/Camera.h
     src/Graphics/OpenGL/Camera/Camera.cpp
     src/core/Logger.cpp
     include/Scene/Scene.h

@@ -76,9 +76,15 @@ namespace Zeroday::Editor::UI {
         auto scl = transform.GetScale();
 
         if (ImGui::CollapsingHeader("Transform")) {
-            if (ImGui::DragFloat3("Position", glm::value_ptr(pos), 0.1)) transform.SetPosition(pos);
-            if (ImGui::DragFloat3("Rotation", glm::value_ptr(rot), 0.1)) transform.SetRotation(rot);
-            if (ImGui::DragFloat3("Scale",    glm::value_ptr(scl), 0.1, 0.05)) transform.SetScale(scl);
+            if (ImGui::DragFloat3("Position", glm::value_ptr(pos), 0.1)) {
+                transform.SetPosition(pos);
+            }
+            if (ImGui::DragFloat3("Rotation", glm::value_ptr(rot), 0.1)) {
+                transform.SetEulerRotation(rot);
+            }
+            if (ImGui::DragFloat3("Scale",    glm::value_ptr(scl), 0.1, 0.05)) {
+                transform.SetScale(scl);
+            }
         }
 
         ImGui::PopID();
@@ -129,8 +135,15 @@ namespace Zeroday::Editor::UI {
         const char* lightTypes[] = { "Directional", "Point", "Spot" };
         int currentType = static_cast<int>(light.GetType());
         if (ImGui::Combo("Type", &currentType, lightTypes, IM_ARRAYSIZE(lightTypes))) {
-            // Handle type change if needed - you might want to create a new Light object
-            // with the appropriate type and copy relevant properties
+            if (currentType == static_cast<int>(opengl::LightType::Point)) {
+                comp.SetAsPoint(light.GetPosition(), light.GetRadiance(), light.GetIntensity());
+            }
+            else if (currentType == static_cast<int>(opengl::LightType::Directional)) {
+                comp.SetAsDirectional(light.GetDirection(), light.GetRadiance(), light.GetIntensity());
+            }
+            else {
+                comp.SetAsSpot(light.GetPosition(), light.GetDirection(), light.GetRadiance(), light.GetIntensity(), light.GetCutOff(), light.GetOuterCutOff());
+            }
         }
 
         ImGui::Separator();
@@ -224,15 +237,16 @@ namespace Zeroday::Editor::UI {
         if (ImGui::CollapsingHeader("View")) {
             auto& camera = comp.m_Camera;
 
-            float fov  = camera.GetPerspectiveFOV();
+            float fov = glm::degrees(camera.GetPerspectiveFOV()); // convert to degrees for UI
             float near = camera.GetPerspectiveNear();
             float far  = camera.GetPerspectiveFar();
 
-            ImGui::DragFloat("Fov",  &fov,  0.1f, 0.0f, 8000.0f);
+            ImGui::DragFloat("Fov",  &fov, 0.1f, 1.0f, 179.0f); // reasonable FOV range
             ImGui::DragFloat("Near", &near, 0.5f, 0.0f, 0.8f);
             ImGui::DragFloat("Far",  &far,  1.5f, 0.0f, 10000.0f);
 
-            camera.SetProjectionMatrix(fov, near, far);
+            // convert to radians again (for fov)
+            camera.SetProjectionMatrix(glm::radians(fov), near, far);
         }
 
         ImGui::PopID();

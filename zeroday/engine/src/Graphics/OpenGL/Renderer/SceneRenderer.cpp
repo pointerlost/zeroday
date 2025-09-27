@@ -2,6 +2,7 @@
 // Created by pointerlost on 9/23/25.
 //
 #include "Graphics/OpenGL/Renderer/SceneRenderer.h"
+#include "core/AssetManager.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Scene/Components.h"
 #include "Scene/Scene.h"
@@ -12,7 +13,6 @@ namespace Zeroday::opengl {
 
     ExtractResult SceneRenderer::ExtractRenderables(Scene *scene) {
         ExtractResult result;
-
         const auto view = scene->GetAllEntitiesWith<TransformComponent, MeshComponent, MaterialComponent>();
 
         // Track which entities we've processed to avoid duplicates
@@ -26,14 +26,14 @@ namespace Zeroday::opengl {
             processedEntities.insert(entity);
 
             TransformSSBO transformData;
-            glm::mat4 modelMatrix = transform.m_Transform.GetModelMatrix();
+            glm::mat4 modelMatrix = transform.m_Transform.GetWorldMatrix();
             transformData.modelMatrix = modelMatrix;
             transformData.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
             result.transforms.push_back(transformData);
             uint32_t transformIndex = result.transforms.size() - 1;
 
             MaterialSSBO materialData = material.m_Instance ?
-                material.m_Instance->ToGPUFormat() : MaterialSSBO{};
+            material.m_Instance->ToGPUFormat() : MaterialSSBO{};
             result.materials.push_back(materialData);
             uint32_t materialIndex = result.materials.size() - 1;
 
@@ -56,13 +56,7 @@ namespace Zeroday::opengl {
     void SceneRenderer::ExtractLights(Scene* scene, ExtractResult& result) {
         auto view = scene->GetAllEntitiesWith<LightComponent, TransformComponent>();
         for (auto [entity, lightComp, transform] : view.each()) {
-            LightSSBO gpuLight = lightComp.ToGPUFormat();
-            gpuLight.position = transform.m_Transform.GetPosition();
-
-            if (lightComp.m_Light.GetType() != LightType::Point) {
-                gpuLight.direction = transform.m_Transform.GetForward();
-            }
-
+            LightSSBO gpuLight = lightComp.ToGPUFormat(transform);
             result.lights.push_back(gpuLight);
         }
     }
@@ -72,13 +66,23 @@ namespace Zeroday::opengl {
 
         for (auto [entity, cameraComp, transform] : view.each()) {
             CameraUBO camera;
-            camera.position  = transform.m_Transform.GetPosition();
-            camera.direction = transform.m_Transform.GetForward();
-            camera.view      = cameraComp.m_Camera.GetViewMatrix();
+            camera.position       = glm::vec4(transform.m_Transform.GetPosition(), 1.0f);
+            camera.direction      = glm::vec4(transform.m_Transform.GetForward(), 0.0f);
+
+            cameraComp.m_Camera.UpdateViewMatrix(transform.m_Transform.GetWorldMatrix());
+
+            camera.view           = cameraComp.m_Camera.GetViewMatrix();
             camera.projection     = cameraComp.m_Camera.GetProjectionMatrix();
-            camera.viewProjection = camera.projection * camera.view;
+            camera.viewProjection = cameraComp.m_Camera.GetProjectionViewMatrix();
 
             result.camera = camera;
+            break;
         }
+    }
+
+    void SceneRenderer::ExtractGlobalData(Scene *scene, ExtractResult &result) {
+        GlobalUBO global;
+        global.globalAmbient = g_GlobalAmbient;
+        result.globalData = global;
     }
 }

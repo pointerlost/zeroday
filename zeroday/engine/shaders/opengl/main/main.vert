@@ -1,4 +1,5 @@
 #version 460
+#extension GL_ARB_shader_draw_parameters : require
 
 #include "core/buffers.glsl"
 #include "common/constants.glsl"
@@ -32,5 +33,5 @@ void main() {
     vMaterialIndex = payload.materialIndex;
 
     // Final position
-    gl_Position = uCamera.viewProjection * worldPos;
+    gl_Position = GetProjView() * worldPos;
 }

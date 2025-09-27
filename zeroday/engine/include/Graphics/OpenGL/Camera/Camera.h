@@ -14,27 +14,76 @@ namespace Zeroday {
         Camera() : Camera(CameraMode::Perspective) {}
         explicit Camera(CameraMode mode) : m_Mode(mode) {}
 
-        void SetPerspectiveFov(float fov)     { m_PerspectiveFOV = fov; CalculateProjection();    }
+        void SetPerspectiveFov(float fov) {
+            m_PerspectiveFOV = fov;
+            m_ProjectionDirty = true;
+            m_ViewProjectionDirty = true;
+        }
         [[nodiscard]] float GetPerspectiveFOV()   const { return m_PerspectiveFOV;   }
-        void SetPerspectiveNear(float near)   { m_PerspectiveNear = near; CalculateProjection();  }
+        void SetPerspectiveNear(float near) {
+            m_PerspectiveNear = near;
+            m_ProjectionDirty = true;
+            m_ViewProjectionDirty = true;
+        }
         [[nodiscard]] float GetPerspectiveNear()  const { return m_PerspectiveNear;  }
-        void SetPerspectiveFar(float far)     { m_PerspectiveFar = far; CalculateProjection();    }
+        void SetPerspectiveFar(float far) {
+            m_PerspectiveFar = far;
+            m_ProjectionDirty = true;
+            m_ViewProjectionDirty = true;
+        }
         [[nodiscard]] float GetPerspectiveFar()   const { return m_PerspectiveFar;   }
-        void SetOrthographicFar(float far)    { m_OrthographicFar = far; CalculateProjection();   }
+        void SetOrthographicFar(float far) {
+            m_OrthographicFar = far;
+            m_ProjectionDirty = true;
+            m_ViewProjectionDirty = true;
+        }
         [[nodiscard]] float GetOrthographicFar()  const { return m_OrthographicFar;  }
-        void SetOrthographicSize(float size)  { m_OrthographicSize = size; CalculateProjection(); }
+        void SetOrthographicSize(float size) {
+            m_OrthographicSize = size;
+            m_ProjectionDirty = true;
+            m_ViewProjectionDirty = true;
+        }
         [[nodiscard]] float GetOrthographicSize() const { return m_OrthographicSize; }
-        void SetOrthographicNear(float near)  { m_OrthographicNear = near; CalculateProjection(); }
+        void SetOrthographicNear(float near) {
+            m_OrthographicNear = near;
+            m_ProjectionDirty = true;
+            m_ViewProjectionDirty = true;
+        }
         [[nodiscard]] float GetOrthographicNear() const { return m_OrthographicNear; }
 
-        void SetViewportSize(uint32_t width, uint32_t height) { m_AspectRatio = static_cast<float>(width) / static_cast<float>(height); CalculateProjection(); }
+        void SetViewportSize(uint32_t width, uint32_t height) {
+            m_AspectRatio = (float)width / (float)height;
+            m_ProjectionDirty = true;
+            m_ViewProjectionDirty = true;
+        }
         [[nodiscard]] float GetViewportSize() const { return m_AspectRatio; }
 
-        [[nodiscard]] const glm::mat4& GetProjectionMatrix() const;
-        [[nodiscard]] const glm::mat4& GetViewMatrix() const;
+        void UpdateViewMatrix(const glm::mat4& cameraWorldMatrix) {
+            m_View = glm::inverse(cameraWorldMatrix);
+            m_ViewProjectionDirty = true;
+        }
+        [[nodiscard]] const glm::mat4& GetViewMatrix() { return m_View; }
 
-        void SetProjectionMatrix(float fov, float near, float far);
-        void SetViewMatrix(const glm::mat4& view);
+        void SetProjectionMatrix(float fov, float near, float far) {
+            m_PerspectiveFOV  = fov;
+            m_PerspectiveNear = near;
+            m_PerspectiveFar  = far;
+            m_ProjectionDirty = true;
+            m_ViewProjectionDirty = true;
+        }
+        [[nodiscard]] const glm::mat4& GetProjectionMatrix() {
+            CalculateProjection();
+            return m_Projection;
+        }
+
+        const glm::mat4& GetProjectionViewMatrix() {
+            if (m_ViewProjectionDirty || m_ProjectionDirty) {
+                CalculateProjection();
+                m_ViewProjection = m_Projection * m_View;
+                m_ViewProjectionDirty = false;
+            }
+            return m_ViewProjection;
+        }
 
     private:
         float m_PerspectiveFOV  = glm::radians(45.0f);
@@ -48,6 +97,10 @@ namespace Zeroday {
 
         glm::mat4 m_View       = glm::mat4(1.0f);
         glm::mat4 m_Projection = glm::mat4(1.0f);
+        glm::mat4 m_ViewProjection = glm::mat4(1.0f);
+
+        mutable bool m_ProjectionDirty = true;
+        mutable bool m_ViewProjectionDirty = true;
 
         void CalculateProjection();
     };

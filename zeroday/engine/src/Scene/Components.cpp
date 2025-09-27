@@ -13,9 +13,8 @@ namespace Zeroday {
         // Return default material if no instance
         opengl::MaterialSSBO defaultMat;
         defaultMat.baseColor = glm::vec4(1.0f);
-        defaultMat.metallic = 0.0f;
-        defaultMat.roughness = 0.5f;
-        defaultMat.emissive = glm::vec3(0.0f);
+        defaultMat.emissiveMetallic = glm::vec4(0.2f);
+        defaultMat.roughnessPadding = glm::vec4(0.0f);
         return defaultMat;
     }
 }

@@ -14,18 +14,20 @@ layout(std430, binding = 3) buffer TransformBuffer {
 
 // ************************** MATERIAL BUFFER *********************
 struct MaterialSSBO {
-    vec4 baseColor;
-    vec3 emissive;
-    float padding1;
-    float metallic;
-    float roughness;
-    float padding2;
-    float padding3;
+    vec4 baseColor; // 16 bytes
+    vec4 emissiveMetallic;  // xyz: emissive, w: metallic - 16 bytes
+    vec4 roughnessPadding;  // x: roughness, yzw: padding - 16 bytes
 };
 
 layout(std430, binding = 4) buffer MaterialBuffer {
     MaterialSSBO materials[];
 };
+
+// helpers
+vec4 GetMatBaseColor(int idx) { return materials[idx].baseColor; }
+vec3 GetEmissive(int idx) { return materials[idx].emissiveMetallic.xyz; }
+float GetMetallic(int idx) { return materials[idx].emissiveMetallic.w; }
+float GetRoughness(int idx) { return materials[idx].roughnessPadding.x; }
 
 // ************************** LIGHT BUFFER *********************
 
@@ -52,18 +54,16 @@ layout(std140, binding = 6) uniform CameraUBO {
     mat4 viewProjection;
     mat4 view;
     mat4 projection;
-    vec3 position;
-    float padding1;
-    vec3 direction;
-    float padding2;
+    vec4 position;  // w unused (padding)
+    vec4 direction; // w unused
 } uCamera;
 
 // helpers
-mat4 GetViewProj()   { return uCamera.viewProjection; }
+mat4 GetProjView()   { return uCamera.viewProjection; }
 mat4 GetView()       { return uCamera.view;           }
 mat4 GetProjection() { return uCamera.projection;     }
-vec3 GetCameraPos()  { return uCamera.position;       }
-vec3 GetCameraDir()  { return uCamera.direction;      }
+vec3 GetCameraPos()  { return uCamera.position.xyz;   }
+vec3 GetCameraDir()  { return uCamera.direction.xyz;  }
 
 vec4 WorldToClipSpace(vec3 worldPosition) {
     return uCamera.viewProjection * vec4(worldPosition, 1.0);

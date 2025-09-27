@@ -15,6 +15,7 @@ namespace Zeroday {
 
         void SetPosition(const glm::vec3& position);
         [[nodiscard]] const glm::vec3& GetPosition() const { return m_Position; }
+        glm::vec3 GetPosition() { return m_Position; }
 
         // Get Euler angles (degrees) - user friendly (for example UI)
         const glm::vec3& GetEulerRotation() const;
@@ -54,10 +55,8 @@ namespace Zeroday {
 
         // --- Transformation Matrices ---
 
-        void ReCalculateViewMatrix()  const;
-        void ReCalculateModelMatrix() const;
-        const glm::mat4& GetViewMatrix()  const;
-        const glm::mat4& GetModelMatrix() const;
+        void ReCalculateWorldMatrix() const;
+        const glm::mat4& GetWorldMatrix() const;
 
         // --- Utility Methods ---
 
@@ -72,11 +71,8 @@ namespace Zeroday {
         glm::quat m_Rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f); // Identity quaternion
         glm::vec3 m_Scale    = glm::vec3(1.0f);
 
-        mutable glm::mat4 m_View  = glm::mat4(1.0f);
-        mutable glm::mat4 m_Model = glm::mat4(1.0f);
-
-        mutable bool m_ViewMatrixDirty  = true;
-        mutable bool m_ModelMatrixDirty = true;
+        mutable glm::mat4 m_WorldMatrix = glm::mat4(1.0f); // model matrix
+        mutable bool m_WorldMatrixDirty = true;
 
         // cache for Euler angles to avoid conversion costs
         mutable glm::vec3 m_CachedEuler = glm::vec3(0.0f);

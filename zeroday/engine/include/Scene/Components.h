@@ -51,7 +51,9 @@ namespace Zeroday {
     struct LightComponent {
         opengl::Light m_Light;
 
-        [[nodiscard]] opengl::LightSSBO ToGPUFormat() const { return m_Light.ToGPUFormat(); }
+        [[nodiscard]] opengl::LightSSBO ToGPUFormat(const TransformComponent& transform) const {
+            return m_Light.ToGPUFormat(transform);
+        }
 
         // Helper methods for easy setup
         void SetAsDirectional(const glm::vec3& direction, const glm::vec3& color, float intensity) {
@@ -63,8 +65,8 @@ namespace Zeroday {
         }
 
         void SetAsSpot(const glm::vec3& position, const glm::vec3& direction,
-                      const glm::vec3& color, float intensity, float angle) {
-            m_Light = opengl::Light::CreateSpot(position, direction, color, intensity, angle);
+                      const glm::vec3& color, float intensity, float innerAngle, float outerAngle) {
+            m_Light = opengl::Light::CreateSpot(position, direction, color, intensity, innerAngle, outerAngle);
         }
 
         // Constructors

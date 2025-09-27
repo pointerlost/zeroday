@@ -11,37 +11,26 @@ namespace Zeroday
 	}
 
 	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::CreateTriangle() {
-		std::vector<Vertex> vertices =
-		{
-			{ glm::vec3(-0.5f, 0.5f, 0.0f),    glm::vec3{0.0, 0.0, 1.0},   glm::vec2{0.0, 1.0},    /* top left   */  },
-			{ glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3{0.0, 0.0, 1.0},   glm::vec2{0.0, 0.0},    /* down left  */  },
-			{ glm::vec3(0.5f, 0.5f, 0.5f),     glm::vec3{0.0, 0.0, 1.0},   glm::vec2{1.0, 1.0},    /* top right  */  },
-			{ glm::vec3(0.5f, -0.5f, 0.5f),    glm::vec3{0.0, 0.0, 1.0},   glm::vec2{1.0, 0.0},    /* down right */  },
-			{ glm::vec3(0.0f, 0.5f, 0.0f),     glm::vec3{0.0, 1.0, 0.0},   glm::vec2{0.5, 1.0}     /* top center */  },
+		std::vector<Vertex> vertices = {
+			{ glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3( 0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3( 0.0f,  0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.5f, 1.0f) }
 		};
 
-		std::vector<uint32_t> indices =
-		{
-			2, 3, 4,
-		};
+		std::vector<uint32_t> indices = { 0, 1, 2 };
 
 		return std::make_pair(vertices, indices);
 	}
 
 	std::pair<std::vector<Vertex>, std::vector<uint32_t>> MeshFactory::CreateSquare() {
-		std::vector<Vertex> vertices =
-		{
-			{ glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(0.0, 0.0, -1.0),  glm::vec3(1.0, 1.0, 0.0) /* top left   */  },
-			{ glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(0.0, 0.0, -1.0),  glm::vec3(1.0, 1.0, 0.0) /* down left  */  },
-			{ glm::vec3( 0.5f,  0.5f, 0.5f),   glm::vec3(0.0, 0.0, -1.0),  glm::vec3(1.0, 1.0, 0.0) /* top right  */  },
-			{ glm::vec3( 0.5f, -0.5f, 0.5f),   glm::vec3(0.0, 0.0, -1.0),  glm::vec3(1.0, 1.0, 0.0) /* down right */  }
+		std::vector<Vertex> vertices = {
+			{ glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3( 0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3( 0.5f,  0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) }
 		};
 
-		std::vector<uint32_t> indices =
-		{
-			0, 1, 2,
-			1, 2, 3
-		};
+		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
 		return std::make_pair(vertices, indices);
 	}

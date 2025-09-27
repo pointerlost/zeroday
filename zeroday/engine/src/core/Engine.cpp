@@ -2,6 +2,7 @@
 #include "core/Config.h"
 #include "CallBack/CallBack.h"
 #include <imgui_impl_opengl3.h>
+#include <core/EngineConfig.h>
 #include <Input/Input.h>
 #include "core/Services.h"
 #include "Editor/InspectorPanel.h"
@@ -56,13 +57,12 @@ namespace Zeroday {
 
 		m_ImGuiLayer->Init(m_Window->getGLFWwindow());
 
-		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Point);
-		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Directional);
-		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Spot);
+		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Point, "Point Light");
+		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Directional, "Directional Light");
+		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Spot, "Spot Light");
 
-		(void)m_SceneObjectFactory->CreatePrimitiveObject("cube");
-		(void)m_SceneObjectFactory->CreatePrimitiveObject("sphere");
-		(void)m_SceneObjectFactory->CreatePrimitiveObject("triangle");
+		(void)m_SceneObjectFactory->CreatePrimitiveObject("cube", "CUBE");
+		(void)m_SceneObjectFactory->CreatePrimitiveObject("sphere", "SPHERE");
 
 		Info("Engine initResources successful!");
 
@@ -190,6 +190,7 @@ namespace Zeroday {
 			Error("[Engine::InitEditor] Failed to create editor camera!");
 			return;
 		}
+		editorCamera.TryGetComponent<CameraComponent>()->m_Camera.SetViewportSize(SCR_WIDTH, SCR_HEIGHT);
 
 		m_EditorState->cameraEntity = editorCamera;
 		m_EditorState->scene = m_Scene.get();

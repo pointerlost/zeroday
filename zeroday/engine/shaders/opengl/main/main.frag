@@ -3,13 +3,24 @@
 #include "common/constants.glsl"
 #include "core/buffers.glsl"
 
-vec3 CalcPBR(MaterialSSBO material, vec3 N, vec3 V, vec3 L, vec3 lightColor) {
-    vec3 albedo = material.baseColor.rgb;
-    float roughness = material.roughness;
-    float metallic = material.metallic;
+// Input from vertex shader
+in vec3 vFragPos;
+in vec3 vNormal;
+in vec2 vUV;
+flat in int vMaterialIndex;
+
+// Output
+out vec4 FragColor;
+
+uniform uint uLightCount;
+
+vec3 CalcPBR(vec3 N, vec3 V, vec3 L, vec3 lightColor) {
+    vec3 albedo     = GetMatBaseColor(vMaterialIndex).rgb;
+    float roughness = GetRoughness(vMaterialIndex);
+    float metallic  = GetMetallic(vMaterialIndex);
 
     vec3 F0 = mix(vec3(0.04), albedo, metallic);
-    vec3 H = normalize(V + L);
+    vec3 H  = normalize(V + L);
 
     float NdotL = max(dot(N, L), 0.0);
     float NdotV = max(dot(N, V), 0.0);
@@ -28,56 +39,44 @@ vec3 CalcPBR(MaterialSSBO material, vec3 N, vec3 V, vec3 L, vec3 lightColor) {
     return Lo;
 }
 
-vec3 CalcDirectionalLight(LightSSBO light, MaterialSSBO material, vec3 worldPos, vec3 worldNormal) {
+vec3 CalcDirectionalLight(LightSSBO light, vec3 worldPos, vec3 worldNormal) {
     vec3 L = normalize(-light.direction);
-    vec3 V = normalize(uCamera.position - worldPos);
+    vec3 V = normalize(GetCameraPos() - worldPos);
     vec3 N = normalize(worldNormal);
 
-    return CalcPBR(material, N, V, L, light.radiance * light.intensity);
+    return CalcPBR(N, V, L, light.radiance * light.intensity);
 }
 
-vec3 CalcPointLight(LightSSBO light, MaterialSSBO material, vec3 worldPos, vec3 worldNormal) {
+vec3 CalcPointLight(LightSSBO light, vec3 worldPos, vec3 worldNormal) {
     vec3 L = normalize(light.position - worldPos);
-    vec3 V = normalize(uCamera.position - worldPos);
+    vec3 V = normalize(GetCameraPos() - worldPos);
     vec3 N = normalize(worldNormal);
 
     float distance = length(light.position - worldPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-    return CalcPBR(material, N, V, L, light.radiance * light.intensity) * attenuation;
+    return CalcPBR(N, V, L, light.radiance * light.intensity) * attenuation;
 }
 
-vec3 CalcSpotLight(LightSSBO light, MaterialSSBO material, vec3 worldPos, vec3 worldNormal) {
+vec3 CalcSpotLight(LightSSBO light, vec3 worldPos, vec3 worldNormal) {
     vec3 L = normalize(light.position - worldPos);
-    vec3 V = normalize(uCamera.position - worldPos);
+    vec3 V = normalize(GetCameraPos() - worldPos);
     vec3 N = normalize(worldNormal);
 
-    float theta = dot(L, normalize(-light.direction));
-    float epsilon = light.cutOff - light.outerCutOff;
+    float theta     = dot(L, normalize(-light.direction));
+    float epsilon   = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
-    float distance = length(light.position - worldPos);
+    float distance    = length(light.position - worldPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-    return CalcPBR(material, N, V, L, light.radiance * light.intensity) * attenuation * intensity;
+    return CalcPBR(N, V, L, light.radiance * light.intensity) * attenuation * intensity;
 }
-
-// Input from vertex shader
-in vec3 vFragPos;
-in vec3 vNormal;
-in vec2 vUV;
-flat in int vMaterialIndex;
-
-// Output
-out vec4 FragColor;
-
-uniform uint uLightCount;
 
 void main() {
     vec3 result = vec3(0.0);
 
-    MaterialSSBO material = materials[vMaterialIndex];
-    vec3 worldPos = vFragPos;
+    vec3 worldPos    = vFragPos;
     vec3 worldNormal = normalize(vNormal);
 
     // Process lights
@@ -85,16 +84,19 @@ void main() {
         LightSSBO light = lights[i];
 
         if (light.type == 0) { // Directional
-            result += CalcDirectionalLight(light, material, worldPos, worldNormal);
+            result += CalcDirectionalLight(light, worldPos, worldNormal);
         } else if (light.type == 1) { // Point
-            result += CalcPointLight(light, material, worldPos, worldNormal);
+            result += CalcPointLight(light, worldPos, worldNormal);
         } else if (light.type == 2) { // Spot
-            result += CalcSpotLight(light, material, worldPos, worldNormal);
+            result += CalcSpotLight(light, worldPos, worldNormal);
         }
     }
 
     // Add ambient
-    result += material.baseColor.rgb * uGlobal.globalAmbient;
+    result += GetMatBaseColor(vMaterialIndex).rgb * uGlobal.globalAmbient;
+
+    // gamma correction
+    result = pow(result, vec3(1.0/2.2));
 
     FragColor = vec4(result, 1.0);
 }

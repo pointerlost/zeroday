@@ -22,6 +22,7 @@ namespace Zeroday::opengl {
         std::vector<LightSSBO> lights;
         std::vector<RenderCommandMDI> renderCommands;
         CameraUBO camera;
+        GlobalUBO globalData;
     };
 
     class SceneRenderer {
@@ -32,5 +33,9 @@ namespace Zeroday::opengl {
         // Helpers for extractions
         static void ExtractLights(Scene* scene, ExtractResult& result);
         static void ExtractCamera(Scene* scene, ExtractResult& result);
+        static void ExtractGlobalData(Scene* scene, ExtractResult& result);
+
+        static inline glm::vec3 g_GlobalAmbient = glm::vec3(0.1f);
     };
+
 }

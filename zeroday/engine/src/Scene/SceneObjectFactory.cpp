@@ -16,7 +16,7 @@ namespace Zeroday
 
 		auto entity = m_Scene.CreateEntity(entityName);
 
-		auto mat = matLib->CreateInstance("wood");
+		auto mat = matLib->CreateInstance("gold");
 		entity.AddComponent<MaterialComponent>(mat);
 
         MeshComponent meshComp{};
@@ -35,7 +35,7 @@ namespace Zeroday
 
 		auto entity = m_Scene.CreateEntity(entityName);
 
-		auto mat = matLib->CreateInstance("wood");
+		auto mat = matLib->CreateInstance("venus");
 		entity.AddComponent<MaterialComponent>(mat);
 
 		LightComponent lightComp{type};
@@ -60,7 +60,7 @@ namespace Zeroday
 
 		CameraComponent cameraComp{mode};
 		entity.AddComponent<CameraComponent>(cameraComp);
-		entity.GetComponent<TransformComponent>().m_Transform.SetPosition(glm::vec3(0.0, 0.0, -5.0));
+		entity.GetComponent<TransformComponent>().m_Transform.SetPosition(glm::vec3(0.0, 0.0, 5.0));
 
 		return entity;
     }

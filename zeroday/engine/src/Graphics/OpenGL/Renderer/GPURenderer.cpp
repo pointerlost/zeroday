@@ -153,15 +153,12 @@ namespace Zeroday::opengl {
             for (uint i = 0; i < extracted.renderCommands.size(); i++) {
                 auto& cmd = extracted.renderCommands[i];
 
-                // CORRECTED: Convert index offset to BYTE offset
-                uint32_t firstIndexByteOffset = cmd.indexOffset * sizeof(uint32_t);
-
                 commands[i] = {
-                    cmd.indexCount,         // number of indices (36, 4704)
-                    1,                      // instance count
-                    firstIndexByteOffset,   // BYTE offset into index buffer ← THIS IS CRITICAL
-                    0,                      // base vertex
-                    i                       // base instance
+                    cmd.indexCount,  // number of indices
+                    1,               // instance count
+                    cmd.indexOffset, // index offset
+                    0,               // base vertex
+                    i                // base instance
                 };
 
                 payloads[i] = {
@@ -179,8 +176,7 @@ namespace Zeroday::opengl {
         glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
         // UBOs
-        GlobalUBO global{glm::vec3(0.1f)};
-        m_GlobalBuffer.Upload(global);
+        m_GlobalBuffer.Upload(extracted.globalData);
         m_CameraBuffer.Upload(extracted.camera);
     }
 
@@ -201,7 +197,6 @@ namespace Zeroday::opengl {
 
         shader->Bind();
         shader->SetUint("uLightCount", m_CurrentLightCount);
-        std::cout << m_CurrentLightCount << "\n";
 
         auto meshData = Services::GetMeshLibrary()->GetMeshData3D();
 

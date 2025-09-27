@@ -40,13 +40,9 @@ namespace Zeroday::opengl {
     /********************************************************************************/
 
     struct MaterialSSBO {
-        glm::vec4 baseColor = glm::vec4(1.0f);  // (RGBA)
-        glm::vec3 emissive  = glm::vec3(0.1f);
-        float     padding1  = 0.0f;  // 16 byte alignment
-        float     metallic  = 0.3f;
-        float     roughness = 0.2f;
-        float     padding2  = 0.0f;
-        float     padding3  = 0.0f;
+        glm::vec4 baseColor = glm::vec4(1.0f);  // 16 bytes
+        glm::vec4 emissiveMetallic = glm::vec4(0.2f); // xyz: emissive, w: metallic - 16 bytes
+        glm::vec4 roughnessPadding = glm::vec4(0.0f); //  x: roughness, yzw: padding - 16 bytes
 
         // uint64_t baseColorHandle;  // bindless texture handle
         // uint64_t normalHandle;
@@ -63,10 +59,8 @@ namespace Zeroday::opengl {
         glm::mat4 viewProjection = glm::mat4(1.0f);
         glm::mat4 view           = glm::mat4(1.0f);
         glm::mat4 projection     = glm::mat4(1.0f);
-        glm::vec3 position       = glm::vec3(0.0f);
-        float padding1           = 0.0f;
-        glm::vec3 direction      = glm::vec3(0.0f);
-        float padding2           = 0.0f;
+        glm::vec4 position       = glm::vec4(0.0f);
+        glm::vec4 direction      = glm::vec4(0.0f);
     };
     static_assert(sizeof(CameraUBO) % 16 == 0);
 

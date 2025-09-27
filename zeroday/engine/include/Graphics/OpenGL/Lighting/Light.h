@@ -5,6 +5,10 @@
 #include "Light.h"
 #include "Graphics/OpenGL/Macros.h"
 
+namespace Zeroday {
+    struct TransformComponent;
+}
+
 namespace Zeroday::opengl {
     struct LightSSBO;
 }
@@ -21,7 +25,6 @@ namespace Zeroday::opengl {
     public:
         explicit Light(LightType type = LightType::Point);
 
-        void SetType(LightType type) { m_Type = type; }
         [[nodiscard]] LightType GetType() const { return m_Type; }
         void SetPosition(const glm::vec3& position) { m_Position = position; }
         [[nodiscard]] const glm::vec3& GetPosition() const { return m_Position; }
@@ -47,9 +50,9 @@ namespace Zeroday::opengl {
         static Light CreatePoint(const glm::vec3& position, const glm::vec3& color, float intensity);
 
         static Light CreateSpot(const glm::vec3& position, const glm::vec3& direction,
-                                const glm::vec3& color, float intensity, float angle);
+                                const glm::vec3& color, float intensity, float innerAngle, float outerAngle);
 
-        [[nodiscard]] LightSSBO ToGPUFormat() const;
+        [[nodiscard]] LightSSBO ToGPUFormat(const TransformComponent& transform) const;
 
     private:
         LightType m_Type = LightType::Point; // 0=directional, 1=point, 2=spot

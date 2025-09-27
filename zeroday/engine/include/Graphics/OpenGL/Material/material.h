@@ -66,7 +66,7 @@ namespace Zeroday::opengl {
 			return m_OverrideEmissive.value_or(m_Base->emissive);
 		}
 
-		Ref<Texture> getTexture(MaterialTextureType type) const {
+		Ref<Texture> GetTexture(MaterialTextureType type) const {
 			if (const auto it = m_OverrideTextures.find(type); it != m_OverrideTextures.end())
 				return it->second;
 			if (const auto it = m_Base->textures.find(type); it != m_Base->textures.end())
@@ -74,7 +74,7 @@ namespace Zeroday::opengl {
 			return nullptr;
 		}
 
-		void resetOverrides() {
+		void ResetOverrides() {
 			m_OverrideBaseColor.reset();
 			m_OverrideMetallic.reset();
 			m_OverrideRoughness.reset();
