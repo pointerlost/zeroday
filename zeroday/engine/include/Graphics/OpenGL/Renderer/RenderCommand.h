@@ -19,7 +19,7 @@ namespace Zeroday::opengl {
     struct DrawElementsIndirectCommand {
         uint count         = 0; // number of indices
         uint instanceCount = 0; // usually 1 for now
-        uint firstIndex    = 0; // index offset (in *indices*, not bytes)
+        uint firstIndex    = 0; // index offset (in *indices*, not bytes) (in EBO should be 0 always)
         uint baseVertex    = 0; // 0 if not using glDrawElementsBaseVertex
         uint baseInstance  = 0; // index into our payload array (SSBO)
     };

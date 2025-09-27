@@ -27,6 +27,7 @@ namespace Zeroday {
 
         Entity GetEntityWithUUID(UUID uuid);
         size_t GetEntityCount() const { return m_Entities.size(); }
+        void CleanUpResources();
 
     private:
         template <typename T>
@@ -36,6 +37,8 @@ namespace Zeroday {
     private:
         entt::registry m_Registry;
         std::unordered_map<UUID ,Entity> m_Entities;
+
+        std::vector<UUID> m_EntitiesToDestroy;
 
         friend class Entity;
     };

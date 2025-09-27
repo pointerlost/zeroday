@@ -36,8 +36,10 @@ namespace Zeroday {
         // Add vertices
         all_Vertices.insert(all_Vertices.end(), v.begin(), v.end());
 
-        // Add indices without offset adjustment
-        all_Indices.insert(all_Indices.end(), i.begin(), i.end());
+        // Append indices but adjust by vertexOffset
+        for (uint32_t idx : i) {
+            all_Indices.push_back(idx + info.m_VertexOffset);
+        }
 
         objectInfo[name] = info;
         return objectInfo[name];

@@ -3,7 +3,7 @@
 //
 #pragma once
 #include "EditorPanel.h"
-
+#include "Scene/Entity.h"
 
 namespace Zeroday {
     struct CameraComponent;
@@ -26,7 +26,5 @@ namespace Zeroday::Editor::UI {
         void DrawComponentUI(MaterialComponent& comp);
         void DrawComponentUI(LightComponent& comp);
         void DrawComponentUI(CameraComponent& comp);
-
-        bool DeleteEntity(NameComponent& comp, EditorState& state);
     };
 }

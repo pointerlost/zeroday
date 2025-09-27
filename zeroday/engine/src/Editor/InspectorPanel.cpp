@@ -36,11 +36,6 @@ namespace Zeroday::Editor::UI {
         auto [nameComp, transformComp, materialComp, lightComp, cameraComp]
         = entity.TryGetAllComponents<NameComponent, TransformComponent, MaterialComponent, LightComponent, CameraComponent>();
 
-        if (nameComp && DeleteEntity(*nameComp, state)) {
-            ImGui::End();
-            return;
-        }
-
         DrawComponentUI(*nameComp);
         DrawComponentUI(*transformComp);
         if (materialComp) {
@@ -52,7 +47,6 @@ namespace Zeroday::Editor::UI {
         if (entity.HasComponent<LightComponent>()) {
             DrawComponentUI(*lightComp);
         }
-
         ImGui::End();
     }
 
@@ -163,15 +157,6 @@ namespace Zeroday::Editor::UI {
 
         ImGui::Separator();
 
-        // Position (for point and spot lights)
-        if (light.GetType() != opengl::LightType::Directional) {
-            glm::vec3 position = light.GetPosition();
-            float posArray[3] = { position.x, position.y, position.z };
-            if (ImGui::DragFloat3("Position", posArray, 0.1f)) {
-                light.SetPosition(glm::vec3(posArray[0], posArray[1], posArray[2]));
-            }
-        }
-
         // Direction (for directional and spot lights)
         if (light.GetType() != opengl::LightType::Point) {
             glm::vec3 direction = light.GetDirection();
@@ -242,8 +227,8 @@ namespace Zeroday::Editor::UI {
             float far  = camera.GetPerspectiveFar();
 
             ImGui::DragFloat("Fov",  &fov, 0.1f, 1.0f, 179.0f); // reasonable FOV range
-            ImGui::DragFloat("Near", &near, 0.5f, 0.0f, 0.8f);
-            ImGui::DragFloat("Far",  &far,  1.5f, 0.0f, 10000.0f);
+            ImGui::DragFloat("Near", &near, 0.5f, 0.00001f, 0.8f);
+            ImGui::DragFloat("Far",  &far,  1.5f, 0.00001f, 10000.0f);
 
             // convert to radians again (for fov)
             camera.SetProjectionMatrix(glm::radians(fov), near, far);
@@ -252,41 +237,4 @@ namespace Zeroday::Editor::UI {
         ImGui::PopID();
     }
 
-    bool InspectorPanel::DeleteEntity(NameComponent &comp, EditorState &state) {
-        ImGui::PushID("Delete");
-        static bool deleteWindowOpen = false;
-        bool deleted = false;
-
-        if (ImGui::Button("Delete Entity", ImVec2(InspectorWidth - 15, 50))) {
-            deleteWindowOpen = true;
-        }
-
-        if (deleteWindowOpen) {
-            ImGui::SetNextWindowSize(ImVec2(350, 150));
-            ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH / 2, SCR_HEIGHT / 2));
-
-            if (ImGui::Begin("Delete Entity", &deleteWindowOpen, ImGuiWindowFlags_NoResize)) {
-                ImGui::Text("Are you sure you want to delete the Entity?");
-                // add some space
-                ImGui::Dummy(ImVec2(0, 20));
-
-                if (ImGui::Button("Yes", ImVec2(162, 50))) {
-                    deleteWindowOpen = false;
-                    if (state.cameraEntity != state.selectedEntity) {
-                        deleted = true;
-                        state.scene->DestroyEntity(state.scene->GetEntityWithUUID(state.selectedEntity.GetUUID()));
-                    }
-                }
-
-                ImGui::SameLine();
-
-                if (ImGui::Button("No", ImVec2(162, 50))) {
-                    deleteWindowOpen = false;
-                }
-                ImGui::End();
-            }
-        }
-        ImGui::PopID();
-        return deleted;
-    }
 }

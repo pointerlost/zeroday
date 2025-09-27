@@ -1,16 +1,7 @@
 #pragma once
 #include <memory>
-
 #include "GPURenderer.h"
 #include "core/Base.h"
-
-namespace Zeroday {
-	namespace Ecs { struct MaterialComponent; }
-	struct MeshData3D;
-	class Camera;
-	class Scene;
-}
-
 
 namespace Zeroday::opengl
 {

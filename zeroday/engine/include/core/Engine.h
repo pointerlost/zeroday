@@ -57,9 +57,9 @@ namespace Zeroday {
 		void InitEditor();
 		void InitImGui();
 
-		void OpenGLSetUpResources() noexcept;
-		void OpenGLRenderStuff()    noexcept;
-		void glfwRenderEventStuff() const noexcept;
+		void OpenGLSetUpResources();
+		void OpenGLRenderStuff();
+		void glfwRenderEvent() const;
 
 		void UpdatePhase();
 		void UIPhase();

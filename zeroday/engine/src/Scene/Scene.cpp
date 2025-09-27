@@ -64,9 +64,9 @@ namespace Zeroday {
     }
 
     Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name) {
-        if (m_Entities.contains(uuid)) {
-            Warn("Entity already exists!");
-            return m_Entities[uuid];
+        // if UUID exists, we have to create a new one!
+        while (m_Entities.contains(uuid)) {
+            uuid = UUID();
         }
         Entity entity = { m_Registry.create(), this };
         entity.AddComponent<IDComponent>(uuid);
@@ -79,15 +79,14 @@ namespace Zeroday {
     }
 
     void Scene::DestroyEntity(Entity entity) {
-        m_Entities.erase(entity.GetUUID());
-        m_Registry.destroy(entity);
+        m_EntitiesToDestroy.push_back(entity.GetUUID());
     }
 
     Entity Scene::GetEntityWithUUID(UUID uuid) {
         if (m_Entities.contains(uuid)) {
             return m_Entities[uuid];
         }
-        ZD_WARN("Entity does not exist! returning a new one!");
+        ZD_WARN(false, "Entity does not exist! returning a new one!");
         Warn("Entity does not exist! returning a new one!");
         return Entity{};
     }
@@ -110,5 +109,15 @@ namespace Zeroday {
         lastUsedName = baseName;
 
         return baseName;
+    }
+
+    void Scene::CleanUpResources() {
+        for (auto& uuid : m_EntitiesToDestroy) {
+            if (m_Entities.contains(uuid)) {
+                m_Registry.destroy(m_Entities[uuid]);
+                m_Entities.erase(uuid);
+            }
+        }
+        m_EntitiesToDestroy.clear();
     }
 }

@@ -114,5 +114,4 @@ namespace Zeroday {
         explicit operator std::string() const { return name; }
     };
 
-
 }

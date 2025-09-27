@@ -140,14 +140,14 @@ namespace Zeroday
 		std::vector<Vertex> vertices;
 		std::vector<uint32_t> indices;
 
-		constexpr unsigned int X_SEGMENTS = 28;
-		constexpr unsigned int Y_SEGMENTS = 28;
+		constexpr uint xSegments = 15;
+		constexpr uint ySegments = 15;
 
-		for (unsigned int y = 0; y <= Y_SEGMENTS; ++y) {
-			for (unsigned int x = 0; x <= X_SEGMENTS; ++x) {
+		for (unsigned int y = 0; y <= ySegments; ++y) {
+			for (unsigned int x = 0; x <= xSegments; ++x) {
 				constexpr float radius = 0.2f;
-				const float xSegment = static_cast<float>(x) / static_cast<float>(X_SEGMENTS);
-				const float ySegment = static_cast<float>(y) / static_cast<float>(Y_SEGMENTS);
+				const float xSegment = static_cast<float>(x) / static_cast<float>(xSegments);
+				const float ySegment = static_cast<float>(y) / static_cast<float>(ySegments);
 				const float xPos = std::cos(xSegment * 2.0f * M_PI) * std::sin(ySegment * M_PI) * radius;
 				const float yPos = std::cos(ySegment * M_PI) * radius;
 				const float zPos = std::sin(xSegment * 2.0f * M_PI) * std::sin(ySegment * M_PI) * radius;
@@ -164,10 +164,10 @@ namespace Zeroday
 			}
 		}
 
-		for (unsigned int y = 0; y < Y_SEGMENTS; ++y) {
-			for (unsigned int x = 0; x < X_SEGMENTS; ++x) {
-				uint32_t i0 = y * (X_SEGMENTS + 1) + x;
-				uint32_t i1 = i0 + X_SEGMENTS + 1;
+		for (unsigned int y = 0; y < ySegments; ++y) {
+			for (unsigned int x = 0; x < xSegments; ++x) {
+				uint32_t i0 = y * (xSegments + 1) + x;
+				uint32_t i1 = i0 + xSegments + 1;
 
 				indices.push_back(i0);
 				indices.push_back(i1);

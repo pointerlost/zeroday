@@ -196,10 +196,11 @@ namespace Zeroday {
 		m_EditorState->scene = m_Scene.get();
 
 		m_Editor = CreateScope<Editor::Editor>(m_EditorState.get());
-		// need update !!?
+		// order is matter don't change it, hierarchy panel managing entity deletions
+		// if you change the order so can cause crashes
 		m_Editor->addPanel(CreateScope<Editor::UI::InspectorPanel>());
-		m_Editor->addPanel(CreateScope<Editor::UI::SceneHierarchyPanel>());
 		m_Editor->addPanel(CreateScope<Editor::UI::MenuBarPanel>(m_SceneObjectFactory.get()));
+		m_Editor->addPanel(CreateScope<Editor::UI::SceneHierarchyPanel>());
 
 		Info("[Engine::InitEditor] Editor initialized successfully!]");
 	}
@@ -210,12 +211,12 @@ namespace Zeroday {
 		Info("[Engine::InitImGui] ImGuiLayer initialized successfully!");
 	}
 
-	void Engine::OpenGLSetUpResources() noexcept {
+	void Engine::OpenGLSetUpResources() {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 	}
 
-	void Engine::OpenGLRenderStuff() noexcept {
+	void Engine::OpenGLRenderStuff() {
 		// Screen Color
 		glClearColor(0.04f, 0.05f, 0.06f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -224,7 +225,7 @@ namespace Zeroday {
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
-	void Engine::glfwRenderEventStuff() const noexcept {
+	void Engine::glfwRenderEvent() const {
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window->getGLFWwindow());
 	}
@@ -246,6 +247,7 @@ namespace Zeroday {
 	}
 
 	void Engine::CleanupPhase() {
-		glfwRenderEventStuff();
+		glfwRenderEvent();
+		m_Scene->CleanUpResources();
 	}
 }
