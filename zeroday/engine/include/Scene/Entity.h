@@ -9,6 +9,17 @@
 
 namespace Zeroday {
 
+    enum class ComponentType {
+        Transform,
+        ID,
+        Camera,
+        Light,
+        Material,
+        Mesh,
+        Model,
+        Tag
+    };
+
     class Entity {
     public:
         Entity() = default;
@@ -59,7 +70,7 @@ namespace Zeroday {
         operator uint32_t() const { return static_cast<uint32_t>(m_Handle); }
 
         UUID GetUUID() { return GetComponent<IDComponent>().ID; }
-        const std::string& GetName() { return GetComponent<NameComponent>().name; }
+        const std::string& GetName() { return GetComponent<TagComponent>().tag; }
 
         [[nodiscard]] bool operator==(const Entity& other) const {
             return m_Handle == other.m_Handle && m_Scene == other.m_Scene;

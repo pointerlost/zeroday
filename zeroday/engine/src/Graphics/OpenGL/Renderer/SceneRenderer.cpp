@@ -37,7 +37,7 @@ namespace Zeroday::opengl {
             result.materials.push_back(materialData);
             uint32_t materialIndex = result.materials.size() - 1;
 
-            const auto& meshInfo = mesh.meshData->getMeshInfo(mesh.subMeshName);
+            const auto& meshInfo = mesh.meshData->GetMeshInfo(mesh.subMeshName);
 
             RenderCommandMDI cmd;
             cmd.materialIndex  = materialIndex;

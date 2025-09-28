@@ -10,7 +10,7 @@ namespace Zeroday {
     struct LightComponent;
     struct MaterialComponent;
     struct TransformComponent;
-    struct NameComponent;
+    struct TagComponent;
 }
 
 namespace Zeroday::Editor::UI {
@@ -21,10 +21,17 @@ namespace Zeroday::Editor::UI {
 
     private:
         // Component based UI design
-        void DrawComponentUI(NameComponent& comp);
+        void DrawComponentUI(TagComponent& comp);
         void DrawComponentUI(TransformComponent& comp);
         void DrawComponentUI(MaterialComponent& comp);
         void DrawComponentUI(LightComponent& comp);
         void DrawComponentUI(CameraComponent& comp);
+        void DrawComponentUI(EditorState& state);
+
+        // helpers
+        bool HasComponentOfType(Entity entity, ComponentType type);
+        void AddComponentToEntity(Entity entity, ComponentType type);
+        void RemoveComponentFromEntity(Entity entity, ComponentType type);
+        void ManageComponentsMenu(Entity entity, bool AddOrDel);
     };
 }

@@ -13,7 +13,7 @@ namespace Zeroday::Editor::UI {
     void MenuBarPanel::Draw(EditorState &state) {
 
         if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("SCENE")) {
+            if (ImGui::BeginMenu("Scene")) {
                 if (ImGui::BeginMenu("Create Empty")) {
                     if (ImGui::BeginMenu("2D")) {
                         if (ImGui::MenuItem("Triangle")) {

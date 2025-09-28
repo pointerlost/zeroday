@@ -104,14 +104,14 @@ namespace Zeroday {
         ModelComponent(const ModelComponent&) = default;
     };
 
-    struct NameComponent {
-        std::string name = {};
+    struct TagComponent {
+        std::string tag = {};
 
-        explicit NameComponent(std::string name) : name(std::move(name)) {}
-        NameComponent() = default;
-        NameComponent(const NameComponent&) = default;
+        explicit TagComponent(std::string tag) : tag(std::move(tag)) {}
+        TagComponent() = default;
+        TagComponent(const TagComponent&) = default;
 
-        explicit operator std::string() const { return name; }
+        explicit operator std::string() const { return tag; }
     };
 
 }

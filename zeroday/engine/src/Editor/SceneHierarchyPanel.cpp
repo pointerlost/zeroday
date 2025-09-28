@@ -19,12 +19,12 @@ namespace Zeroday::Editor::UI {
         ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoResize);
 
         // Can be more optimize need fix!
-        auto view = state.scene->GetAllEntitiesWith<NameComponent>();
+        auto view = state.scene->GetAllEntitiesWith<TagComponent>();
         for (auto [enttEntity, nameComp] : view.each()) {
             Entity entity(enttEntity, state.scene);
 
             bool isSelected = (state.selectedEntity == entity);
-            ImGui::Selectable(nameComp.name.c_str(), isSelected);
+            ImGui::Selectable(nameComp.tag.c_str(), isSelected);
 
             // Left click
             if (ImGui::IsItemClicked(0))

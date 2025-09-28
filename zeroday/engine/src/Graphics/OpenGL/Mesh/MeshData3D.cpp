@@ -37,7 +37,7 @@ namespace Zeroday {
         all_Vertices.insert(all_Vertices.end(), v.begin(), v.end());
 
         // Append indices but adjust by vertexOffset
-        for (uint32_t idx : i) {
+        for (const uint32_t idx : i) {
             all_Indices.push_back(idx + info.m_VertexOffset);
         }
 
@@ -72,7 +72,7 @@ namespace Zeroday {
 
         // UV (location = 2)
         glEnableVertexArrayAttrib(m_UniversalVAO, 2);
-        glVertexArrayAttribFormat(m_UniversalVAO, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, UV));
+        glVertexArrayAttribFormat(m_UniversalVAO, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, m_UV));
         glVertexArrayAttribBinding(m_UniversalVAO, 2, 0);
 
         Info("Created Universal VAO: " + std::to_string(m_UniversalVAO) +

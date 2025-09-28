@@ -61,8 +61,9 @@ namespace Zeroday {
 		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Directional, "Directional Light");
 		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Spot, "Spot Light");
 
-		(void)m_SceneObjectFactory->CreatePrimitiveObject("cube", "CUBE");
-		(void)m_SceneObjectFactory->CreatePrimitiveObject("sphere", "SPHERE");
+
+		(void)m_SceneObjectFactory->CreatePrimitiveObject("cube", "Cube");
+		(void)m_SceneObjectFactory->CreatePrimitiveObject("sphere", "Sphere");
 
 		Info("Engine initResources successful!");
 

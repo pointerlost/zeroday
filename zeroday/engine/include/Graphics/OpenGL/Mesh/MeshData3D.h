@@ -11,7 +11,7 @@ namespace Zeroday {
     struct Vertex {
         glm::vec3 m_Position;
         glm::vec3 m_Normal;
-        glm::vec2 UV;
+        glm::vec2 m_UV;
     };
 
     struct SubMeshInfo {
@@ -36,16 +36,17 @@ namespace Zeroday {
         void CreateUniversalVAO();
         void Cleanup();
 
-        [[nodiscard]] SubMeshInfo& getMeshInfo(const std::string& name) {
+        // get the mesh information of any primitive type you want in lowercase, ex: ("cube", "triangle")
+        [[nodiscard]] SubMeshInfo& GetMeshInfo(const std::string& name) {
             return objectInfo.at(name);
         }
 
         [[nodiscard]] GLuint GetUniversalVAO() const { return m_UniversalVAO; }
-        [[nodiscard]] uint32_t getVBO() const { return m_VBO; }
-        [[nodiscard]] uint32_t getEBO() const { return m_EBO; }
+        [[nodiscard]] uint32_t GetVBO() const { return m_VBO; }
+        [[nodiscard]] uint32_t GetEBO() const { return m_EBO; }
 
-        [[nodiscard]] const std::vector<Vertex>& getVertices() const { return all_Vertices; }
-        [[nodiscard]] const std::vector<uint32_t>& getIndices() const { return all_Indices; }
+        [[nodiscard]] const std::vector<Vertex>& GetVertices()  const { return all_Vertices; }
+        [[nodiscard]] const std::vector<uint32_t>& GetIndices() const { return all_Indices;  }
 
     private:
         GLuint m_UniversalVAO = 0;
@@ -62,12 +63,12 @@ namespace Zeroday {
         ~MeshData3D() { Cleanup(); }
         void AddMesh3DToMeshData(const std::string& name, std::vector<Vertex>& v, std::vector<uint32_t>& i);
 
-        [[nodiscard]] uint32_t getIndexCount(const std::string& name) {
-            return getMeshInfo(name).m_IndexCount;
+        [[nodiscard]] uint32_t GetIndexCount(const std::string& name) {
+            return GetMeshInfo(name).m_IndexCount;
         }
 
-        [[nodiscard]] uint32_t getIndexOffSet(const std::string& name) {
-            return getMeshInfo(name).m_IndexOffset;
+        [[nodiscard]] uint32_t GetIndexOffSet(const std::string& name) {
+            return GetMeshInfo(name).m_IndexOffset;
         }
     };
 }

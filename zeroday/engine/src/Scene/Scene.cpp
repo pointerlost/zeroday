@@ -55,7 +55,7 @@ namespace Zeroday {
     }
 
     template<>
-    void Scene::OnComponentAdded<NameComponent>(Entity entity, NameComponent& component)
+    void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
     {
     }
 
@@ -71,7 +71,7 @@ namespace Zeroday {
         Entity entity = { m_Registry.create(), this };
         entity.AddComponent<IDComponent>(uuid);
         entity.AddComponent<TransformComponent>();
-        entity.AddComponent<NameComponent>().name = name.empty() ? CreateUniqueName() : name;
+        entity.AddComponent<TagComponent>().tag = name.empty() ? CreateUniqueName() : name;
 
         m_Entities[uuid] = entity;
 

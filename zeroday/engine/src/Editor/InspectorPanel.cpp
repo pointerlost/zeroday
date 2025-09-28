@@ -33,10 +33,10 @@ namespace Zeroday::Editor::UI {
 
         Entity entity = scene->GetEntityWithUUID(state.selectedEntity.GetUUID());
 
-        auto [nameComp, transformComp, materialComp, lightComp, cameraComp]
-        = entity.TryGetAllComponents<NameComponent, TransformComponent, MaterialComponent, LightComponent, CameraComponent>();
+        auto [tagComp, transformComp, materialComp, lightComp, cameraComp]
+        = entity.TryGetAllComponents<TagComponent, TransformComponent, MaterialComponent, LightComponent, CameraComponent>();
 
-        DrawComponentUI(*nameComp);
+        DrawComponentUI(*tagComp);
         DrawComponentUI(*transformComp);
         if (materialComp) {
             DrawComponentUI(*materialComp);
@@ -47,17 +47,23 @@ namespace Zeroday::Editor::UI {
         if (entity.HasComponent<LightComponent>()) {
             DrawComponentUI(*lightComp);
         }
+
+        // General Settings
+        DrawComponentUI(state);
+
         ImGui::End();
     }
 
-    void InspectorPanel::DrawComponentUI(NameComponent &comp) {
+    void InspectorPanel::DrawComponentUI(TagComponent &comp) {
         char buffer[128];
-        strncpy( buffer, comp.name.c_str(), sizeof(buffer) );
+        strncpy( buffer, comp.tag.c_str(), sizeof(buffer) );
 
-        if (ImGui::CollapsingHeader("Name")) {
+        static bool headerOpened = true;
+        ImGui::SetNextItemOpen(headerOpened, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("Tag")) {
             ImGui::SetNextItemWidth(400);
-            ImGui::InputText("##NameInput ", buffer, sizeof(buffer));
-            comp.name = buffer;
+            ImGui::InputText("##TagInput ", buffer, sizeof(buffer));
+            comp.tag = buffer;
         }
     }
 
@@ -69,6 +75,8 @@ namespace Zeroday::Editor::UI {
         auto rot = transform.GetEulerRotation();
         auto scl = transform.GetScale();
 
+        static bool headerOpened = true;
+        ImGui::SetNextItemOpen(headerOpened, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Transform")) {
             if (ImGui::DragFloat3("Position", glm::value_ptr(pos), 0.1)) {
                 transform.SetPosition(pos);
@@ -88,20 +96,22 @@ namespace Zeroday::Editor::UI {
         ImGui::PushID("Material");
         auto& material = comp.m_Instance;
 
+        static bool headerOpenedMat = true;
+        ImGui::SetNextItemOpen(headerOpenedMat, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Material")) {
             auto baseColor = material->GetBaseColor();
-            if (ImGui::ColorEdit4("Base Color R",  &baseColor.x,  ImGuiColorEditFlags_None)) {
+            if (ImGui::ColorEdit4("Color",  &baseColor.x,  ImGuiColorEditFlags_None)) {
                 material->SetBaseColor(baseColor);
             }
         }
 
         float metallic = material->GetMetallic();
-        if (ImGui::SliderFloat("Metallic", &metallic, 0.0f, 1.0f)) {
+        if (ImGui::SliderFloat("Metallic", &metallic, 0.0001f, 1.0f)) {
             material->SetMetallic(metallic);
         }
 
         float roughness = material->GetRoughness();
-        if (ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f)) {
+        if (ImGui::SliderFloat("Roughness", &roughness, 0.0001f, 1.0f)) {
             material->SetRoughness(roughness);
         }
 
@@ -110,11 +120,19 @@ namespace Zeroday::Editor::UI {
             material->SetEmissive(emissive);
         }
 
+        static bool headerOpenedTex = true;
+        ImGui::SetNextItemOpen(headerOpenedTex, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Texture")) {
-            if (ImGui::Button("On")) {
+            auto xButtons = InspectorWidth / 3 - 10;
+            if (ImGui::Button("On", ImVec2(xButtons, 32))) {
 
             }
-            if (ImGui::Button("Off")) {
+            ImGui::SameLine();
+            if (ImGui::Button("Off", ImVec2(xButtons, 32))) {
+
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Load", ImVec2(xButtons, 32))) {
 
             }
         }
@@ -125,91 +143,81 @@ namespace Zeroday::Editor::UI {
         ImGui::PushID("Light");
         auto& light = comp.m_Light;
 
-        // Light Type selection
-        const char* lightTypes[] = { "Directional", "Point", "Spot" };
-        int currentType = static_cast<int>(light.GetType());
-        if (ImGui::Combo("Type", &currentType, lightTypes, IM_ARRAYSIZE(lightTypes))) {
-            if (currentType == static_cast<int>(opengl::LightType::Point)) {
-                comp.SetAsPoint(light.GetPosition(), light.GetRadiance(), light.GetIntensity());
-            }
-            else if (currentType == static_cast<int>(opengl::LightType::Directional)) {
-                comp.SetAsDirectional(light.GetDirection(), light.GetRadiance(), light.GetIntensity());
-            }
-            else {
-                comp.SetAsSpot(light.GetPosition(), light.GetDirection(), light.GetRadiance(), light.GetIntensity(), light.GetCutOff(), light.GetOuterCutOff());
-            }
-        }
-
-        ImGui::Separator();
-
-        // Radiance (color) with color picker
-        glm::vec3 radiance = light.GetRadiance();
-        float radianceArray[3] = { radiance.x, radiance.y, radiance.z };
-        if (ImGui::ColorEdit3("Radiance", radianceArray)) {
-            light.SetRadiance(glm::vec3(radianceArray[0], radianceArray[1], radianceArray[2]));
-        }
-
-        // Intensity
-        float intensity = light.GetIntensity();
-        if (ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
-            light.SetIntensity(intensity);
-        }
-
-        ImGui::Separator();
-
-        // Direction (for directional and spot lights)
-        if (light.GetType() != opengl::LightType::Point) {
-            glm::vec3 direction = light.GetDirection();
-            float dirArray[3] = { direction.x, direction.y, direction.z };
-            if (ImGui::DragFloat3("Direction", dirArray, 0.01f, -1.0f, 1.0f)) {
-                glm::vec3 newDir = glm::vec3(dirArray[0], dirArray[1], dirArray[2]);
-                if (glm::length(newDir) > 0.001f) {
-                    light.SetDirection(glm::normalize(newDir));
+        static bool headerOpened = true;
+        ImGui::SetNextItemOpen(headerOpened, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("Light Properties")) {
+            // Light Type selection
+            const char* lightTypes[] = { "Directional", "Point", "Spot" };
+            int currentType = static_cast<int>(light.GetType());
+            if (ImGui::Combo("Type", &currentType, lightTypes, IM_ARRAYSIZE(lightTypes))) {
+                if (currentType == static_cast<int>(opengl::LightType::Point)) {
+                    comp.SetAsPoint(light.GetPosition(), light.GetRadiance(), light.GetIntensity());
+                }
+                else if (currentType == static_cast<int>(opengl::LightType::Directional)) {
+                    comp.SetAsDirectional(light.GetDirection(), light.GetRadiance(), light.GetIntensity());
+                }
+                else {
+                    comp.SetAsSpot(light.GetPosition(), light.GetDirection(), light.GetRadiance(), light.GetIntensity(), light.GetCutOff(), light.GetOuterCutOff());
                 }
             }
-        }
 
-        ImGui::Separator();
-
-        // Spotlight
-        if (light.GetType() == opengl::LightType::Spot) {
-            // Convert cosine angles to degrees for more intuitive editing
-            float cutOffDeg      = glm::degrees(glm::acos(light.GetCutOff()));
-            float outerCutOffDeg = glm::degrees(glm::acos(light.GetOuterCutOff()));
-
-            if (ImGui::DragFloat("Cut Off (degrees)", &cutOffDeg, 1.0f, 1.0f, 89.0f)) {
-                light.SetCutOff(glm::cos(glm::radians(cutOffDeg)));
-            }
-
-            if (ImGui::DragFloat("Outer Cut Off (degrees)", &outerCutOffDeg, 1.0f, 1.0f, 89.0f)) {
-                light.SetOuterCutOff(glm::cos(glm::radians(outerCutOffDeg)));
-            }
-
-            // Ensure outer cut off is always larger than inner cut off
-            if (outerCutOffDeg <= cutOffDeg) {
-                outerCutOffDeg = cutOffDeg + 1.0f;
-                light.SetOuterCutOff(glm::cos(glm::radians(outerCutOffDeg)));
-            }
-        }
-
-        // Attenuation parameters (for point and spot lights)
-        if (light.GetType() != opengl::LightType::Directional) {
             ImGui::Separator();
-            ImGui::Text("Attenuation");
 
-            float constant = light.GetConstant();
-            if (ImGui::DragFloat("Constant", &constant, 0.01f, 0.0f, 10.0f)) {
-                light.SetConstant(constant);
+            // Radiance with color picker
+            glm::vec3 radiance = light.GetRadiance();
+            float radianceArray[3] = { radiance.x, radiance.y, radiance.z };
+            if (ImGui::ColorEdit3("Radiance", radianceArray)) {
+                light.SetRadiance(glm::vec3(radianceArray[0], radianceArray[1], radianceArray[2]));
             }
 
-            float linear = light.GetLinear();
-            if (ImGui::DragFloat("Linear", &linear, 0.001f, 0.0f, 1.0f)) {
-                light.SetLinear(linear);
+            // Intensity
+            float intensity = light.GetIntensity();
+            if (ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f, 100.0f)) {
+                light.SetIntensity(intensity);
             }
 
-            float quadratic = light.GetQuadratic();
-            if (ImGui::DragFloat("Quadratic", &quadratic, 0.0001f, 0.0f, 0.01f, "%.6f")) {
-                light.SetQuadratic(quadratic);
+            ImGui::Separator();
+
+            // Spotlight
+            if (light.GetType() == opengl::LightType::Spot) {
+                // Convert cosine angles to degrees for more intuitive editing
+                float cutOffDeg      = glm::degrees(glm::acos(light.GetCutOff()));
+                float outerCutOffDeg = glm::degrees(glm::acos(light.GetOuterCutOff()));
+
+                if (ImGui::DragFloat("Cut Off (degrees)", &cutOffDeg, 1.0f, 1.0f, 89.0f)) {
+                    light.SetCutOff(glm::cos(glm::radians(cutOffDeg)));
+                }
+
+                if (ImGui::DragFloat("Outer Cut Off (degrees)", &outerCutOffDeg, 1.0f, 1.0f, 89.0f)) {
+                    light.SetOuterCutOff(glm::cos(glm::radians(outerCutOffDeg)));
+                }
+
+                // Ensure outer cut off is always larger than inner cut off
+                if (outerCutOffDeg <= cutOffDeg) {
+                    outerCutOffDeg = cutOffDeg + 0.25f;
+                    light.SetOuterCutOff(glm::cos(glm::radians(outerCutOffDeg)));
+                }
+            }
+
+            // Attenuation parameters (for point and spot lights)
+            if (light.GetType() != opengl::LightType::Directional) {
+                ImGui::Separator();
+                ImGui::Text("Attenuation Properties");
+
+                float constant = light.GetConstant();
+                if (ImGui::DragFloat("Constant", &constant, 0.01f, 0.0f, 10.0f)) {
+                    light.SetConstant(constant);
+                }
+
+                float linear = light.GetLinear();
+                if (ImGui::DragFloat("Linear", &linear, 0.001f, 0.0f, 1.0f)) {
+                    light.SetLinear(linear);
+                }
+
+                float quadratic = light.GetQuadratic();
+                if (ImGui::DragFloat("Quadratic", &quadratic, 0.0001f, 0.0f, 0.01f, "%.6f")) {
+                    light.SetQuadratic(quadratic);
+                }
             }
         }
 
@@ -219,6 +227,8 @@ namespace Zeroday::Editor::UI {
     void InspectorPanel::DrawComponentUI(CameraComponent &comp) {
         ImGui::PushID("Camera");
 
+        static bool headerOpened = true;
+        ImGui::SetNextItemOpen(headerOpened, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("View")) {
             auto& camera = comp.m_Camera;
 
@@ -226,7 +236,7 @@ namespace Zeroday::Editor::UI {
             float near = camera.GetPerspectiveNear();
             float far  = camera.GetPerspectiveFar();
 
-            ImGui::DragFloat("Fov",  &fov, 0.1f, 1.0f, 179.0f); // reasonable FOV range
+            ImGui::DragFloat("Fov",  &fov,  0.1f, 1.0f, 179.0f); // reasonable FOV range
             ImGui::DragFloat("Near", &near, 0.5f, 0.00001f, 0.8f);
             ImGui::DragFloat("Far",  &far,  1.5f, 0.00001f, 10000.0f);
 
@@ -237,4 +247,125 @@ namespace Zeroday::Editor::UI {
         ImGui::PopID();
     }
 
+    void InspectorPanel::DrawComponentUI(EditorState& state) {
+        ImGui::PushID("General Inspector##");
+
+        auto& entity = state.selectedEntity;
+
+        if (!entity) {
+            ImGui::PopID();
+            return;
+        }
+
+        ImGui::PushStyleColor(ImGuiCol_Button,       ImVec4(0.2f, 0.7f, 0.2f, 1.0f)); // Normal state
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered,ImVec4(0.3f, 0.8f, 0.3f, 1.0f)); // Hover state
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.6f, 0.1f, 1.0f)); // Active state
+        if (ImGui::Button("Add Component", ImVec2(InspectorWidth - 20, 30))) {
+            ImGui::OpenPopup("add_component_popup");
+        }
+        ImGui::PopStyleColor(3);
+
+        // Component addition popup
+        if (ImGui::BeginPopup("add_component_popup")) {
+            // second parameter true = "Add Component", false = "Remove Component"
+            ManageComponentsMenu(entity, true);
+            ImGui::EndPopup();
+        }
+
+        ImGui::PushStyleColor(ImGuiCol_Button,       ImVec4(0.7f, 0.2f, 0.2f, 1.0f)); // Normal state
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered,ImVec4(0.8f, 0.3f, 0.3f, 1.0f)); // Hover state
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f)); // Active state
+        if (ImGui::Button("Remove Component", ImVec2(InspectorWidth - 20, 30))) {
+            ImGui::OpenPopup("remove_component_popup");
+        }
+        ImGui::PopStyleColor(3);
+
+        // Component deletion popup
+        if (ImGui::BeginPopup("remove_component_popup")) {
+            // second parameter true = "Add Component", false = "Remove Component"
+            ManageComponentsMenu(entity, false);
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
+    }
+
+    bool InspectorPanel::HasComponentOfType(Entity entity, ComponentType type) {
+        switch (type) {
+            case ComponentType::Transform: return entity.HasComponent<TransformComponent>();
+            case ComponentType::ID:        return entity.HasComponent<IDComponent>();
+            case ComponentType::Camera:    return entity.HasComponent<CameraComponent>();
+            case ComponentType::Light:     return entity.HasComponent<LightComponent>();
+            case ComponentType::Material:  return entity.HasComponent<MaterialComponent>();
+            case ComponentType::Mesh:      return entity.HasComponent<MeshComponent>();
+            case ComponentType::Model:     return entity.HasComponent<ModelComponent>();
+            case ComponentType::Tag:       return entity.HasComponent<TagComponent>();
+            default: return false;
+        }
+    }
+
+    void InspectorPanel::AddComponentToEntity(Entity entity, ComponentType type) {
+        switch (type) {
+            case ComponentType::Transform: entity.AddComponent<TransformComponent>(); break;
+            case ComponentType::Camera:    entity.AddComponent<CameraComponent>();    break;
+            case ComponentType::Light:     entity.AddComponent<LightComponent>();     break;
+            case ComponentType::Material:  entity.AddComponent<MaterialComponent>();  break;
+            case ComponentType::Mesh:      entity.AddComponent<MeshComponent>();      break;
+            case ComponentType::Model:     entity.AddComponent<ModelComponent>();     break;
+            case ComponentType::Tag:       entity.AddComponent<TagComponent>();       break;
+            default: break;
+        }
+    }
+
+    void InspectorPanel::RemoveComponentFromEntity(Entity entity, ComponentType type) {
+        switch (type) {
+            case ComponentType::Transform: entity.RemoveComponent<TransformComponent>(); break;
+            case ComponentType::Camera:    entity.RemoveComponent<CameraComponent>();    break;
+            case ComponentType::Light:     entity.RemoveComponent<LightComponent>();     break;
+            case ComponentType::Material:  entity.RemoveComponent<MaterialComponent>();  break;
+            case ComponentType::Mesh:      entity.RemoveComponent<MeshComponent>();      break;
+            case ComponentType::Model:     entity.RemoveComponent<ModelComponent>();     break;
+            case ComponentType::Tag:       entity.RemoveComponent<TagComponent>();       break;
+            default: break;
+        }
+    }
+
+    void InspectorPanel::ManageComponentsMenu(Entity entity, bool AddOrDel) {
+        constexpr std::array componentTypes = {
+            std::make_pair(ComponentType::Transform, "Transform"),
+            std::make_pair(ComponentType::Camera,    "Camera"),
+            std::make_pair(ComponentType::Light,     "Light"),
+            std::make_pair(ComponentType::Material,  "Material"),
+            std::make_pair(ComponentType::Mesh,      "Mesh"),
+            std::make_pair(ComponentType::Model,     "Model"),
+            std::make_pair(ComponentType::Tag,       "Tag")
+        };
+
+        for (const auto& [type, name] : componentTypes) {
+            // If addOrDel = true "Add Component", else "Remove Component"
+            // Skip if entity already has this component type
+            if (AddOrDel) { // Add Component AddOrDel = true
+                if (HasComponentOfType(entity, type)) {
+                    ImGui::BeginDisabled();
+                    ImGui::MenuItem(name, nullptr, false, false);
+                    ImGui::EndDisabled();
+                } else {
+                    if (ImGui::MenuItem(name)) {
+                        AddComponentToEntity(entity, type);
+                    }
+                }
+            }
+            else { // Remove Component AddOrDel = false
+                if (!HasComponentOfType(entity, type)) {
+                    ImGui::BeginDisabled();
+                    ImGui::MenuItem(name, nullptr, false, false);
+                    ImGui::EndDisabled();
+                } else {
+                    if (ImGui::MenuItem(name)) {
+                        RemoveComponentFromEntity(entity, type);
+                    }
+                }
+            }
+        }
+    }
 }
