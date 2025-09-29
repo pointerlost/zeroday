@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "GPURenderer.h"
-#include "core/Base.h"
+#include "Core/Base.h"
 
 namespace Zeroday::opengl {
 

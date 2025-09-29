@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include <optional>
-#include "core/Base.h"
+#include "Core/Base.h"
 #include "Graphics/OpenGL/GPU_buffers.h"
 
 namespace Zeroday {

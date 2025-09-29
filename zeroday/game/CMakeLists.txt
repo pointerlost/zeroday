@@ -1,6 +1,6 @@
 add_executable (ZeroDayGame
-	src/core/Game.cpp
-	src/core/main.cpp
+	src/Core/Game.cpp
+	src/Core/main.cpp
 	src/objects/GameObject.cpp
 )
 

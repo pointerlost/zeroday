@@ -2,7 +2,7 @@
 // Created by pointerlost on 8/9/25.
 //
 #include "Graphics/OpenGL/Shader.h"
-#include <core/Logger.h>
+#include <Core/Logger.h>
 
 namespace Zeroday {
 

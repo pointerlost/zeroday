@@ -1,9 +1,7 @@
 //
 // Created by pointerlost on 9/18/25.
 //
-#include "core/Logger.h"
-
-
+#include "Core/Logger.h"
 
 namespace Zeroday::Logger {
 

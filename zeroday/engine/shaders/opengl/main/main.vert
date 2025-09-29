@@ -3,7 +3,7 @@
 #extension GL_ARB_shader_draw_parameters : require
 #extension GL_ARB_gpu_shader_int64 : enable
 
-#include "core/buffers.glsl"
+#include "Core/buffers.glsl"
 #include "common/constants.glsl"
 #include "common/command_generation.glsl"
 

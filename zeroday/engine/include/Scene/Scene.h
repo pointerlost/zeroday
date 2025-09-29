@@ -4,7 +4,7 @@
 #pragma once
 #include <iostream>
 #include <unordered_map>
-#include "core/UUID.h"
+#include "Core/UUID.h"
 #include "entt/entt.hpp"
 
 namespace Zeroday { class Entity; }

@@ -1,10 +1,10 @@
-#include "core/Engine.h"
-#include "core/Config.h"
+#include "Core/Engine.h"
+#include "Core/Config.h"
 #include "CallBack/CallBack.h"
 #include <imgui_impl_opengl3.h>
-#include <core/EngineConfig.h>
+#include <Core/EngineConfig.h>
 #include <Input/Input.h>
-#include "core/Services.h"
+#include "Core/Services.h"
 #include "Editor/InspectorPanel.h"
 #include "Editor/MenuBarPanel.h"
 #include "Editor/SceneHierarchyPanel.h"
@@ -20,7 +20,7 @@ namespace Zeroday {
 	}
 
 	bool Engine::Run() {
-		const auto glfwWin = m_Window->getGLFWwindow();
+		const auto glfwWin = m_Window->GetGLFWwindow();
 
 		if (!glfwWin) {
 			Error("[Engine::run] GLFW window returning nullptr!");
@@ -28,20 +28,15 @@ namespace Zeroday {
 		}
 		glfwSwapInterval(0);
 
-		Info("Starting engine...");
-
-		glEnable(GL_DEBUG_OUTPUT);
-
 		// engine life loop
 		EditorStateLoop(glfwWin);
 
-		Info("Finishing engine...");
 		return true;
 	}
 
 	bool Engine::InitResources() {
 		// Load materials
-		if (!g_MaterialLibrary->CreateMaterials(std::string(MATERIAL_JSON_PATH) + "materials.json")) {
+		if (!g_AssetManager->LoadMaterialsFromFolder(std::string(MATERIAL_JSON_PATH) + "materials.json")) {
 			Error("[Engine::initResources] loadMaterialFromJSON function is not working correctly!");
 			return false;
 		}
@@ -53,15 +48,10 @@ namespace Zeroday {
 
 		Info("[Engine::initResources] Shaders loaded successfully!");
 
-		m_ImGuiLayer->Init(m_Window->getGLFWwindow());
+		m_ImGuiLayer->Init(m_Window->GetGLFWwindow());
 
 		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Point, "Point Light");
-		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Directional, "Directional Light");
-		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Spot, "Spot Light");
-
-
 		(void)m_SceneObjectFactory->CreatePrimitiveObject("cube", "Cube");
-		(void)m_SceneObjectFactory->CreatePrimitiveObject("sphere", "Sphere");
 
 		Info("Engine initResources successful!");
 
@@ -69,12 +59,10 @@ namespace Zeroday {
 	}
 
 	void Engine::InitServices() {
-		Services::RegisterMaterialLibrary(g_MaterialLibrary.get());
 		Services::RegisterMeshLibrary(g_MeshLibrary.get());
 		Services::RegisterAssetManager(g_AssetManager.get());
 		Services::RegisterModelLoader(g_ModelLoader.get());
 		Services::RegisterRenderContext(g_RenderContext.get());
-		Services::RegisterTextureManager(g_TextureManager.get());
 		Services::RegisterEditorState(m_EditorState.get());
 	}
 
@@ -83,8 +71,6 @@ namespace Zeroday {
 			InitWindow();
 			InitCallBack();
 			InitAssetManager();
-			InitTexture();
-			InitMaterial();
 			InitMesh();
 			InitModel();
 			InitScene();
@@ -102,9 +88,7 @@ namespace Zeroday {
 	}
 
     void Engine::EditorStateLoop(GLFWwindow* glfwWin) {
-
-		while (!glfwWindowShouldClose(glfwWin) && !m_EditorState->requestShutdown)
-		{
+		while (!glfwWindowShouldClose(glfwWin) && !m_EditorState->requestShutdown) {
 			UpdatePhase();
 			RenderPhase();
 			UIPhase();
@@ -115,7 +99,7 @@ namespace Zeroday {
     void Engine::InitWindow() {
         m_Window = CreateScope<Window>();
 
-		if (!m_Window->initResources()) {
+		if (!m_Window->InitResources()) {
 			Error("Engine::initWindow FAILED because of initResources!");
 			throw std::runtime_error("Failed to initialize window FAILED because of initResources!");
 		}
@@ -124,30 +108,18 @@ namespace Zeroday {
     }
 
     void Engine::InitCallBack() {
-		CallBack::initResources(m_Window->getGLFWwindow());
+		CallBack::InitResources(m_Window->GetGLFWwindow());
 
 		Info("[Engine::InitCallBack] initialized successfully!");
 	}
 
-	void Engine::InitAssetManager() {
+    void Engine::InitAssetManager() {
 		g_AssetManager = CreateScope<AssetManager>();
 
 		Info("[Engine::InitAssetManager] AssetManager initialized successfully!");
-	}
+    }
 
-	void Engine::InitTexture() {
-		g_TextureManager = CreateScope<TextureManager>();
-
-		Info("[Engine::InitTexture] TextureManager initialized successfully!");
-	}
-
-	void Engine::InitMaterial() {
-		g_MaterialLibrary = CreateScope<MaterialLibrary>();
-
-		Info("[Engine::InitMaterial] MaterialLibrary initialized successfully!");
-	}
-
-	void Engine::InitMesh() {
+    void Engine::InitMesh() {
 		g_MeshLibrary = CreateScope<MeshLibrary>();
 
 		Info("[Engine::InitMesh] MeshLibrary initialized successfully!");
@@ -205,7 +177,7 @@ namespace Zeroday {
 	}
 
 	void Engine::InitImGui() {
-		m_ImGuiLayer = CreateScope<UI::ImGuiLayer>(m_Window->getGLFWwindow(), m_SceneObjectFactory.get());
+		m_ImGuiLayer = CreateScope<UI::ImGuiLayer>(m_Window->GetGLFWwindow(), m_SceneObjectFactory.get());
 
 		Info("[Engine::InitImGui] ImGuiLayer initialized successfully!");
 	}
@@ -216,11 +188,11 @@ namespace Zeroday {
 
 	void Engine::glfwRenderEvent() const {
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window->getGLFWwindow());
+		glfwSwapBuffers(m_Window->GetGLFWwindow());
 	}
 
 	void Engine::UpdatePhase() {
-		Input::update();
+		Input::Update();
 		// world->update();
 	}
 

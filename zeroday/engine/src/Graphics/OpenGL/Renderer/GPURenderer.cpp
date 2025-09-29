@@ -4,9 +4,9 @@
 #include "Graphics/OpenGL/Renderer/GPURenderer.h"
 #include "Graphics/OpenGL/Renderer/SceneRenderer.h"
 #include "Graphics/OpenGL/GPU_buffers.h"
-#include "core/AssetManager.h"
-#include "core/Logger.h"
-#include "core/Services.h"
+#include "Core/AssetManager.h"
+#include "Core/Logger.h"
+#include "Core/Services.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 
@@ -193,7 +193,7 @@ namespace Zeroday::opengl {
 
     void GPURenderer::RenderFrame() {
         auto extracted = SceneRenderer::ExtractRenderables(m_Scene);
-        auto shader = AssetManager::GetShader("main");
+        auto shader = Services::GetAssetManager()->GetShader("main");
 
         shader->Bind();
         shader->SetUint("uLightCount", m_CurrentLightCount);

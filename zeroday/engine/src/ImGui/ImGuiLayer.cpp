@@ -3,9 +3,8 @@
 #include <imgui_impl_opengl3.h>
 #include "Graphics/OpenGL/Lighting/Light.h"
 #include "core/Config.h"
-#include <core/File.h>
-
-#include "core/Logger.h"
+#include <Core/File.h>
+#include "Core/Logger.h"
 
 namespace Zeroday::UI
 {
@@ -42,11 +41,11 @@ namespace Zeroday::UI
 
 	void ImGuiLayer::initFontAndImages(const ImGuiIO& io)
 	{
-		const auto& file = Zeroday::File::get();
+		const auto& file = Zeroday::File::Get();
 
 		m_fontPath = std::string(ASSETS_DIR) + "/fonts/RobotoSlab.ttf";
 
-		if (file.exists(m_fontPath)) {
+		if (file.Exists(m_fontPath)) {
 			io.Fonts->AddFontFromFileTTF(m_fontPath.c_str(), 20.0f);
 		}
 		else {

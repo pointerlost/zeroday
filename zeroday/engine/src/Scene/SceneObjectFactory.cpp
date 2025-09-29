@@ -1,7 +1,7 @@
 #include "Scene/SceneObjectFactory.h"
+#include "Core/AssetManager.h"
+#include "Core/Services.h"
 #include "Scene/Scene.h"
-#include "core/Services.h"
-#include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 #include "Graphics/OpenGL/Model/Model.h"
 
@@ -13,7 +13,7 @@ namespace Zeroday {
         const auto* meshLib = Services::GetMeshLibrary();
 		auto entity = m_Scene.CreateEntity(entityName);
 
-		auto mat = Services::GetMaterialLibrary()->CreateInstance("bricks_097");
+		auto mat = Services::GetAssetManager()->CreateMaterialInstance("bricks_097");
 		entity.AddComponent<MaterialComponent>(mat);
 
         MeshComponent meshComp{};
@@ -31,7 +31,7 @@ namespace Zeroday {
 
 		auto entity = m_Scene.CreateEntity(entityName);
 
-		auto mat = Services::GetMaterialLibrary()->CreateInstance("asphalt_031");
+		auto mat = Services::GetAssetManager()->CreateMaterialInstance("asphalt_031");
 		entity.AddComponent<MaterialComponent>(mat);
 
 		LightComponent lightComp{type};

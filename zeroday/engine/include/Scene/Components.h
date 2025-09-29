@@ -4,7 +4,7 @@
 #pragma once
 #include <memory>
 #include <utility>
-#include "core/UUID.h"
+#include "Core/UUID.h"
 #include "Graphics/OpenGL/Camera/Camera.h"
 #include "Graphics/OpenGL/Lighting/Light.h"
 #include "Graphics/OpenGL/Material/material.h"

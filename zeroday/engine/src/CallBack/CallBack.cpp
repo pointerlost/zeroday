@@ -2,21 +2,21 @@
 
 namespace CallBack
 {
-	void initResources(GLFWwindow* window) noexcept
+	void InitResources(GLFWwindow* window) noexcept
 	{
-		glfwSetFramebufferSizeCallback(window, frameBufferSizeCallback);
-		glfwSetKeyCallback(window, key_CallBack);
-		glfwSetCursorPosCallback(window, mouse_CallBack);
+		glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback);
+		glfwSetKeyCallback(window, Key_CallBack);
+		glfwSetCursorPosCallback(window, Mouse_CallBack);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		//glfwSetScrollCallback(window, scroll_CallBack);
 	}
 
-	void frameBufferSizeCallback(GLFWwindow* window, int width, int height) noexcept
+	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height) noexcept
 	{
 		glViewport(0, 0, width, height);
 	}
 
-	void key_CallBack(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
+	void Key_CallBack(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
 	{
 		if (key < 0 || key >= Input::KEY_MAX) return;
 
@@ -34,11 +34,11 @@ namespace CallBack
 		}
 	}
 
-	void mouse_CallBack(GLFWwindow* window, double xpos, double ypos) noexcept
+	void Mouse_CallBack(GLFWwindow* window, double xpos, double ypos) noexcept
 	{
 		Input::xPosMouse = xpos;
 		Input::yPosMouse = ypos;
-		Input::updateMouseDelta();
+		Input::UpdateMouseDelta();
 	}
 	
 }

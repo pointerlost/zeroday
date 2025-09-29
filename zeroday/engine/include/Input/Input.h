@@ -30,9 +30,9 @@ namespace Input
 
 	extern bool g_IsKeyUp[KEY_MAX];
 	
-	void update();
+	void Update();
 
-	void updateMouseDelta();
+	void UpdateMouseDelta();
 
 	void ResetMouseDelta();
 }

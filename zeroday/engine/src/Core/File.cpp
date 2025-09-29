@@ -1,16 +1,16 @@
-#include "core/File.h"
+#include "Core/File.h"
 #include <fstream>
-#include "core/Logger.h"
+#include "Core/Logger.h"
 
 namespace Zeroday
 {
-    File& File::get()
+    File& File::Get()
     {
         static File instance;
         return instance;
     }
 
-    std::string File::readFromFile(const std::string& name) {
+    std::string File::ReadFromFile(const std::string& name) {
 
         std::ifstream file(name, std::ios::binary | std::ios::ate);
         if (!file.is_open()) {
@@ -31,7 +31,7 @@ namespace Zeroday
     }
 
 
-	bool File::exists(const std::string& path) const noexcept
+	bool File::Exists(const std::string& path) const noexcept
 	{
 		std::ifstream f(path);
 		return f.good();

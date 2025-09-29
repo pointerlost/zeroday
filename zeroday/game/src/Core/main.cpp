@@ -1,8 +1,7 @@
-#include "core/main.h"
+#include "Core/main.h"
 #include <memory>
 
-int main()
-{
+int main() {
 	const auto engine = Zeroday::CreateScope<Zeroday::Engine>();
 
 	try {

@@ -1,8 +1,8 @@
 #include "ImGui/ImGuiScoped.h"
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include "core/Logger.h"
-#include "core/Debug.h"
+#include "Core/Logger.h"
+#include "Core/Debug.h"
 #define DEBUG_PTR(ptr) DEBUG::DebugForEngineObjectPointers(ptr)
 
 namespace ENGINE::UI

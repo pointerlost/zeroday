@@ -1,10 +1,9 @@
 #include "Input/InputComponentFactory.h"
 #include <Input/InputComponent.h>
-#include <core/Logger.h>
+#include <Core/Logger.h>
 #include <Graphics/OpenGL/Transformations/Transformations.h>
 #include <Graphics/OpenGL/Lighting/Light.h>
-
-#include "core/Base.h"
+#include "Core/Base.h"
 
 namespace Input
 {

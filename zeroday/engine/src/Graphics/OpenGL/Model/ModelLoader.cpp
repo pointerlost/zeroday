@@ -2,12 +2,10 @@
 // Created by pointerlost on 8/15/25.
 //
 #include "Graphics/OpenGL/Model/ModelLoader.h"
-#include "core/Logger.h"
-#include "core/Services.h"
-#include "Graphics/OpenGL/Material/material_lib.h"
+#include "Core/Logger.h"
+#include "Core/Services.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Graphics/OpenGL/Model/Model.h"
-#include "Graphics/OpenGL/Textures/TextureManager.h"
 
 namespace Zeroday::Graphics {
     //

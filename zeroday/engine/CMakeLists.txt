@@ -27,10 +27,10 @@ target_include_directories(glad_local PUBLIC
 )
 
 add_library(ZeroDayEngine STATIC
-    src/core/Engine.cpp
-    src/core/Window.cpp
-    src/core/File.cpp
-    src/core/AssetManager.cpp
+    src/Core/Engine.cpp
+    src/Core/Window.cpp
+    src/Core/File.cpp
+    src/Core/AssetManager.cpp
     src/Math/Math.cpp
     src/Graphics/OpenGL/Shader.cpp
     src/Graphics/OpenGL/Mesh/MeshLibrary.cpp
@@ -40,8 +40,6 @@ add_library(ZeroDayEngine STATIC
     src/Graphics/OpenGL/Renderer/Renderer3D.cpp
     src/Graphics/OpenGL/Renderer/RenderState.cpp
     src/Graphics/OpenGL/Lighting/Light.cpp
-    src/Graphics/OpenGL/Material/material_lib.cpp
-    src/Graphics/OpenGL/Textures/TextureManager.cpp
     src/Graphics/OpenGL/Textures/stb_image.cpp
     src/Input/Input.cpp
     src/Input/InputContext.cpp
@@ -62,11 +60,21 @@ add_library(ZeroDayEngine STATIC
     src/ImGui/ImGuiObjectState.cpp
     src/ImGui/TransformGizmo.cpp
     src/Graphics/OpenGL/Renderer/GPURenderer.cpp
+    src/Graphics/OpenGL/Camera/Camera.cpp
+    src/Core/Services.cpp
+    src/Core/Logger.cpp
+    src/Scene/Scene.cpp
+    src/Core/UUID.cpp
+    src/Scene/Entity.cpp
+    src/Graphics/OpenGL/Renderer/SceneRenderer.cpp
+    src/Graphics/OpenGL/Material/material.cpp
+    src/Scene/Components.cpp
+    src/Graphics/OpenGL/Textures/Textures.cpp
     vendor/ImGuizmo/ImGuizmo.cpp
 
     # Header-only files (must be explicitly listed for IDE support)
     include/Graphics/OpenGL/Mesh/MeshLibrary.h
-    include/core/AssetManager.h
+    include/Core/AssetManager.h
     include/Graphics/OpenGL/Shader.h
     include/Editor/Editor.h
     include/Editor/EditorPanel.h
@@ -85,8 +93,6 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Renderer/Renderer3D.h
     include/Graphics/OpenGL/Lighting/Light.h
     include/Scene/SceneObjectFactory.h
-    include/Graphics/OpenGL/Textures/TextureManager.h
-    include/Graphics/OpenGL/Material/material_lib.h
     include/Graphics/OpenGL/Textures/Textures.h
     include/Graphics/OpenGL/Textures/stb_image.h
     include/ImGui/ImGuiLayer.h
@@ -96,10 +102,10 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Transformations/Transformations.h
     include/Math/Math.h
     include/Math/RayMath.h
-    include/core/Engine.h
-    include/core/Window.h
-    include/core/File.h
-    include/core/Logger.h
+    include/Core/Engine.h
+    include/Core/Window.h
+    include/Core/File.h
+    include/Core/Logger.h
     include/Input/Input.h
     include/Input/InputContext.h
     include/Input/InputComponent.h
@@ -108,26 +114,16 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Mesh/MeshFactory.h
     include/Graphics/OpenGL/Mesh/MeshData3D.h
     include/Graphics/OpenGL/Renderer/GPURenderer.h
-    include/core/Services.h
-    src/core/Services.cpp
+    include/Core/Services.h
     include/Graphics/OpenGL/Camera/Camera.h
-    src/Graphics/OpenGL/Camera/Camera.cpp
-    src/core/Logger.cpp
     include/Scene/Scene.h
     include/Scene/Components.h
     include/Scene/Entity.h
-    include/core/Assert.h
-    include/core/Compat.h
-    src/Scene/Scene.cpp
-    src/core/UUID.cpp
-    src/Scene/Entity.cpp
-    src/Graphics/OpenGL/Renderer/SceneRenderer.cpp
-    src/Graphics/OpenGL/Material/material.cpp
-    src/Scene/Components.cpp
-    include/core/UUID.h
-    include/core/Base.h
+    include/Core/Assert.h
+    include/Core/Compat.h
+    include/Core/UUID.h
+    include/Core/Base.h
     include/Graphics/OpenGL/Renderer/SceneRenderer.h
-    src/Graphics/OpenGL/Textures/Textures.cpp
 )
 
 # Include directories
@@ -156,33 +152,22 @@ target_link_libraries(ZeroDayEngine PUBLIC
     assimp::assimp
 )
 
-# Copy assets and shaders to build directory
-add_custom_command(TARGET ZeroDayEngine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets
-    ${CMAKE_CURRENT_BINARY_DIR}/assets
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_CURRENT_SOURCE_DIR}/shaders
-    ${CMAKE_CURRENT_BINARY_DIR}/shaders
-    COMMENT "Copying assets and shaders to build directory"
-)
-
 # Configure engine config files
-set(SHADERS_DIR "${CMAKE_CURRENT_BINARY_DIR}/shaders/")
-set(ASSETS_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets/")
+set(SHADERS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/shaders/")
+set(ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets/")
 set(TEXTURES_DIR "${ASSETS_DIR}textures/")
 set(MODEL_DIR "${ASSETS_DIR}models/")
 set(SHADERS_CONFIG_PATH "${SHADERS_DIR}config/shaders.json")
 set(MATERIAL_JSON_PATH "${ASSETS_DIR}json/")
 
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/core/Config.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/core/Config.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Core/Config.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/Core/Config.h
 )
 
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/core/EngineConfig.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/core/EngineConfig.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/Core/EngineConfig.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/Core/EngineConfig.h
 )
 
 # Compiler warnings and optimizations

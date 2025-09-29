@@ -3,7 +3,7 @@
 //
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 
-#include "core/Base.h"
+#include "Core/Base.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Graphics/OpenGL/Mesh/MeshFactory.h"
 

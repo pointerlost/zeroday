@@ -1,8 +1,8 @@
 #include "Graphics/OpenGL/Mesh/MeshFactory.h"
 #include <Graphics/OpenGL/Mesh/MeshData3D.h>
-#include "core/Logger.h"
+#include "Core/Logger.h"
 #include "Math/Math.h"
-#include "core/Base.h"
+#include "Core/Base.h"
 
 namespace Zeroday
 {

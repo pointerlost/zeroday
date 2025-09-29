@@ -2,7 +2,7 @@
 #include <cstring>
 #include <ranges>
 #include <glad/glad.h>
-#include "core/Logger.h"
+#include "Core/Logger.h"
 
 namespace Zeroday {
 

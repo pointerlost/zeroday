@@ -2,7 +2,7 @@
 // Created by pointerlost on 9/23/25.
 //
 #include "Graphics/OpenGL/Renderer/SceneRenderer.h"
-#include "core/AssetManager.h"
+#include "Core/AssetManager.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Scene/Components.h"
 #include "Scene/Scene.h"

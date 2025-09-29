@@ -2,10 +2,8 @@
 // Created by pointerlost on 9/23/25.
 //
 #include "Graphics/OpenGL/Material/material.h"
-
-#include "core/Services.h"
+#include "Core/Services.h"
 #include "Graphics/OpenGL/GPU_buffers.h"
-#include "Graphics/OpenGL/Textures/TextureManager.h"
 #include "Graphics/OpenGL/Textures/Textures.h"
 #include "Scene/Components.h"
 

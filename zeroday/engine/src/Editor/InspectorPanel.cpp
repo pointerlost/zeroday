@@ -8,7 +8,6 @@
 #include "glm/ext.hpp"
 #include "Scene/Scene.h"
 #include "Graphics/OpenGL/Lighting/Light.h"
-#include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Transformations/Transformations.h"
 #include "Scene/Components.h"
 #include "Graphics/OpenGL/Material/material.h"

@@ -2,7 +2,7 @@
 #extension GL_ARB_bindless_texture : require
 
 #include "common/constants.glsl"
-#include "core/buffers.glsl"
+#include "Core/buffers.glsl"
 
 // Input from vertex shader
 in vec3 vFragPos;

@@ -4,7 +4,7 @@
 #pragma once
 #include <typeindex>
 #include "Components.h"
-#include "core/Assert.h"
+#include "Core/Assert.h"
 #include "Scene.h"
 
 namespace Zeroday {

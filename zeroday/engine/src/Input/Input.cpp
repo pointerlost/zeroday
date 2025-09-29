@@ -1,17 +1,12 @@
 #include "Input/Input.h"
 
+namespace Input {
 
-namespace Input
-{
 	bool firstMouse = true;
-
 	bool g_IsKeyPressed[KEY_MAX] = {};
 	bool g_LastFrameIsKeyPressed[KEY_MAX] = {};
-
 	bool g_IsKeyDown[KEY_MAX] = {};
-
 	bool g_IsKeyHeld[KEY_MAX] = {};
-
 	bool g_IsKeyUp[KEY_MAX] = {};
 
 	double xPosMouse = 0.0f;
@@ -24,10 +19,8 @@ namespace Input
 	double mouseDeltaX = 0.0f;
 	double mouseDeltaY = 0.0f;
 
-	void update()
-	{
-		for (int i = 0; i < KEY_MAX; i++)
-		{
+	void Update() {
+		for (int i = 0; i < KEY_MAX; i++) {
 			// If last frame and the key is currently pressed => held
 			g_IsKeyHeld[i] = g_LastFrameIsKeyPressed[i] && g_IsKeyPressed[i];
 
@@ -42,11 +35,9 @@ namespace Input
 		}
 	}
 
-	void updateMouseDelta()
-	{
+	void UpdateMouseDelta() {
 		// to avoid a sudden change of the initial mouse delta
-		if (firstMouse)
-		{
+		if (firstMouse) {
 			// update last mouse pos
 			lastMousePosX = xPosMouse;
 			lastMousePosY = yPosMouse;
@@ -67,8 +58,7 @@ namespace Input
 		lastMousePosY = yPosMouse;
 	}
 
-	void ResetMouseDelta()
-	{
+	void ResetMouseDelta() {
 		mouseDeltaX = 0.0;
 		mouseDeltaY = 0.0;
 	}

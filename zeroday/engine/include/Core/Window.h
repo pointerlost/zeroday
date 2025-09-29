@@ -10,26 +10,23 @@ namespace Zeroday {
 	public:
 		Window();
 
-		bool initResources();
+		bool InitResources();
 
-		[[nodiscard]] GLFWwindow* getGLFWwindow() const;
-		[[nodiscard]] float getWidth()  const;
-		[[nodiscard]] float getHeight() const;
+		[[nodiscard]] GLFWwindow* GetGLFWwindow() const;
+		[[nodiscard]] float GetWidth()  const;
+		[[nodiscard]] float GetHeight() const;
 
-		void SetUpGLFWmonitorVidmode();
+		void SetUpGLFWmonitorVidMode();
 		void SetUpGLFWContext();
-		bool loadGlad();
+		bool LoadGlad();
 
-		bool checkOpenGLVersion();
+		[[nodiscard]] bool CheckOpenGLVersion();
 
 	private:
-
-		// SCREEN STUFF
 		float width;
 		float height;
 		const char* title;
 
-		// GLFW STUFF
 		GLFWwindow* window;
 		GLFWmonitor* monitor;
 		GLFWwindow* share;

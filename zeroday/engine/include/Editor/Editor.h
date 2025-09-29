@@ -4,7 +4,7 @@
 #pragma once
 #include <vector>
 #include "EditorPanel.h"
-#include "core/Base.h"
+#include "Core/Base.h"
 
 namespace Zeroday::Editor {
     struct EditorState;
