@@ -18,7 +18,7 @@ uniform uint uLightCount;
 vec3 CalcPBR(vec3 N, vec3 V, vec3 L, vec3 lightColor) {
     // Use vUV to sample textures
     vec3 albedo     = GetMatBaseColor(vMaterialIndex, vUV).rgb;
-    float roughness = GetRoughness(vMaterialIndex, vUV); // 👈 Pass vUV
+    float roughness = GetRoughness(vMaterialIndex, vUV);
     float metallic  = GetMetallic(vMaterialIndex);
 
     vec3 F0 = mix(vec3(0.04), albedo, metallic);
