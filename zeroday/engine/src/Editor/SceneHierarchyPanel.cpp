@@ -47,7 +47,7 @@ namespace Zeroday::Editor::UI {
         }
 
         // Release
-        if (ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered() && !ImGui::IsWindowHovered())
+        if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered() && !ImGui::IsAnyItemHovered())
             state.selectedEntity = Entity{};
 
         ImGui::End();

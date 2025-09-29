@@ -14,24 +14,24 @@ namespace Zeroday {
 		struct MaterialComponent;
 	}
 
-	struct Texture;}
+	struct Texture;
+}
 
 namespace Zeroday::opengl {
 
 	enum class MaterialTextureType {
 		BaseColor,
-		Metallic,
-		Roughness,
-		Emissive,
 		Normal,
-		AmbientOcclusion,
+		Roughness,
 		Displacement,
-		Height,
+		AmbientOcclusion,
+		// Metallic,
+		// Emissive,
+		// Height,
 	};
 
 	struct Material
 	{
-		std::string name    = {};
 		glm::vec4 baseColor = glm::vec4(1.0f); // RGBA
 		float     metallic  = 0.0f;
 		float     roughness = 1.0f;

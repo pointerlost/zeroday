@@ -15,9 +15,10 @@ namespace Zeroday {
         [[nodiscard]] bool LoadShader(const std::string &name, const std::string &vertPath, const std::string &fragPath);
         [[nodiscard]] static bool CompileComputeShader(const std::string& name, const std::string& filePath);
         [[nodiscard]] bool LoadAllShaders();
+
         static std::string PreprocessShader(const std::string &source, const std::string &basePath);
 
     private:
-        inline static std::unordered_map<std::string, Shader> g_shaders;
+        inline static std::unordered_map<std::string, Shader> g_Shaders;
     };
 }

@@ -3,54 +3,35 @@
 //
 #include "Graphics/OpenGL/Model/ModelLoader.h"
 #include "core/Logger.h"
+#include "core/Services.h"
 #include "Graphics/OpenGL/Material/material_lib.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Graphics/OpenGL/Model/Model.h"
 #include "Graphics/OpenGL/Textures/TextureManager.h"
 
-namespace Zeroday {
-
-    // std::shared_ptr<Model> ModelLoader::load(const std::string &filePath) {
+namespace Zeroday::Graphics {
+    //
+    // std::shared_ptr<opengl::Model> ModelLoader::Load(const std::string &filePath) {
     //     Assimp::Importer importer;
-    //
     //     const aiScene* scene = importer.ReadFile(filePath,
-    //         aiProcess_Triangulate |
-    //         aiProcess_FlipUVs |
-    //         aiProcess_CalcTangentSpace |
-    //         aiProcess_JoinIdenticalVertices);
+    //         aiProcess_Triangulate | aiProcess_FlipUVs |
+    //         aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices);
     //
-    //     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-    //         Logger::error("Assimp failed to load model: " + std::string(importer.GetErrorString()));
+    //     if (!scene || !scene->mRootNode) {
+    //         Error("Assimp failed to load model: " + std::string(importer.GetErrorString()));
     //         return nullptr;
     //     }
     //
-    //     auto model = CreateRef<Model>();
+    //     auto model = CreateRef<opengl::Model>();
+    //     std::string directory = GetDirectoryFromPath(filePath);
     //
-    //     std::string directory;
-    //     size_t slashIndex = filePath.find_last_of("/\\");
-    //     if (slashIndex != std::string::npos)
-    //         directory = filePath.substr(0, slashIndex);
-    //
-    //     std::function<void(aiNode*, const aiScene* scene)> processNode;
-    //     processNode = [&](aiNode* node, const aiScene* scene) {
-    //         for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-    //             aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-    //             MeshEntry entry = processMesh(mesh, scene, directory);
-    //             model->meshes.push_back(entry);
-    //         }
-    //
-    //         // Process Children
-    //         for (unsigned int i = 0; i < node->mNumChildren; i++) {
-    //             processNode(node->mChildren[i], scene);
-    //         }
-    //     };
-    //
-    //     processNode(scene->mRootNode, scene);
+    //     // Process all meshes
+    //     ProcessNode(scene->mRootNode, scene, directory, model.get());
     //
     //     return model;
     // }
     //
-    // std::shared_ptr<Material> ModelLoader::processMaterial(aiMaterial *mat, const std::string &directory) {
+    // std::shared_ptr<opengl::Material> ModelLoader::ProcessMaterial(aiMaterial *mat, const std::string &directory) {
     //     aiString name;
     //     mat->Get(AI_MATKEY_NAME, name);
     //
@@ -58,7 +39,7 @@ namespace Zeroday {
     //     auto existing = m_matLib->getMaterialByName(name.C_Str());
     //     if (existing) return existing;
     //
-    //     auto material = CreateRef<Material>();
+    //     auto material = CreateRef<opengl::Material>();
     //     material->m_name = name.C_Str();
     //
     //     aiColor3D ambient, diffuse, specular;
@@ -95,47 +76,68 @@ namespace Zeroday {
     //     return material;
     // }
     //
-    // MeshEntry ModelLoader::processMesh(aiMesh *mesh, const aiScene *scene, const std::string &directory) {
+    // opengl::MeshEntry ModelLoader::ProcessMesh(aiMesh *mesh, const aiScene *scene, const std::string &directory) {
     //     std::vector<Vertex> vertices;
     //     std::vector<uint32_t> indices;
     //
-    //     // Extract Vertices
+    //     // Extract vertices
     //     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-    //         Vertex v;
-    //         v.position = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
-    //         v.normal = mesh->HasNormals() ? glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z) : glm::vec3(0.0);
+    //         Vertex v{};
+    //         v.m_Position = { mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z };
+    //         v.m_Normal = mesh->HasNormals() ?
+    //             glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z) : glm::vec3(0.0f);
+    //
     //         if (mesh->mTextureCoords[0]) {
-    //             v.texCoords = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
+    //             v.m_UV = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
     //         } else {
-    //             v.texCoords = glm::vec2(0.0);
+    //             v.m_UV = glm::vec2(0.0f);
     //         }
     //         vertices.push_back(v);
     //     }
     //
-    //     // Extract Indices
+    //     // Extract indices
     //     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
     //         aiFace face = mesh->mFaces[i];
     //         for (unsigned int j = 0; j < face.mNumIndices; j++)
     //             indices.push_back(face.mIndices[j]);
     //     }
     //
-    //     // Create MeshData3D
+    //     // Create mesh data
     //     auto meshData = CreateRef<MeshData3D>();
-    //     SubMeshInfo& info = meshData->AddMesh3DToMeshData(mesh->mName.C_Str(), vertices, indices);
-    //     meshData->uploadToGPU();
+    //     meshData->AddMesh3DToMeshData(mesh->mName.C_Str(), vertices, indices);
     //
-    //     // Material
-    //     std::shared_ptr<Material> material = nullptr;
-    //     if (mesh->mMaterialIndex >= 0) {
-    //         aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
-    //         material = processMaterial(mat, directory);
-    //     }
+    //     // Note: Don't call UploadToGPU() here - do it once for all meshes
+    //     // Don't call CreateUniversalVAO() here either
     //
-    //     MeshEntry entry;
-    //     entry.meshData    = meshData;
+    //     // Create material (simplified - you'll need your material system)
+    //     auto material = Services::GetMaterialLibrary()->GetDefaultMaterial();
+    //
+    //     opengl::MeshEntry entry;
+    //     entry.meshData = meshData;
     //     entry.subMeshName = mesh->mName.C_Str();
-    //     entry.material    = material;
+    //     entry.material = material;
     //
     //     return entry;
+    // }
+    //
+    // void ModelLoader::ProcessNode(aiNode* node, const aiScene* scene, const std::string& directory, opengl::Model* model) {
+    //     // Process meshes in current node
+    //     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+    //         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+    //         opengl::MeshEntry entry = ProcessMesh(mesh, scene, directory);
+    //         model->meshes.push_back(entry);
+    //     }
+    //
+    //     // Process children
+    //     for (unsigned int i = 0; i < node->mNumChildren; i++) {
+    //         ProcessNode(node->mChildren[i], scene, directory, model);
+    //     }
+    // }
+    //
+    //
+    //
+    // std::string ModelLoader::GetDirectoryFromPath(const std::string& filePath) {
+    //     size_t slashIndex = filePath.find_last_of("/\\");
+    //     return (slashIndex != std::string::npos) ? filePath.substr(0, slashIndex) : "";
     // }
 }

@@ -26,7 +26,7 @@ namespace Zeroday::Editor::UI {
         void DrawComponentUI(MaterialComponent& comp);
         void DrawComponentUI(LightComponent& comp);
         void DrawComponentUI(CameraComponent& comp);
-        void DrawComponentUI(EditorState& state);
+        void DrawComponentUI(EditorState& editorState);
 
         // helpers
         bool HasComponentOfType(Entity entity, ComponentType type);

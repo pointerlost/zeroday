@@ -40,18 +40,17 @@ namespace Zeroday::opengl {
     /********************************************************************************/
 
     struct MaterialSSBO {
-        glm::vec4 baseColor = glm::vec4(1.0f);  // 16 bytes
+        glm::vec4 baseColor = glm::vec4(1.0f);
         glm::vec4 emissiveMetallic = glm::vec4(0.2f); // xyz: emissive, w: metallic - 16 bytes
         glm::vec4 roughnessPadding = glm::vec4(0.0f); //  x: roughness, yzw: padding - 16 bytes
 
-        // uint64_t baseColorHandle;  // bindless texture handle
-        // uint64_t normalHandle;
-        // uint64_t roughnessHandle;
-        // uint64_t metallicHandle;
-        // uint64_t aoHandle;
-        // uint64_t emissiveHandle;
-        // uint64_t displacementHandle;
-        // uint64_t heightHandle;
+        // bindless texture handle GPU can access directly no needed binding
+        uint64_t baseColorHandle = 0;
+        uint64_t normalHandle = 0;
+        uint64_t roughnessHandle = 0;
+        uint64_t displacementHandle = 0;
+        uint64_t ambientOccHandle = 0;
+        uint64_t padding[1] = {0}; // 8 bytes padding
     };
     static_assert(sizeof(MaterialSSBO) % 16 == 0);
 

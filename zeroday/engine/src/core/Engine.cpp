@@ -20,8 +20,6 @@ namespace Zeroday {
 	}
 
 	bool Engine::Run() {
-		OpenGLSetUpResources();
-
 		const auto glfwWin = m_Window->getGLFWwindow();
 
 		if (!glfwWin) {
@@ -156,7 +154,7 @@ namespace Zeroday {
 	}
 
 	void Engine::InitModel() {
-		g_ModelLoader = CreateScope<ModelLoader>();
+		g_ModelLoader = CreateScope<Graphics::ModelLoader>();
 
 		Info("[Engine::InitModel] Model Loader initialized successfully!]");
 	}
@@ -212,18 +210,8 @@ namespace Zeroday {
 		Info("[Engine::InitImGui] ImGuiLayer initialized successfully!");
 	}
 
-	void Engine::OpenGLSetUpResources() {
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-	}
-
 	void Engine::OpenGLRenderStuff() {
-		// Screen Color
-		glClearColor(0.04f, 0.05f, 0.06f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		while (glGetError() != GL_NO_ERROR);
-		// glDisable(GL_CULL_FACE);
-		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		opengl::RenderState::ApplyAllStates();
 	}
 
 	void Engine::glfwRenderEvent() const {

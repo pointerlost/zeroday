@@ -12,6 +12,8 @@
 #include "Graphics/OpenGL/Transformations/Transformations.h"
 #include "Scene/Components.h"
 #include "Graphics/OpenGL/Material/material.h"
+#include "Graphics/OpenGL/Renderer/Renderer3D.h"
+#include "Graphics/OpenGL/Renderer/RenderState.h"
 #include "Scene/Entity.h"
 
 namespace Zeroday::Editor::UI {
@@ -81,10 +83,10 @@ namespace Zeroday::Editor::UI {
             if (ImGui::DragFloat3("Position", glm::value_ptr(pos), 0.1)) {
                 transform.SetPosition(pos);
             }
-            if (ImGui::DragFloat3("Rotation", glm::value_ptr(rot), 0.1)) {
+            if (ImGui::DragFloat3("Rotation", glm::value_ptr(rot), 0.1, -360.0, 360.0)) {
                 transform.SetEulerRotation(rot);
             }
-            if (ImGui::DragFloat3("Scale",    glm::value_ptr(scl), 0.1, 0.05)) {
+            if (ImGui::DragFloat3("Scale",    glm::value_ptr(scl), 0.1, 0.1)) {
                 transform.SetScale(scl);
             }
         }
@@ -149,6 +151,8 @@ namespace Zeroday::Editor::UI {
             // Light Type selection
             const char* lightTypes[] = { "Directional", "Point", "Spot" };
             int currentType = static_cast<int>(light.GetType());
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.3f, 0.6f, 0.9f, 0.8f));
+            ImGui::PushStyleColor(ImGuiCol_Header,        ImVec4(0.2f, 0.5f, 0.8f, 0.6f));
             if (ImGui::Combo("Type", &currentType, lightTypes, IM_ARRAYSIZE(lightTypes))) {
                 if (currentType == static_cast<int>(opengl::LightType::Point)) {
                     comp.SetAsPoint(light.GetPosition(), light.GetRadiance(), light.GetIntensity());
@@ -160,6 +164,7 @@ namespace Zeroday::Editor::UI {
                     comp.SetAsSpot(light.GetPosition(), light.GetDirection(), light.GetRadiance(), light.GetIntensity(), light.GetCutOff(), light.GetOuterCutOff());
                 }
             }
+            ImGui::PopStyleColor(2);
 
             ImGui::Separator();
 
@@ -247,10 +252,10 @@ namespace Zeroday::Editor::UI {
         ImGui::PopID();
     }
 
-    void InspectorPanel::DrawComponentUI(EditorState& state) {
+    void InspectorPanel::DrawComponentUI(EditorState& editorState) {
         ImGui::PushID("General Inspector##");
 
-        auto& entity = state.selectedEntity;
+        auto& entity = editorState.selectedEntity;
 
         if (!entity) {
             ImGui::PopID();
@@ -285,6 +290,44 @@ namespace Zeroday::Editor::UI {
             // second parameter true = "Add Component", false = "Remove Component"
             ManageComponentsMenu(entity, false);
             ImGui::EndPopup();
+        }
+
+        static bool headerOpened = true;
+        ImGui::SetNextItemOpen(headerOpened, ImGuiCond_Once);
+        if (ImGui::CollapsingHeader("OpenGL State")) {
+
+            bool wireframeMode = opengl::RenderState::GetWireframeMode();
+            bool depthTestMode = opengl::RenderState::GetDepthTestMode();
+            bool cullingMode   = opengl::RenderState::GetFaceCullingMode();
+
+            ImGui::PushStyleColor(ImGuiCol_Header,
+                 wireframeMode ? ImVec4(0.2f, 0.7f, 0.2f, 1.0f)
+                               : ImVec4(0.8f, 0.3f, 0.3f, 1.0f)
+            );
+
+            if (ImGui::Selectable("Polygon(Wireframe) Mode", wireframeMode, 0, ImVec2(InspectorWidth - 10, 20))) {
+                opengl::RenderState::SetWireframeMode(!wireframeMode);
+            }
+
+            ImGui::PushStyleColor(ImGuiCol_Header,
+                 depthTestMode ? ImVec4(0.2f, 0.7f, 0.2f, 1.0f)
+                               : ImVec4(0.8f, 0.3f, 0.3f, 1.0f)
+            );
+
+            if (ImGui::Selectable("Depth Test Mode", depthTestMode, 0, ImVec2(InspectorWidth - 10, 20))) {
+                opengl::RenderState::SetDepthTestMode(!depthTestMode);
+            }
+
+            ImGui::PushStyleColor(ImGuiCol_Header,
+                 cullingMode ? ImVec4(0.2f, 0.7f, 0.2f, 1.0f)
+                             : ImVec4(0.8f, 0.3f, 0.3f, 1.0f)
+            );
+
+            if (ImGui::Selectable("Face Culling Mode", cullingMode, 0, ImVec2(InspectorWidth - 10, 20))) {
+                opengl::RenderState::SetFaceCullingMode(!cullingMode);
+            }
+
+            ImGui::PopStyleColor(3);
         }
 
         ImGui::PopID();

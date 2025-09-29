@@ -5,18 +5,15 @@
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 #include "Graphics/OpenGL/Model/Model.h"
 
-namespace Zeroday
-{
+namespace Zeroday {
+
 	SceneObjectFactory::SceneObjectFactory(Scene& scene) : m_Scene(scene) {}
 
-    Entity SceneObjectFactory::CreatePrimitiveObject(const std::string& meshName, const std::string& entityName) const
-    {
-        auto* matLib = Services::GetMaterialLibrary();
+    Entity SceneObjectFactory::CreatePrimitiveObject(const std::string& meshName, const std::string& entityName) const {
         const auto* meshLib = Services::GetMeshLibrary();
-
 		auto entity = m_Scene.CreateEntity(entityName);
 
-		auto mat = matLib->CreateInstance("gold");
+		auto mat = Services::GetMaterialLibrary()->CreateInstance("bricks_097");
 		entity.AddComponent<MaterialComponent>(mat);
 
         MeshComponent meshComp{};
@@ -30,12 +27,11 @@ namespace Zeroday
     Entity SceneObjectFactory::CreateLight(opengl::LightType type,
 										const std::string& entityName, const std::string& meshName) const {
 
-		auto* matLib = Services::GetMaterialLibrary();
-		auto* meshLib = Services::GetMeshLibrary();
+		auto* meshLib  = Services::GetMeshLibrary();
 
 		auto entity = m_Scene.CreateEntity(entityName);
 
-		auto mat = matLib->CreateInstance("venus");
+		auto mat = Services::GetMaterialLibrary()->CreateInstance("asphalt_031");
 		entity.AddComponent<MaterialComponent>(mat);
 
 		LightComponent lightComp{type};

@@ -1,4 +1,5 @@
 #version 460
+#extension GL_ARB_bindless_texture : require
 
 #include "common/constants.glsl"
 #include "core/buffers.glsl"
@@ -15,8 +16,9 @@ out vec4 FragColor;
 uniform uint uLightCount;
 
 vec3 CalcPBR(vec3 N, vec3 V, vec3 L, vec3 lightColor) {
-    vec3 albedo     = GetMatBaseColor(vMaterialIndex).rgb;
-    float roughness = GetRoughness(vMaterialIndex);
+    // Use vUV to sample textures
+    vec3 albedo     = GetMatBaseColor(vMaterialIndex, vUV).rgb;
+    float roughness = GetRoughness(vMaterialIndex, vUV); // 👈 Pass vUV
     float metallic  = GetMetallic(vMaterialIndex);
 
     vec3 F0 = mix(vec3(0.04), albedo, metallic);
@@ -92,10 +94,14 @@ void main() {
         }
     }
 
-    // Add ambient
-    result += GetMatBaseColor(vMaterialIndex).rgb * uGlobal.globalAmbient;
+    // Use vUV for ambient sampling too
+    vec3 ambientColor = GetMatBaseColor(vMaterialIndex, vUV).rgb;
+    result += ambientColor * uGlobal.globalAmbient;
 
-    // gamma correction
+    // Add emissive
+    result += GetEmissive(vMaterialIndex);
+
+    // Gamma correction
     result = pow(result, vec3(1.0/2.2));
 
     FragColor = vec4(result, 1.0);

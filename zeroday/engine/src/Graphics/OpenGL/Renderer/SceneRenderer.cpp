@@ -32,8 +32,9 @@ namespace Zeroday::opengl {
             result.transforms.push_back(transformData);
             uint32_t transformIndex = result.transforms.size() - 1;
 
-            MaterialSSBO materialData = material.m_Instance ?
-            material.m_Instance->ToGPUFormat() : MaterialSSBO{};
+            MaterialSSBO materialData = material.m_Instance
+                ? material.m_Instance->ToGPUFormat()
+                : MaterialSSBO{};
             result.materials.push_back(materialData);
             uint32_t materialIndex = result.materials.size() - 1;
 

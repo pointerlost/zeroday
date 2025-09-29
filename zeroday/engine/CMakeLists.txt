@@ -127,6 +127,7 @@ add_library(ZeroDayEngine STATIC
     include/core/UUID.h
     include/core/Base.h
     include/Graphics/OpenGL/Renderer/SceneRenderer.h
+    src/Graphics/OpenGL/Textures/Textures.cpp
 )
 
 # Include directories

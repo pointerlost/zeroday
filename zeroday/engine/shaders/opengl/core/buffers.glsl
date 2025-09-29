@@ -1,6 +1,9 @@
 #ifndef BUFFERS_GLSL
 #define BUFFERS_GLSL
 
+#extension GL_ARB_bindless_texture : require
+#extension GL_ARB_gpu_shader_int64 : require
+
 // ************************** TRANSFORM BUFFER *********************
 
 struct TransformSSBO {
@@ -14,9 +17,18 @@ layout(std430, binding = 3) buffer TransformBuffer {
 
 // ************************** MATERIAL BUFFER *********************
 struct MaterialSSBO {
-    vec4 baseColor; // 16 bytes
+    // material
+    vec4 baseColor;
     vec4 emissiveMetallic;  // xyz: emissive, w: metallic - 16 bytes
     vec4 roughnessPadding;  // x: roughness, yzw: padding - 16 bytes
+
+    // texture handles
+    uint64_t baseColorHandle;
+    uint64_t normalHandle;
+    uint64_t roughnessHandle;
+    uint64_t displacementHandle;
+    uint64_t ambientOccHandle;
+    uint64_t padding[1];
 };
 
 layout(std430, binding = 4) buffer MaterialBuffer {
@@ -24,10 +36,32 @@ layout(std430, binding = 4) buffer MaterialBuffer {
 };
 
 // helpers
-vec4 GetMatBaseColor(int idx) { return materials[idx].baseColor; }
-vec3 GetEmissive(int idx) { return materials[idx].emissiveMetallic.xyz; }
-float GetMetallic(int idx) { return materials[idx].emissiveMetallic.w; }
-float GetRoughness(int idx) { return materials[idx].roughnessPadding.x; }
+vec4 GetMatBaseColor(int materialIndex, vec2 uv) {
+    if (materials[materialIndex].baseColorHandle != 0u) {
+        return texture(sampler2D(materials[materialIndex].baseColorHandle), uv);
+    } else {
+        return materials[materialIndex].baseColor;
+    }
+}
+
+vec3 GetNormal(int materialIndex, vec2 uv) {
+    if (materials[materialIndex].normalHandle != 0u) {
+        return texture(sampler2D(materials[materialIndex].normalHandle), uv).xyz * 2.0 - 1.0;
+    } else {
+        return vec3(0.0, 0.0, 1.0); // default normal
+    }
+}
+
+float GetRoughness(int materialIndex, vec2 uv) {
+    if (materials[materialIndex].roughnessHandle != 0u) {
+        return texture(sampler2D(materials[materialIndex].roughnessHandle), uv).r;
+    } else {
+        return materials[materialIndex].roughnessPadding.x;
+    }
+}
+
+vec3  GetEmissive(int materialIndex) { return materials[materialIndex].emissiveMetallic.xyz; }
+float GetMetallic(int materialIndex) { return materials[materialIndex].emissiveMetallic.w; }
 
 // ************************** LIGHT BUFFER *********************
 

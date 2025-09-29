@@ -3,8 +3,8 @@
 #include "GPURenderer.h"
 #include "core/Base.h"
 
-namespace Zeroday::opengl
-{
+namespace Zeroday::opengl {
+
 	class Renderer3D
 	{
 	public:
@@ -19,4 +19,5 @@ namespace Zeroday::opengl
 		Scene* m_Scene = nullptr;
 		std::unique_ptr<GPURenderer> m_GPURenderer = nullptr;
 	};
+
 }

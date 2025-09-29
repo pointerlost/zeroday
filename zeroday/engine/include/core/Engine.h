@@ -39,7 +39,7 @@ namespace Zeroday {
 		Scope<UI::ImGuiLayer> m_ImGuiLayer;
 		Scope<MeshLibrary> g_MeshLibrary;
 		Scope<AssetManager> g_AssetManager;
-		Scope<ModelLoader> g_ModelLoader;
+		Scope<Graphics::ModelLoader> g_ModelLoader;
 		Scope<MaterialLibrary> g_MaterialLibrary;
 		Scope<TextureManager> g_TextureManager;
 		Scope<opengl::RenderContext> g_RenderContext;
@@ -47,7 +47,6 @@ namespace Zeroday {
 		void InitWindow();
 		void InitCallBack();
 		void InitAssetManager();
-		void InitWorld();
 		void InitModel();
 		void InitTexture();
 		void InitMaterial();
@@ -57,7 +56,6 @@ namespace Zeroday {
 		void InitEditor();
 		void InitImGui();
 
-		void OpenGLSetUpResources();
 		void OpenGLRenderStuff();
 		void glfwRenderEvent() const;
 

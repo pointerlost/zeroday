@@ -25,6 +25,7 @@ namespace Zeroday {
 
         [[nodiscard]] Ref<Texture> Load(const std::string& name, const std::string& path);
         Ref<Texture> GetDefaultTexture(opengl::MaterialTextureType type);
+        std::string GetTextureTypeName(opengl::MaterialTextureType type);
 
         Ref<Texture> GetTextureWithName(const std::string& name);
         Ref<Texture> GetTextureWithPath(const std::string& path);
@@ -41,6 +42,8 @@ namespace Zeroday {
         void ReleaseAll();
 
         void LoadFromFolder(const std::string& folderName, const std::string& folderPath);
+
+        Ref<Texture> CreateSolidTexture(float r, float g, float b, float a = 1.0f);
 
     private:
         std::unordered_map<std::string, Ref<Texture>> m_NameMap; // name -> texture (for UI stuff)

@@ -5,6 +5,7 @@
 
 // Assets folder
 #define ASSETS_DIR "@ASSETS_DIR@"
+#define TEXTURES_DIR "@TEXTURES_DIR@"
 #define MATERIAL_JSON_PATH "@MATERIAL_JSON_PATH@"
 #define MODEL_DIR "@MODEL_DIR@"
 

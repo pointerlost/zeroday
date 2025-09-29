@@ -10,11 +10,11 @@
 namespace Zeroday {
 
     Shader* AssetManager::GetShader(const std::string &name) {
-        if (!g_shaders.contains(name)) {
+        if (!g_Shaders.contains(name)) {
             Warn("[AssetManager::getShader] shader not found!");
             return {};
         }
-        return &g_shaders[name];
+        return &g_Shaders[name];
     }
 
     bool AssetManager::LoadShader(const std::string &name, const std::string &vertPath, const std::string &fragPath) {
@@ -91,7 +91,7 @@ namespace Zeroday {
         instance.m_Program = shaderProgram;
         instance.CacheUniformLocations();
 
-        g_shaders[name] = std::move(instance);
+        g_Shaders[name] = std::move(instance);
         return true;
     }
 
@@ -139,7 +139,7 @@ namespace Zeroday {
         instance.m_Program = shaderProgram;
         instance.CacheUniformLocations();
 
-        g_shaders[name] = std::move(instance);
+        g_Shaders[name] = std::move(instance);
         return true;
     }
 

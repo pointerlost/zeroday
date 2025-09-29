@@ -15,16 +15,16 @@ namespace Zeroday::opengl {
 namespace Zeroday::opengl {
 
     struct MeshEntry {
-        MeshData3D* meshData;
+        Ref<MeshData3D> meshData;
         std::string subMeshName;
-        std::shared_ptr<MaterialInstance> material;
+        Ref<MaterialInstance> material;
     };
 
     struct Model {
         std::vector<MeshEntry> meshes;
 
-        void addMesh(MeshData3D* data, const std::string& name, std::shared_ptr<MaterialInstance> material) {
-            meshes.push_back( {data, name, std::move(material) } );
+        void AddMesh(Ref<MeshData3D> data, const std::string& name, Ref<MaterialInstance> material) {
+            meshes.push_back({std::move(data), name, std::move(material)});
         }
     };
 }
