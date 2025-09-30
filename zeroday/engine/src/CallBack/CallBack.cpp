@@ -1,6 +1,6 @@
 #include "CallBack/CallBack.h"
 
-namespace CallBack
+namespace Zeroday::CallBack
 {
 	void InitResources(GLFWwindow* window) noexcept
 	{

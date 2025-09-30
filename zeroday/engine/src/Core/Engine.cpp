@@ -9,6 +9,7 @@
 #include "Editor/MenuBarPanel.h"
 #include "Editor/SceneHierarchyPanel.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
+#include "Graphics/OpenGL/Renderer/SceneRenderer.h"
 #include "Scene/SceneObjectFactory.h"
 
 namespace Zeroday {
@@ -44,7 +45,7 @@ namespace Zeroday {
 		Info("[Engine::initResources] Materials loaded successfully!");
 
 		// Load Shaders
-		m_Renderer3D->Init();
+		m_Renderer3D->InitEditorState();
 
 		Info("[Engine::initResources] Shaders loaded successfully!");
 
@@ -204,11 +205,18 @@ namespace Zeroday {
 
 	void Engine::RenderPhase() {
 		OpenGLRenderStuff();
-		m_Renderer3D->Render();
+		m_Renderer3D->RenderEditorState();
 	}
 
 	void Engine::CleanupPhase() {
 		glfwRenderEvent();
 		m_Scene->CleanUpResources();
+	}
+
+	void Engine::EditorToGameState() {
+		auto renderablesObjects = opengl::SceneRenderer::ExtractRenderables(m_Scene.get());
+	}
+
+	void Engine::TakeSnapshot() {
 	}
 }

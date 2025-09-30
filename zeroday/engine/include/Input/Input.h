@@ -3,8 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace Input
-{
+namespace Zeroday::Input {
 
 	constexpr int KEY_MAX = GLFW_KEY_LAST + 1; // 349 key
 

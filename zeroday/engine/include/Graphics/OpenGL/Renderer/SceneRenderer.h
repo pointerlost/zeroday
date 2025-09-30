@@ -28,6 +28,8 @@ namespace Zeroday::opengl {
     class SceneRenderer {
     public:
         static ExtractResult ExtractRenderables(Scene* scene);
+        static void SetGlobalAmbient(const glm::vec3& light) { g_GlobalAmbient = light; }
+        static const glm::vec3& GetGlobalAmbient() { return g_GlobalAmbient; }
 
     private:
         // Helpers for extractions

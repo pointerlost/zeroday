@@ -64,9 +64,9 @@ namespace Zeroday::opengl {
     public:
         explicit GPURenderer(Scene* scene) : m_Scene(scene) {}
 
-        void Init();
-        void Render();
-        void Shutdown();
+        void InitEditorState();
+        void RenderEditorState();
+        void ShutdownEditorState();
 
     private:
         void CollectSceneData();
@@ -76,12 +76,16 @@ namespace Zeroday::opengl {
         Scene* m_Scene = nullptr;
 
         // Template-based buffers
-        GPUBuffer<TransformSSBO, BufferType::SSBO> m_TransformBuffer;
-        GPUBuffer<MaterialSSBO, BufferType::SSBO> m_MaterialBuffer;
-        GPUBuffer<LightSSBO, BufferType::SSBO> m_LightBuffer;
-        GPUBuffer<RenderCommandMDI, BufferType::SSBO> m_RenderCommandsOfPerEntity;
-        GPUBuffer<DrawElementsIndirectCommand, BufferType::SSBO> m_IndirectCommandBuffer;
-        GPUBuffer<DrawPayloadGPU, BufferType::SSBO> m_PayloadBuffer;
+        struct Buffers {
+            GPUBuffer<TransformSSBO, BufferType::SSBO> m_TransformBuffer;
+            GPUBuffer<MaterialSSBO, BufferType::SSBO> m_MaterialBuffer;
+            GPUBuffer<LightSSBO, BufferType::SSBO> m_LightBuffer;
+            GPUBuffer<RenderCommandMDI, BufferType::SSBO> m_RenderCommandsOfPerEntity;
+            GPUBuffer<DrawElementsIndirectCommand, BufferType::SSBO> m_IndirectCommandBuffer;
+            GPUBuffer<DrawPayloadGPU, BufferType::SSBO> m_PayloadBuffer;
+        };
+        Buffers m_EditorStateBuffers;
+        Buffers m_GameStateBuffers;
 
         GPUBuffer<GlobalUBO, BufferType::UBO> m_GlobalBuffer;
         GPUBuffer<CameraUBO, BufferType::UBO> m_CameraBuffer;

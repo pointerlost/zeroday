@@ -476,6 +476,19 @@
       "metallic": 0.0,
       "roughness": 0.4,
       "emissive": [0.0, 0.0, 0.0]
+    },
+    {
+      "name": "editorPlayButton",
+      "baseColor": [0.55, 0.35, 0.15, 1.0],
+      "metallic": 0.0,
+      "roughness": 0.5,
+      "emissive": [0.0, 0.0, 0.0],
+      "textures": {
+        "baseColor": "WoodFloor064_1K-PNG/WoodFloor064_1K-PNG_Color.png",
+        "normal": "WoodFloor064_1K-PNG/WoodFloor064_1K-PNG_NormalGL.png",
+        "roughness": "WoodFloor064_1K-PNG/WoodFloor064_1K-PNG_Roughness.png",
+        "displacement": "WoodFloor064_1K-PNG/WoodFloor064_1K-PNG_Displacement.png"
+      }
     }
   ]
 }

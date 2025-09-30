@@ -99,21 +99,21 @@ namespace Zeroday::opengl {
         }
     }
 
-    void GPURenderer::Init() {
+    void GPURenderer::InitEditorState() {
         // Load shaders
         if (!Services::GetAssetManager()->LoadAllShaders()) {
             Error("[Engine::initResources] LoadAllShaders FAILED!");
         }
 
         // Pre-allocate buffers with persistent mapping
-        m_TransformBuffer.Upload(std::vector<TransformSSBO>(MAX_ENTITIES));
-        m_MaterialBuffer.Upload(std::vector<MaterialSSBO>(MAX_ENTITIES));
-        m_LightBuffer.Upload(std::vector<LightSSBO>(MAX_LIGHTS));
-        m_IndirectCommandBuffer.Upload(std::vector<DrawElementsIndirectCommand>(MAX_ENTITIES));
-        m_PayloadBuffer.Upload(std::vector<DrawPayloadGPU>(MAX_ENTITIES));
+        m_EditorStateBuffers.m_TransformBuffer.Upload(std::vector<TransformSSBO>(MAX_ENTITIES));
+        m_EditorStateBuffers.m_MaterialBuffer.Upload(std::vector<MaterialSSBO>(MAX_ENTITIES));
+        m_EditorStateBuffers.m_LightBuffer.Upload(std::vector<LightSSBO>(MAX_LIGHTS));
+        m_EditorStateBuffers.m_IndirectCommandBuffer.Upload(std::vector<DrawElementsIndirectCommand>(MAX_ENTITIES));
+        m_EditorStateBuffers.m_PayloadBuffer.Upload(std::vector<DrawPayloadGPU>(MAX_ENTITIES));
     }
 
-    void GPURenderer::Render() {
+    void GPURenderer::RenderEditorState() {
         if (!m_Scene) return;
         // Extract + Upload (CPU -> GPU)
         CollectSceneData();
@@ -128,27 +128,27 @@ namespace Zeroday::opengl {
 
         // persistent mapping for frequent updates
         {
-            void* transformData = m_TransformBuffer.BeginUpdate();
+            void* transformData = m_EditorStateBuffers.m_TransformBuffer.BeginUpdate();
             memcpy(transformData, extracted.transforms.data(), extracted.transforms.size() * sizeof(TransformSSBO));
-            m_TransformBuffer.EndUpdate(extracted.transforms.size() * sizeof(TransformSSBO));
+            m_EditorStateBuffers.m_TransformBuffer.EndUpdate(extracted.transforms.size() * sizeof(TransformSSBO));
         }
 
         {
-            void* materialData = m_MaterialBuffer.BeginUpdate();
+            void* materialData = m_EditorStateBuffers.m_MaterialBuffer.BeginUpdate();
             memcpy(materialData, extracted.materials.data(), extracted.materials.size() * sizeof(MaterialSSBO));
-            m_MaterialBuffer.EndUpdate(extracted.materials.size() * sizeof(MaterialSSBO));
+            m_EditorStateBuffers.m_MaterialBuffer.EndUpdate(extracted.materials.size() * sizeof(MaterialSSBO));
         }
 
         {
-            void* lightData = m_LightBuffer.BeginUpdate();
+            void* lightData = m_EditorStateBuffers.m_LightBuffer.BeginUpdate();
             memcpy(lightData, extracted.lights.data(), extracted.lights.size() * sizeof(LightSSBO));
-            m_LightBuffer.EndUpdate(extracted.lights.size() * sizeof(LightSSBO));
+            m_EditorStateBuffers.m_LightBuffer.EndUpdate(extracted.lights.size() * sizeof(LightSSBO));
         }
 
         // Generate commands/payloads directly into mapped memory
         {
-            auto* commands = static_cast<DrawElementsIndirectCommand*>(m_IndirectCommandBuffer.BeginUpdate());
-            auto* payloads = static_cast<DrawPayloadGPU*>(m_PayloadBuffer.BeginUpdate());
+            auto* commands = static_cast<DrawElementsIndirectCommand*>(m_EditorStateBuffers.m_IndirectCommandBuffer.BeginUpdate());
+            auto* payloads = static_cast<DrawPayloadGPU*>(m_EditorStateBuffers.m_PayloadBuffer.BeginUpdate());
 
             for (uint i = 0; i < extracted.renderCommands.size(); i++) {
                 auto& cmd = extracted.renderCommands[i];
@@ -168,8 +168,8 @@ namespace Zeroday::opengl {
                 };
             }
 
-            m_IndirectCommandBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawElementsIndirectCommand));
-            m_PayloadBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawPayloadGPU));
+            m_EditorStateBuffers.m_IndirectCommandBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawElementsIndirectCommand));
+            m_EditorStateBuffers.m_PayloadBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawPayloadGPU));
         }
 
         // sync before GPU access
@@ -181,12 +181,13 @@ namespace Zeroday::opengl {
     }
 
     void GPURenderer::BindBuffers() {
-        m_RenderCommandsOfPerEntity.Bind(0);
-        m_IndirectCommandBuffer.Bind(1);
-        m_PayloadBuffer.Bind(2);
-        m_TransformBuffer.Bind(3);
-        m_MaterialBuffer.Bind(4);
-        m_LightBuffer.Bind(5);
+        m_EditorStateBuffers.m_RenderCommandsOfPerEntity.Bind(0);
+        m_EditorStateBuffers.m_IndirectCommandBuffer.Bind(1);
+        m_EditorStateBuffers.m_PayloadBuffer.Bind(2);
+        m_EditorStateBuffers.m_TransformBuffer.Bind(3);
+        m_EditorStateBuffers.m_MaterialBuffer.Bind(4);
+        m_EditorStateBuffers.m_LightBuffer.Bind(5);
+
         m_CameraBuffer.Bind(6);
         m_GlobalBuffer.Bind(7);
     }
@@ -207,9 +208,10 @@ namespace Zeroday::opengl {
         }
 
         glBindVertexArray(universalVAO);
-        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_IndirectCommandBuffer.GetHandle());
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_EditorStateBuffers.m_IndirectCommandBuffer.GetHandle());
         glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, extracted.renderCommands.size(), 0);
 
         glBindVertexArray(0);
     }
+
 }

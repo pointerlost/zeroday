@@ -58,6 +58,9 @@ namespace Zeroday {
 		void RenderPhase();
 		void CleanupPhase();
 
+		void EditorToGameState();
+		void TakeSnapshot();
+
 		bool m_RequestShutdown = false;
 	};
 };

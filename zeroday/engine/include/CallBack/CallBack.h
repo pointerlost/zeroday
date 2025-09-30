@@ -2,9 +2,7 @@
 #include "Core/Window.h"
 #include "Input/Input.h"
 
-
-namespace CallBack
-{
+namespace Zeroday::CallBack {
 	void InitResources(GLFWwindow* window) noexcept;
 	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height) noexcept;
 	void Key_CallBack(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept;

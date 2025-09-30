@@ -50,6 +50,7 @@ namespace Zeroday::opengl {
 
         ExtractLights(scene, result);
         ExtractCamera(scene, result);
+        ExtractGlobalData(scene, result);
 
         return result;
     }

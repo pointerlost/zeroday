@@ -51,6 +51,7 @@ namespace Zeroday {
         Ref<Texture> GetTextureWithName(const std::string& name);
         Ref<Texture> GetTextureWithPath(const std::string& path);
         Ref<Texture> Load(const std::string& name, const std::string &path);
+        std::vector<std::string> GetAllTexturesNames();
 
         uint64_t GetBindlessHandle(Ref<Texture> tex) const;
         void ReleaseAllTextureHandles();
@@ -64,6 +65,6 @@ namespace Zeroday {
         std::unordered_map<std::string, Ref<Texture>> m_NameMap; // name -> texture
         std::unordered_map<std::string, Ref<Texture>> m_PathMap; // file path -> texture
         std::vector<Ref<Texture>> m_AllTextures;
-
+        std::vector<std::string> m_TexturesNames;
     };
 }

@@ -13,7 +13,7 @@ namespace Zeroday {
         const auto* meshLib = Services::GetMeshLibrary();
 		auto entity = m_Scene.CreateEntity(entityName);
 
-		auto mat = Services::GetAssetManager()->CreateMaterialInstance("bricks_097");
+		auto mat = Services::GetAssetManager()->CreateMaterialInstance("metal_048a");
 		entity.AddComponent<MaterialComponent>(mat);
 
         MeshComponent meshComp{};
@@ -31,7 +31,7 @@ namespace Zeroday {
 
 		auto entity = m_Scene.CreateEntity(entityName);
 
-		auto mat = Services::GetAssetManager()->CreateMaterialInstance("asphalt_031");
+		auto mat = Services::GetAssetManager()->CreateMaterialInstance("onyx_015");
 		entity.AddComponent<MaterialComponent>(mat);
 
 		LightComponent lightComp{type};

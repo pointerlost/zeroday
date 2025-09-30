@@ -73,10 +73,10 @@ namespace Zeroday::Editor::UI {
             ImGui::Dummy(ImVec2(0, 20)); // spacing before buttons
 
             // centered yes | no buttons
-            float buttonWidth = 120;
-            float buttonHeight = 50;
-            float totalWidth = buttonWidth * 2 + 10; // 10 px spacing between buttons
-            float startX = (deletePopupSize.x - totalWidth) * 0.5f;
+            constexpr float buttonWidth = 120.0;
+            constexpr float buttonHeight = 50.0;
+            constexpr float totalWidth = buttonWidth * 2 + 10; // 10 px spacing between buttons
+            const float startX = (deletePopupSize.x - totalWidth) * 0.5f;
 
             ImGui::SetCursorPosX(startX);
             if (ImGui::Button("Yes", ImVec2(buttonWidth, buttonHeight))) {

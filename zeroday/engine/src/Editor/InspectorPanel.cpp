@@ -4,6 +4,8 @@
 #include "Editor/InspectorPanel.h"
 #include "core/EngineConfig.h"
 #include <imgui.h>
+#include "Core/AssetManager.h"
+#include "Core/Services.h"
 #include "Editor/EditorState.h"
 #include "glm/ext.hpp"
 #include "Scene/Scene.h"
@@ -13,6 +15,8 @@
 #include "Graphics/OpenGL/Material/material.h"
 #include "Graphics/OpenGL/Renderer/Renderer3D.h"
 #include "Graphics/OpenGL/Renderer/RenderState.h"
+#include "Graphics/OpenGL/Renderer/SceneRenderer.h"
+#include "Graphics/OpenGL/Textures/Textures.h"
 #include "Scene/Entity.h"
 
 namespace Zeroday::Editor::UI {
@@ -96,47 +100,97 @@ namespace Zeroday::Editor::UI {
     void InspectorPanel::DrawComponentUI(MaterialComponent &comp) {
         ImGui::PushID("Material");
         auto& material = comp.m_Instance;
+        auto* assetManager = Services::GetAssetManager();
 
-        static bool headerOpenedMat = true;
-        ImGui::SetNextItemOpen(headerOpenedMat, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader("Material")) {
+        // Material Properties
+        if (ImGui::CollapsingHeader("Material Properties", ImGuiTreeNodeFlags_DefaultOpen)) {
             auto baseColor = material->GetBaseColor();
-            if (ImGui::ColorEdit4("Color",  &baseColor.x,  ImGuiColorEditFlags_None)) {
+            if (ImGui::ColorEdit4("Base Color", &baseColor.x)) {
                 material->SetBaseColor(baseColor);
             }
+
+            float metallic = material->GetMetallic();
+            if (ImGui::SliderFloat("Metallic", &metallic, 0.0f, 1.0f)) {
+                material->SetMetallic(metallic);
+            }
+
+            float roughness = material->GetRoughness();
+            if (ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f)) {
+                material->SetRoughness(roughness);
+            }
+
+            glm::vec3 emissive = material->GetEmissive();
+            if (ImGui::ColorEdit3("Emissive", &emissive.x)) {
+                material->SetEmissive(emissive);
+            }
+
+            if (ImGui::Button("Reset Material")) {
+                material->ResetAllOverrides();
+            }
         }
 
-        float metallic = material->GetMetallic();
-        if (ImGui::SliderFloat("Metallic", &metallic, 0.0001f, 1.0f)) {
-            material->SetMetallic(metallic);
-        }
-
-        float roughness = material->GetRoughness();
-        if (ImGui::SliderFloat("Roughness", &roughness, 0.0001f, 1.0f)) {
-            material->SetRoughness(roughness);
-        }
-
-        glm::vec3 emissive = material->GetEmissive();
-        if (ImGui::ColorEdit3("Emissive", &emissive.x)) {
-            material->SetEmissive(emissive);
-        }
-
-        static bool headerOpenedTex = true;
-        ImGui::SetNextItemOpen(headerOpenedTex, ImGuiCond_Once);
-        if (ImGui::CollapsingHeader("Texture")) {
-            auto xButtons = InspectorWidth / 3 - 10;
-            if (ImGui::Button("On", ImVec2(xButtons, 32))) {
-
+        if (ImGui::CollapsingHeader("Texture Properties", ImGuiTreeNodeFlags_DefaultOpen)) {
+            if (ImGui::Button("Enable All Textures")) {
+                material->EnableAllTextures();
             }
             ImGui::SameLine();
-            if (ImGui::Button("Off", ImVec2(xButtons, 32))) {
-
+            if (ImGui::Button("Disable All Textures")) {
+                material->DisableAllTextures();
             }
-            ImGui::SameLine();
-            if (ImGui::Button("Load", ImVec2(xButtons, 32))) {
 
-            }
+            ImGui::Separator();
+
+            // Individual texture controls
+            auto DrawTextureControl = [&](const char* label, opengl::MaterialTextureType type) {
+                ImGui::PushID(label);
+
+                bool enabled = material->IsTextureEnabled(type);
+                if (ImGui::Checkbox("##Enabled", &enabled)) {
+                    material->SetTextureEnabled(type, enabled);
+                }
+
+                ImGui::SameLine();
+                ImGui::Text("%s", label);
+
+                if (enabled) {
+                    ImGui::SameLine(ImGui::GetContentRegionAvail().x - 200);
+
+                    // Get current texture name for display
+                    std::string currentTexName = "Default";
+                    auto currentTex = material->GetTexture(type, assetManager->GetDefaultTexture(type));
+                    if (currentTex && !currentTex->m_Name.empty()) {
+                        currentTexName = currentTex->m_Name;
+                    }
+
+                    if (ImGui::Button(currentTexName.c_str(), ImVec2(200, 0))) {
+                        // Open texture selection popup
+                        ImGui::OpenPopup("texture_select");
+                    }
+
+                    if (ImGui::BeginPopup("texture_select")) {
+                        const auto& allTextures = assetManager->GetAllTexturesNames();
+                        for (const auto& texName : allTextures) {
+                            if (ImGui::Selectable(texName.c_str())) {
+                                auto newTexture = assetManager->GetTextureWithName(texName);
+                                if (newTexture) {
+                                    material->SetTexture(type, newTexture);
+                                }
+                            }
+                        }
+                        ImGui::EndPopup();
+                    }
+                }
+
+                ImGui::PopID();
+            };
+
+            DrawTextureControl("Base Color", opengl::MaterialTextureType::BaseColor);
+            DrawTextureControl("Normal", opengl::MaterialTextureType::Normal);
+            DrawTextureControl("Roughness", opengl::MaterialTextureType::Roughness);
+            DrawTextureControl("Displacement", opengl::MaterialTextureType::Displacement);
+            DrawTextureControl("Ambient Occlusion", opengl::MaterialTextureType::AmbientOcclusion);
         }
+
         ImGui::PopID();
     }
 
@@ -223,6 +277,10 @@ namespace Zeroday::Editor::UI {
                     light.SetQuadratic(quadratic);
                 }
             }
+
+            auto globalAmbient = opengl::SceneRenderer::GetGlobalAmbient();
+            ImGui::DragFloat3("Global Ambient", glm::value_ptr(globalAmbient), 0.05f, 0.001f, 1.0f);
+            opengl::SceneRenderer::SetGlobalAmbient(globalAmbient);
         }
 
         ImGui::PopID();
@@ -374,13 +432,13 @@ namespace Zeroday::Editor::UI {
 
     void InspectorPanel::ManageComponentsMenu(Entity entity, bool AddOrDel) {
         constexpr std::array componentTypes = {
-            std::make_pair(ComponentType::Transform, "Transform"),
-            std::make_pair(ComponentType::Camera,    "Camera"),
-            std::make_pair(ComponentType::Light,     "Light"),
-            std::make_pair(ComponentType::Material,  "Material"),
-            std::make_pair(ComponentType::Mesh,      "Mesh"),
-            std::make_pair(ComponentType::Model,     "Model"),
-            std::make_pair(ComponentType::Tag,       "Tag")
+            std::make_pair(ComponentType::Transform,"Transform"),
+            std::make_pair(ComponentType::Camera,   "Camera"),
+            std::make_pair(ComponentType::Light,    "Light"),
+            std::make_pair(ComponentType::Material, "Material"),
+            std::make_pair(ComponentType::Mesh,     "Mesh"),
+            std::make_pair(ComponentType::Model,    "Model"),
+            std::make_pair(ComponentType::Tag,      "Tag")
         };
 
         for (const auto& [type, name] : componentTypes) {

@@ -4,6 +4,7 @@
 #include "Editor/MenuBarPanel.h"
 #include <imgui.h>
 #include <core/Config.h>
+#include <core/EngineConfig.h>
 #include <nlohmann/detail/string_concat.hpp>
 #include "Editor/EditorState.h"
 #include "Scene/SceneObjectFactory.h"
@@ -65,12 +66,22 @@ namespace Zeroday::Editor::UI {
                 }
                 ImGui::EndMenu();
             }
+
+            if (ImGui::MenuItem("Exit")) {
+                state.requestShutdown = true;
+            }
+
+            ImGui::EndMainMenuBar();
         }
 
-        if (ImGui::MenuItem("Exit")) {
-            state.requestShutdown = true;
+        ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH / 2 - 50, 25), ImGuiCond_Always);
+        ImGui::Begin("PlayOrPauseButtons", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+        if (ImGui::Button("Play")) {
         }
+        ImGui::SameLine();
+        if (ImGui::Button("Pause")) {
+        }
+        ImGui::End();
 
-        ImGui::EndMainMenuBar();
     }
 }

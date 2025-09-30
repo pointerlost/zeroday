@@ -43,9 +43,7 @@ add_library(ZeroDayEngine STATIC
     src/Graphics/OpenGL/Textures/stb_image.cpp
     src/Input/Input.cpp
     src/Input/InputContext.cpp
-    src/Input/InputComponent.cpp
-    src/Input/InputComponentFactory.cpp
-    src/CallBack/CallBack.cpp
+        src/CallBack/CallBack.cpp
     src/Graphics/OpenGL/Mesh/MeshFactory.cpp
     src/Graphics/OpenGL/Mesh/MeshData3D.cpp
     src/Scene/SceneObjectFactory.cpp
@@ -101,16 +99,13 @@ add_library(ZeroDayEngine STATIC
     include/ImGui/TransformGizmo.h
     include/Graphics/OpenGL/Transformations/Transformations.h
     include/Math/Math.h
-    include/Math/RayMath.h
-    include/Core/Engine.h
+        include/Core/Engine.h
     include/Core/Window.h
     include/Core/File.h
     include/Core/Logger.h
     include/Input/Input.h
     include/Input/InputContext.h
-    include/Input/InputComponent.h
-    include/Input/InputComponentFactory.h
-    include/CallBack/CallBack.h
+        include/CallBack/CallBack.h
     include/Graphics/OpenGL/Mesh/MeshFactory.h
     include/Graphics/OpenGL/Mesh/MeshData3D.h
     include/Graphics/OpenGL/Renderer/GPURenderer.h

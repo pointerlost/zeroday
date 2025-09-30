@@ -1,6 +1,6 @@
 #include "Input/Input.h"
 
-namespace Input {
+namespace Zeroday::Input {
 
 	bool firstMouse = true;
 	bool g_IsKeyPressed[KEY_MAX] = {};

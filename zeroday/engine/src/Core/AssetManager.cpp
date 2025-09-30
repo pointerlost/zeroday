@@ -485,7 +485,7 @@ namespace Zeroday {
 
     Ref<Texture> AssetManager::GetTextureWithPath(const std::string &path) {
         if (!m_PathMap.contains(path)) {
-            Warn("Texture \"" + path + "\" not found.");
+            Info("Texture \"" + path + "\" not found. (already exists or creating new one!)");
             return nullptr;
         }
         return m_PathMap[path];
@@ -529,12 +529,17 @@ namespace Zeroday {
         texture->m_Name = name;
         m_NameMap[name] = texture;
         m_PathMap[path] = texture;
+        m_TexturesNames.push_back(name);
 
         // make it bindless resident
         texture->MakeResident();
 
         stbi_image_free(data);
         return texture;
+    }
+
+    std::vector<std::string> AssetManager::GetAllTexturesNames() {
+        return m_TexturesNames;
     }
 
     uint64_t AssetManager::GetBindlessHandle(Ref<Texture> tex) const {
@@ -553,6 +558,7 @@ namespace Zeroday {
         m_NameMap.clear();
         m_PathMap.clear();
         m_DefaultTextures.clear();
+        m_TexturesNames.clear();
     }
 
     Ref<opengl::MaterialInstance> AssetManager::CreateMaterialInstance(const std::string &name) {

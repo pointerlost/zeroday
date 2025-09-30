@@ -11,9 +11,9 @@ namespace Zeroday::opengl {
 		explicit Renderer3D(Scene* scene)
 			: m_Scene(scene), m_GPURenderer(CreateScope<GPURenderer>(scene)) {}
 
-		void Init()     { m_GPURenderer->Init();     }
-		void Render()   { m_GPURenderer->Render();   }
-		void Shutdown() { m_GPURenderer->Shutdown(); }
+		void InitEditorState()     { m_GPURenderer->InitEditorState();     }
+		void RenderEditorState()   { m_GPURenderer->RenderEditorState();   }
+		void ShutdownEditorState() { m_GPURenderer->ShutdownEditorState(); }
 
 	private:
 		Scene* m_Scene = nullptr;

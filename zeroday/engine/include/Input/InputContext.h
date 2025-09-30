@@ -1,8 +1,7 @@
 #pragma once
 #include <iostream>
 
-namespace Input
-{
+namespace Zeroday::Input {
 	
 	struct InputContext
 	{
@@ -14,14 +13,6 @@ namespace Input
 		float m_angle = {};
 		float m_interval = {};
 		float m_radius = {};
-
-		bool m_isJumping = {};
-		float m_jumpDuration = {};
-		float m_jumpHeight = {};
-
-		float m_firstVelocityY = {};
-		float m_gravity = {};
-		float m_startY = {};
 
 		InputContext() = default;
 		InputContext(const InputContext&) = default;
