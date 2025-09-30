@@ -18,6 +18,7 @@ namespace Zeroday::opengl {
 
 namespace Zeroday::opengl {
 
+    /* Default type = SSBO, if the type is not SSBO, so then specify */
     enum class BufferType {
         SSBO, // Shader Storage Buffer Object
         UBO,  // Uniform Buffer Object
@@ -60,30 +61,32 @@ namespace Zeroday::opengl {
         GLbitfield m_Flags = GL_DYNAMIC_STORAGE_BIT;
     };
 
+    // Template-based buffers
+    struct Buffers {
+        GPUBuffer<TransformSSBO> m_TransformBuffer;
+        GPUBuffer<MaterialSSBO> m_MaterialBuffer;
+        GPUBuffer<LightSSBO> m_LightBuffer;
+        GPUBuffer<RenderCommandMDI> m_RenderCommandsOfPerEntity;
+        GPUBuffer<DrawElementsIndirectCommand> m_IndirectCommandBuffer;
+        GPUBuffer<DrawPayloadGPU> m_PayloadBuffer;
+    };
+
     class GPURenderer {
     public:
         explicit GPURenderer(Scene* scene) : m_Scene(scene) {}
 
-        void InitEditorState();
-        void RenderEditorState();
-        void ShutdownEditorState();
+        void Init();
+        void Render();
+        void Shutdown();
 
     private:
-        void CollectSceneData();
-        void BindBuffers();
-        void RenderFrame();
+        void CollectSceneData(Buffers& buffers);
+        void BindBuffers(Buffers& buffers);
+        void RenderFrame(Buffers& buffers);
+
+        Buffers& CheckStateAndReturnBuffers();
 
         Scene* m_Scene = nullptr;
-
-        // Template-based buffers
-        struct Buffers {
-            GPUBuffer<TransformSSBO, BufferType::SSBO> m_TransformBuffer;
-            GPUBuffer<MaterialSSBO, BufferType::SSBO> m_MaterialBuffer;
-            GPUBuffer<LightSSBO, BufferType::SSBO> m_LightBuffer;
-            GPUBuffer<RenderCommandMDI, BufferType::SSBO> m_RenderCommandsOfPerEntity;
-            GPUBuffer<DrawElementsIndirectCommand, BufferType::SSBO> m_IndirectCommandBuffer;
-            GPUBuffer<DrawPayloadGPU, BufferType::SSBO> m_PayloadBuffer;
-        };
         Buffers m_EditorStateBuffers;
         Buffers m_GameStateBuffers;
 

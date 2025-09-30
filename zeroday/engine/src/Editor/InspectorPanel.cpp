@@ -22,6 +22,7 @@
 namespace Zeroday::Editor::UI {
 
     void InspectorPanel::Draw(EditorState &state) {
+        if (!Services::GetEditorState()->ShowInspector) return;
         auto scene = state.scene;
 
         float inspectorX = InspectorWidth;

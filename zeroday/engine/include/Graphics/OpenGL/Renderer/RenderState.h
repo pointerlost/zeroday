@@ -8,9 +8,9 @@ namespace Zeroday::opengl {
     class RenderState {
     private:
         struct State {
-            bool m_WireframeMode   = false;
+            bool m_WireframeMode   = true;
             bool m_DepthTestMode   = true;
-            bool m_FaceCullingMode = true;
+            bool m_FaceCullingMode = false;
         };
 
         static State s_State;

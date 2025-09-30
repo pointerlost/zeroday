@@ -11,16 +11,15 @@ namespace Zeroday {
 namespace Zeroday::Editor {
 
     struct EditorState {
-        bool isPlayMode    = false; // false = editor mode
-        bool showHierarchy = true;
-        bool showInspector = true;
-        bool showSceneView = true;
+        bool IsPlayMode    = false; // false = editor mode
+        bool ShowHierarchy = true;
+        bool ShowInspector = true;
 
         Entity selectedEntity = {};
         Entity cameraEntity   = {};
         Scene* scene = nullptr;
 
-        bool requestShutdown = false;
+        bool RequestShutdown = false;
     };
 
 }

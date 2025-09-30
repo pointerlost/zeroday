@@ -57,7 +57,7 @@ add_library(ZeroDayEngine STATIC
     src/ImGui/ImGuiScoped.cpp
     src/ImGui/ImGuiObjectState.cpp
     src/ImGui/TransformGizmo.cpp
-    src/Graphics/OpenGL/Renderer/GPURenderer.cpp
+        src/Graphics/OpenGL/Renderer/GPURenderer.cpp
     src/Graphics/OpenGL/Camera/Camera.cpp
     src/Core/Services.cpp
     src/Core/Logger.cpp
@@ -108,7 +108,7 @@ add_library(ZeroDayEngine STATIC
         include/CallBack/CallBack.h
     include/Graphics/OpenGL/Mesh/MeshFactory.h
     include/Graphics/OpenGL/Mesh/MeshData3D.h
-    include/Graphics/OpenGL/Renderer/GPURenderer.h
+        include/Graphics/OpenGL/Renderer/GPURenderer.h
     include/Core/Services.h
     include/Graphics/OpenGL/Camera/Camera.h
     include/Scene/Scene.h

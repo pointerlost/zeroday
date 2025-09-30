@@ -4,6 +4,7 @@
 #include "Editor/SceneHierarchyPanel.h"
 #include <imgui.h>
 #include "core/EngineConfig.h"
+#include "Core/Services.h"
 #include "Editor/EditorState.h"
 #include "Scene/Components.h"
 #include "Scene/Scene.h"
@@ -11,6 +12,8 @@
 namespace Zeroday::Editor::UI {
 
     void SceneHierarchyPanel::Draw(EditorState &state) {
+        if (!Services::GetEditorState()->ShowHierarchy) return;
+
         static bool deleteRequested = false;
         static ImVec2 deletePopupSize = ImVec2(340, 160); // fixed size
 

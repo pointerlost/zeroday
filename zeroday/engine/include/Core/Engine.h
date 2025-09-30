@@ -24,8 +24,7 @@ namespace Zeroday {
 		void InitServices();
 		void InitPointerObjects();
 
-		void EditorStateLoop(GLFWwindow* glfwWin);
-		void GameStateLoop();
+		void GameLoop(GLFWwindow* glfwWin);
 
 	private:
 		Scope<Editor::EditorState> m_EditorState;
@@ -58,8 +57,8 @@ namespace Zeroday {
 		void RenderPhase();
 		void CleanupPhase();
 
-		void EditorToGameState();
-		void TakeSnapshot();
+		void SetTime();
+		double lastFrameTime = 0.0;
 
 		bool m_RequestShutdown = false;
 	};

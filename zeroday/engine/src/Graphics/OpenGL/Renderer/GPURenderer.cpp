@@ -7,6 +7,7 @@
 #include "Core/AssetManager.h"
 #include "Core/Logger.h"
 #include "Core/Services.h"
+#include "Editor/EditorState.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 
@@ -99,12 +100,7 @@ namespace Zeroday::opengl {
         }
     }
 
-    void GPURenderer::InitEditorState() {
-        // Load shaders
-        if (!Services::GetAssetManager()->LoadAllShaders()) {
-            Error("[Engine::initResources] LoadAllShaders FAILED!");
-        }
-
+    void GPURenderer::Init() {
         // Pre-allocate buffers with persistent mapping
         m_EditorStateBuffers.m_TransformBuffer.Upload(std::vector<TransformSSBO>(MAX_ENTITIES));
         m_EditorStateBuffers.m_MaterialBuffer.Upload(std::vector<MaterialSSBO>(MAX_ENTITIES));
@@ -113,42 +109,44 @@ namespace Zeroday::opengl {
         m_EditorStateBuffers.m_PayloadBuffer.Upload(std::vector<DrawPayloadGPU>(MAX_ENTITIES));
     }
 
-    void GPURenderer::RenderEditorState() {
+    void GPURenderer::Render() {
         if (!m_Scene) return;
         // Extract + Upload (CPU -> GPU)
-        CollectSceneData();
-        BindBuffers();
-        RenderFrame();
+        auto& buffers = CheckStateAndReturnBuffers();
+
+        CollectSceneData(buffers);
+        BindBuffers(buffers);
+        RenderFrame(buffers);
     }
 
-    void GPURenderer::CollectSceneData() {
+    void GPURenderer::CollectSceneData(Buffers& buffers) {
         auto extracted = SceneRenderer::ExtractRenderables(m_Scene);
 
         m_CurrentLightCount = extracted.lights.size();
 
         // persistent mapping for frequent updates
         {
-            void* transformData = m_EditorStateBuffers.m_TransformBuffer.BeginUpdate();
+            void* transformData = buffers.m_TransformBuffer.BeginUpdate();
             memcpy(transformData, extracted.transforms.data(), extracted.transforms.size() * sizeof(TransformSSBO));
-            m_EditorStateBuffers.m_TransformBuffer.EndUpdate(extracted.transforms.size() * sizeof(TransformSSBO));
+            buffers.m_TransformBuffer.EndUpdate(extracted.transforms.size() * sizeof(TransformSSBO));
         }
 
         {
-            void* materialData = m_EditorStateBuffers.m_MaterialBuffer.BeginUpdate();
+            void* materialData = buffers.m_MaterialBuffer.BeginUpdate();
             memcpy(materialData, extracted.materials.data(), extracted.materials.size() * sizeof(MaterialSSBO));
-            m_EditorStateBuffers.m_MaterialBuffer.EndUpdate(extracted.materials.size() * sizeof(MaterialSSBO));
+            buffers.m_MaterialBuffer.EndUpdate(extracted.materials.size() * sizeof(MaterialSSBO));
         }
 
         {
-            void* lightData = m_EditorStateBuffers.m_LightBuffer.BeginUpdate();
+            void* lightData = buffers.m_LightBuffer.BeginUpdate();
             memcpy(lightData, extracted.lights.data(), extracted.lights.size() * sizeof(LightSSBO));
-            m_EditorStateBuffers.m_LightBuffer.EndUpdate(extracted.lights.size() * sizeof(LightSSBO));
+            buffers.m_LightBuffer.EndUpdate(extracted.lights.size() * sizeof(LightSSBO));
         }
 
         // Generate commands/payloads directly into mapped memory
         {
-            auto* commands = static_cast<DrawElementsIndirectCommand*>(m_EditorStateBuffers.m_IndirectCommandBuffer.BeginUpdate());
-            auto* payloads = static_cast<DrawPayloadGPU*>(m_EditorStateBuffers.m_PayloadBuffer.BeginUpdate());
+            auto* commands = static_cast<DrawElementsIndirectCommand*>(buffers.m_IndirectCommandBuffer.BeginUpdate());
+            auto* payloads = static_cast<DrawPayloadGPU*>(buffers.m_PayloadBuffer.BeginUpdate());
 
             for (uint i = 0; i < extracted.renderCommands.size(); i++) {
                 auto& cmd = extracted.renderCommands[i];
@@ -168,8 +166,8 @@ namespace Zeroday::opengl {
                 };
             }
 
-            m_EditorStateBuffers.m_IndirectCommandBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawElementsIndirectCommand));
-            m_EditorStateBuffers.m_PayloadBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawPayloadGPU));
+            buffers.m_IndirectCommandBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawElementsIndirectCommand));
+            buffers.m_PayloadBuffer.EndUpdate(extracted.renderCommands.size() * sizeof(DrawPayloadGPU));
         }
 
         // sync before GPU access
@@ -180,19 +178,19 @@ namespace Zeroday::opengl {
         m_CameraBuffer.Upload(extracted.camera);
     }
 
-    void GPURenderer::BindBuffers() {
-        m_EditorStateBuffers.m_RenderCommandsOfPerEntity.Bind(0);
-        m_EditorStateBuffers.m_IndirectCommandBuffer.Bind(1);
-        m_EditorStateBuffers.m_PayloadBuffer.Bind(2);
-        m_EditorStateBuffers.m_TransformBuffer.Bind(3);
-        m_EditorStateBuffers.m_MaterialBuffer.Bind(4);
-        m_EditorStateBuffers.m_LightBuffer.Bind(5);
+    void GPURenderer::BindBuffers(Buffers& buffers) {
+        buffers.m_RenderCommandsOfPerEntity.Bind(0);
+        buffers.m_IndirectCommandBuffer.Bind(1);
+        buffers.m_PayloadBuffer.Bind(2);
+        buffers.m_TransformBuffer.Bind(3);
+        buffers.m_MaterialBuffer.Bind(4);
+        buffers.m_LightBuffer.Bind(5);
 
         m_CameraBuffer.Bind(6);
         m_GlobalBuffer.Bind(7);
     }
 
-    void GPURenderer::RenderFrame() {
+    void GPURenderer::RenderFrame(Buffers& buffers) {
         auto extracted = SceneRenderer::ExtractRenderables(m_Scene);
         auto shader = Services::GetAssetManager()->GetShader("main");
 
@@ -208,10 +206,14 @@ namespace Zeroday::opengl {
         }
 
         glBindVertexArray(universalVAO);
-        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_EditorStateBuffers.m_IndirectCommandBuffer.GetHandle());
+        glBindBuffer(GL_DRAW_INDIRECT_BUFFER, buffers.m_IndirectCommandBuffer.GetHandle());
         glMultiDrawElementsIndirect(GL_TRIANGLES, GL_UNSIGNED_INT, nullptr, extracted.renderCommands.size(), 0);
 
         glBindVertexArray(0);
     }
 
+    Buffers& GPURenderer::CheckStateAndReturnBuffers() {
+        const auto mode = Services::GetEditorState()->IsPlayMode;
+        return mode ? m_GameStateBuffers : m_EditorStateBuffers;
+    }
 }

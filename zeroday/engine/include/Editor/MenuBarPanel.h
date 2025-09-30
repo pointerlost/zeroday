@@ -2,6 +2,8 @@
 // Created by pointerlost on 8/14/25.
 //
 #pragma once
+#include <string>
+
 #include "EditorPanel.h"
 
 namespace Zeroday { class SceneObjectFactory; }
@@ -15,5 +17,12 @@ namespace Zeroday::Editor::UI {
 
     private:
         SceneObjectFactory* sceneObjectFactory;
+
+        void ShowPlayPauseScreen();
+        void ShowTextWithProgressBar();
+
+        bool showProgressBar = false;
+        std::string progressBarText = {};
+        float progressStartTime = 0.0;
     };
 }

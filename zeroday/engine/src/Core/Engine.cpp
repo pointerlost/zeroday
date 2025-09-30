@@ -30,7 +30,7 @@ namespace Zeroday {
 		glfwSwapInterval(0);
 
 		// engine life loop
-		EditorStateLoop(glfwWin);
+		GameLoop(glfwWin);
 
 		return true;
 	}
@@ -44,8 +44,12 @@ namespace Zeroday {
 
 		Info("[Engine::initResources] Materials loaded successfully!");
 
-		// Load Shaders
-		m_Renderer3D->InitEditorState();
+		// Load shaders
+		if (!Services::GetAssetManager()->LoadAllShaders()) {
+			Error("[Engine::initResources] LoadAllShaders FAILED!");
+		}
+
+		m_Renderer3D->Init();
 
 		Info("[Engine::initResources] Shaders loaded successfully!");
 
@@ -88,8 +92,9 @@ namespace Zeroday {
 		}
 	}
 
-    void Engine::EditorStateLoop(GLFWwindow* glfwWin) {
-		while (!glfwWindowShouldClose(glfwWin) && !m_EditorState->requestShutdown) {
+    void Engine::GameLoop(GLFWwindow* glfwWin) {
+		while (!glfwWindowShouldClose(glfwWin) && !m_EditorState->RequestShutdown) {
+			Services::SetTime();
 			UpdatePhase();
 			RenderPhase();
 			UIPhase();
@@ -205,7 +210,7 @@ namespace Zeroday {
 
 	void Engine::RenderPhase() {
 		OpenGLRenderStuff();
-		m_Renderer3D->RenderEditorState();
+		m_Renderer3D->Render();
 	}
 
 	void Engine::CleanupPhase() {
@@ -213,10 +218,4 @@ namespace Zeroday {
 		m_Scene->CleanUpResources();
 	}
 
-	void Engine::EditorToGameState() {
-		auto renderablesObjects = opengl::SceneRenderer::ExtractRenderables(m_Scene.get());
-	}
-
-	void Engine::TakeSnapshot() {
-	}
 }

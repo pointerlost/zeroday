@@ -14,6 +14,8 @@ namespace {
     Zeroday::Graphics::ModelLoader* g_ModelLoader   = nullptr;
     Zeroday::opengl::RenderContext* g_RenderContext = nullptr;
     Zeroday::Editor::EditorState* g_EditorState     = nullptr;
+    float DeltaTime = 0.0f;
+    float lastFrameTime = 0.0f;
 }
 
 namespace Zeroday::Services {
@@ -22,6 +24,12 @@ namespace Zeroday::Services {
     Graphics::ModelLoader *GetModelLoader()   { return g_ModelLoader;     }
     opengl::RenderContext *GetRenderContext() { return g_RenderContext;   }
     Editor::EditorState *GetEditorState()     { return g_EditorState;     }
+    float GetTime() { return DeltaTime; }
+    void SetTime() {
+        const double currentTime = glfwGetTime();
+        DeltaTime = currentTime - lastFrameTime;
+        lastFrameTime = currentTime;
+    }
 
     void RegisterMeshLibrary(MeshLibrary   *lib)          { g_MeshLibrary     = lib;    }
     void RegisterAssetManager(AssetManager    *mngr)      { g_AssetManager    = mngr;   }

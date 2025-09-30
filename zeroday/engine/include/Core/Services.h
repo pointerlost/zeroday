@@ -19,18 +19,16 @@ namespace Zeroday {
         class RenderContext;
     }
 
-    namespace EditoR {
-        class EditorState;
-    }
 }
 
 namespace Zeroday::Services {
-
     MeshLibrary *GetMeshLibrary();
     AssetManager *GetAssetManager();
     Graphics::ModelLoader *GetModelLoader();
     opengl::RenderContext *GetRenderContext();
     Editor::EditorState *GetEditorState();
+    float GetTime();
+    void SetTime();
 
     // Service registration
     void RegisterMeshLibrary(MeshLibrary *lib);
