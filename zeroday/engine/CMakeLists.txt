@@ -19,6 +19,8 @@ endif()
 
 add_library(glad_local STATIC
     vendor/glad/src/glad.c
+        include/Core/Timer.h
+        include/Core/EngineState.h
 )
 
 # Include directories for local GLAD
@@ -119,6 +121,8 @@ add_library(ZeroDayEngine STATIC
     include/Core/UUID.h
     include/Core/Base.h
     include/Graphics/OpenGL/Renderer/SceneRenderer.h
+        src/Core/Timer.cpp
+        src/Core/EngineState.cpp
 )
 
 # Include directories

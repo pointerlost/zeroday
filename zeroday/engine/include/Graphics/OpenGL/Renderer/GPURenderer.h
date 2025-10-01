@@ -84,7 +84,7 @@ namespace Zeroday::opengl {
         void BindBuffers(Buffers& buffers);
         void RenderFrame(Buffers& buffers);
 
-        Buffers& CheckStateAndReturnBuffers();
+        Buffers& CheckStateAndGetBuffers();
 
         Scene* m_Scene = nullptr;
         Buffers m_EditorStateBuffers;

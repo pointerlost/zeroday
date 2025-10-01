@@ -19,9 +19,13 @@ namespace Zeroday::Editor::UI {
         SceneObjectFactory* sceneObjectFactory;
 
         void ShowPlayPauseScreen();
-        void ShowTextWithProgressBar();
+        void ShowProgressBar();
+
+        void PlayStateChanged();
+        void PauseStateChanged();
 
         bool showProgressBar = false;
+        float progressAccumulatedTime = 0.0;
         std::string progressBarText = {};
         float progressStartTime = 0.0;
     };

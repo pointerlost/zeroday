@@ -8,11 +8,10 @@
 
 namespace Zeroday::UI
 {
-	ImGuiLayer::ImGuiLayer(GLFWwindow* window, Zeroday::SceneObjectFactory* factory)
+	ImGuiLayer::ImGuiLayer(GLFWwindow* window, SceneObjectFactory* factory)
 		: m_Window(window), sceneObjectFactory(factory) {}
 
-	void ImGuiLayer::Init(GLFWwindow* window)
-	{
+	void ImGuiLayer::Init(GLFWwindow* window) {
 		m_Window = window;
 
 		IMGUI_CHECKVERSION();
@@ -23,7 +22,7 @@ namespace Zeroday::UI
 		ImGui::StyleColorsClassic();
 
 		// set the ImGui font style and text size
-		initFontAndImages(io);
+		InitFontAndImages(io);
 
 		ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
 		ImGui_ImplOpenGL3_Init("#version 460");	// according to shader version
@@ -32,16 +31,14 @@ namespace Zeroday::UI
 		SetDarkThemeColors();
 	}
 
-	void ImGuiLayer::BeginFrame()
-	{
+	void ImGuiLayer::BeginFrame() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
 
-	void ImGuiLayer::initFontAndImages(const ImGuiIO& io)
-	{
-		const auto& file = Zeroday::File::Get();
+	void ImGuiLayer::InitFontAndImages(const ImGuiIO& io) {
+		const auto& file = File::Get();
 
 		m_fontPath = std::string(ASSETS_DIR) + "/fonts/RobotoSlab.ttf";
 
@@ -52,19 +49,14 @@ namespace Zeroday::UI
 			Error("[ImGuiLayer::Init::initFont] Font file not found at path! so Default path assigned!");
 			io.Fonts->AddFontDefault();
 		}
-
-		// load texture for inspector background
-		// m_renderData->getTextureManager()->load("inspectorBG", nlohmann::detail::concat(ASSETS_DIR, "/textures/inspectorBG.png"));
 	}
 
-	void ImGuiLayer::EndFrame()
-	{
+	void ImGuiLayer::EndFrame() {
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
-	void ImGuiLayer::Shutdown()
-	{
+	void ImGuiLayer::Shutdown() {
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();

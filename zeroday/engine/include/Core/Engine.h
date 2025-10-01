@@ -1,6 +1,7 @@
 #pragma once
-#include <memory>
 #include "Base.h"
+#include "EngineState.h"
+#include "Timer.h"
 #include "Core/Window.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Editor/Editor.h"
@@ -16,7 +17,7 @@ namespace Zeroday {
 
 	class Engine {
 	public:
-		Engine() = default;
+		Engine();
 		~Engine();
 
 		[[nodiscard]] bool Run();
@@ -39,6 +40,7 @@ namespace Zeroday {
 		Scope<Graphics::ModelLoader> g_ModelLoader;
 		Scope<opengl::RenderContext> g_RenderContext;
 
+		void InitEngineState();
 		void InitWindow();
 		void InitCallBack();
 		void InitAssetManager();
@@ -49,18 +51,17 @@ namespace Zeroday {
 		void InitEditor();
 		void InitImGui();
 
-		void OpenGLRenderStuff();
-		void glfwRenderEvent() const;
+		void OpenGLState();
+		void glfwEventState() const;
 
 		void UpdatePhase();
 		void UIPhase();
 		void RenderPhase();
 		void CleanupPhase();
+		void RenderGameWindow();
+		void EditorToGameTime();
 
-		void SetTime();
-		double lastFrameTime = 0.0;
-
-		bool m_RequestShutdown = false;
+		Scope<EngineState> m_EngineState;
 	};
 };
 

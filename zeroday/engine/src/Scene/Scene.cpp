@@ -2,6 +2,10 @@
 // Created by pointerlost on 9/21/25.
 //
 #include "Scene/Scene.h"
+
+#include "Core/Services.h"
+#include "Editor/EditorState.h"
+#include "Graphics/OpenGL/Renderer/SceneRenderer.h"
 #include "Scene/Components.h"
 #include "Scene/Entity.h"
 
@@ -119,5 +123,8 @@ namespace Zeroday {
             }
         }
         m_EntitiesToDestroy.clear();
+    }
+
+    void Scene::Update() {
     }
 }

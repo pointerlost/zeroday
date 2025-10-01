@@ -2,7 +2,7 @@
 #include "Core/Config.h"
 #include "CallBack/CallBack.h"
 #include <imgui_impl_opengl3.h>
-#include <Core/EngineConfig.h>
+#include <thread>
 #include <Input/Input.h>
 #include "Core/Services.h"
 #include "Editor/InspectorPanel.h"
@@ -10,9 +10,12 @@
 #include "Editor/SceneHierarchyPanel.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Graphics/OpenGL/Renderer/SceneRenderer.h"
+#include "Graphics/OpenGL/Textures/Textures.h"
 #include "Scene/SceneObjectFactory.h"
 
 namespace Zeroday {
+
+	Engine::Engine() {}
 
 	Engine::~Engine() {
 		if (m_ImGuiLayer) {
@@ -22,11 +25,6 @@ namespace Zeroday {
 
 	bool Engine::Run() {
 		const auto glfwWin = m_Window->GetGLFWwindow();
-
-		if (!glfwWin) {
-			Error("[Engine::run] GLFW window returning nullptr!");
-			return false;
-		}
 		glfwSwapInterval(0);
 
 		// engine life loop
@@ -36,6 +34,9 @@ namespace Zeroday {
 	}
 
 	bool Engine::InitResources() {
+		// Start Global Timer
+		m_EngineState->StartTimers();
+
 		// Load materials
 		if (!g_AssetManager->LoadMaterialsFromFolder(std::string(MATERIAL_JSON_PATH) + "materials.json")) {
 			Error("[Engine::initResources] loadMaterialFromJSON function is not working correctly!");
@@ -69,10 +70,12 @@ namespace Zeroday {
 		Services::RegisterModelLoader(g_ModelLoader.get());
 		Services::RegisterRenderContext(g_RenderContext.get());
 		Services::RegisterEditorState(m_EditorState.get());
+		Services::RegisterEngineState(m_EngineState.get());
 	}
 
 	void Engine::InitPointerObjects() {
 		try {
+			InitEngineState();
 			InitWindow();
 			InitCallBack();
 			InitAssetManager();
@@ -93,13 +96,20 @@ namespace Zeroday {
 	}
 
     void Engine::GameLoop(GLFWwindow* glfwWin) {
-		while (!glfwWindowShouldClose(glfwWin) && !m_EditorState->RequestShutdown) {
-			Services::SetTime();
+		while (!glfwWindowShouldClose(glfwWin) && !m_EngineState->ShutdownRequested()) {
+			OpenGLState();
+
 			UpdatePhase();
 			RenderPhase();
 			UIPhase();
 			CleanupPhase();
 		}
+    }
+
+    void Engine::InitEngineState() {
+		m_EngineState = CreateScope<EngineState>();
+
+		Info("[Engine::InitEngineState] Initialization successful!");
     }
 
     void Engine::InitWindow() {
@@ -163,10 +173,6 @@ namespace Zeroday {
 		Info("[Engine::InitEditor] Editor initialized successfully!");
 
 		Entity editorCamera = m_SceneObjectFactory->CreateCamera(CameraMode::Perspective, "Editor Camera");
-		if (!editorCamera) {
-			Error("[Engine::InitEditor] Failed to create editor camera!");
-			return;
-		}
 		editorCamera.TryGetComponent<CameraComponent>()->m_Camera.SetViewportSize(SCR_WIDTH, SCR_HEIGHT);
 
 		m_EditorState->cameraEntity = editorCamera;
@@ -185,37 +191,79 @@ namespace Zeroday {
 	void Engine::InitImGui() {
 		m_ImGuiLayer = CreateScope<UI::ImGuiLayer>(m_Window->GetGLFWwindow(), m_SceneObjectFactory.get());
 
-		Info("[Engine::InitImGui] ImGuiLayer initialized successfully!");
+		Info("[Engine::InitImGui] +ImGuiLayer initialized successfully!");
 	}
 
-	void Engine::OpenGLRenderStuff() {
+	void Engine::OpenGLState() {
 		opengl::RenderState::ApplyAllStates();
 	}
 
-	void Engine::glfwRenderEvent() const {
+	void Engine::glfwEventState() const {
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window->GetGLFWwindow());
 	}
 
 	void Engine::UpdatePhase() {
 		Input::Update();
-		// world->update();
+		m_EngineState->UpdateTimers();
+		m_Scene->Update();
 	}
 
 	void Engine::UIPhase() {
 		m_ImGuiLayer->BeginFrame();
 		m_Editor->drawUI();
+		RenderGameWindow();
 		m_ImGuiLayer->EndFrame();
 	}
 
 	void Engine::RenderPhase() {
-		OpenGLRenderStuff();
+		if (m_EngineState->IsPaused()) return;
 		m_Renderer3D->Render();
 	}
 
 	void Engine::CleanupPhase() {
-		glfwRenderEvent();
+		glfwEventState();
 		m_Scene->CleanUpResources();
 	}
 
+	void Engine::RenderGameWindow() {
+		if (m_EngineState->IsPlaying()) {
+			auto editorCamera = m_EditorState->cameraEntity.GetComponent<CameraComponent>().m_Camera;
+			auto pos = opengl::SceneRenderer::GetViewportSize(m_EngineState->IsPlaying());
+			const auto viewPort = ImVec2(pos.first, pos.second);
+			editorCamera.SetViewportSize(viewPort.x, viewPort.y);
+
+			const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+			ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+			ImGui::SetNextWindowSize(viewPort, ImGuiCond_Appearing);
+			ImGui::SetNextWindowFocus();
+
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+			ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(80, 40, 40, 255));
+			ImGui::Begin("Zeroday Game", nullptr,
+				ImGuiWindowFlags_NoScrollbar |
+				ImGuiWindowFlags_NoScrollWithMouse |
+				ImGuiWindowFlags_NoCollapse
+			);
+
+			const ImVec2 windowPos = ImGui::GetWindowPos();
+			const ImVec2 windowSize = ImGui::GetWindowSize();
+			const float centeredX = windowPos.x + (windowSize.x - viewPort.x) * 0.5f;
+			const float centeredY = windowPos.y + (windowSize.y - viewPort.y) * 0.5f;
+
+			glViewport((int)centeredX, (int)centeredY, (int)viewPort.x, (int)viewPort.y);
+
+			ImGui::End();
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+		}
+	}
+
+	void Engine::EditorToGameTime() {
+		auto* editorState = Services::GetEditorState();
+
+		auto editorCamera = editorState->cameraEntity.GetComponent<CameraComponent>();
+		auto [first, second] = opengl::SceneRenderer::GetViewportSize(m_EngineState->IsPlaying());
+		editorCamera.m_Camera.SetViewportSize(first, second);
+	}
 }

@@ -5,6 +5,7 @@
 #include "Graphics/OpenGL/Renderer/SceneRenderer.h"
 #include "Graphics/OpenGL/GPU_buffers.h"
 #include "Core/AssetManager.h"
+#include "Core/Engine.h"
 #include "Core/Logger.h"
 #include "Core/Services.h"
 #include "Editor/EditorState.h"
@@ -112,7 +113,7 @@ namespace Zeroday::opengl {
     void GPURenderer::Render() {
         if (!m_Scene) return;
         // Extract + Upload (CPU -> GPU)
-        auto& buffers = CheckStateAndReturnBuffers();
+        auto& buffers = CheckStateAndGetBuffers();
 
         CollectSceneData(buffers);
         BindBuffers(buffers);
@@ -212,8 +213,7 @@ namespace Zeroday::opengl {
         glBindVertexArray(0);
     }
 
-    Buffers& GPURenderer::CheckStateAndReturnBuffers() {
-        const auto mode = Services::GetEditorState()->IsPlayMode;
-        return mode ? m_GameStateBuffers : m_EditorStateBuffers;
+    Buffers& GPURenderer::CheckStateAndGetBuffers() {
+        return Services::GetEngineState()->IsPlaying() ? m_GameStateBuffers : m_EditorStateBuffers;
     }
 }

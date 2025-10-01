@@ -1,7 +1,6 @@
 #include "Core/Window.h"
 #include "Core/EngineConfig.h"
 #include <cstring>
-
 #include "Core/Logger.h"
 
 namespace Zeroday {
@@ -22,7 +21,7 @@ namespace Zeroday {
 		SetUpGLFWmonitorVidMode();
 		SetUpGLFWContext();
 		
-		window = glfwCreateWindow(mode->width, mode->height, title, monitor, NULL);
+		window = glfwCreateWindow(mode->width, mode->height, title, monitor, nullptr);
 
 		if (!window) {
 			Warn("glfwCreateWindow failed!");

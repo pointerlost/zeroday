@@ -6,9 +6,8 @@
 #include <core/Config.h>
 #include <core/EngineConfig.h>
 #include <nlohmann/detail/string_concat.hpp>
-
+#include "Core/Engine.h"
 #include "Core/Services.h"
-#include "Editor/EditorState.h"
 #include "Scene/SceneObjectFactory.h"
 
 namespace Zeroday::Editor::UI {
@@ -70,52 +69,42 @@ namespace Zeroday::Editor::UI {
             }
 
             if (ImGui::MenuItem("Exit")) {
-                state.RequestShutdown = true;
+                Services::GetEngineState()->RequestShutdown();
             }
 
             ImGui::EndMainMenuBar();
         }
 
         ShowPlayPauseScreen();
-        ShowTextWithProgressBar();
+        ShowProgressBar();
     }
 
     void MenuBarPanel::ShowPlayPauseScreen() {
-        const auto& editorState = Services::GetEditorState();
         ImGui::SetNextWindowPos(ImVec2(SCR_WIDTH / 2 - 50, 25), ImGuiCond_Always);
         ImGui::Begin("PlayAndPauseButtons", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 
         if (ImGui::Button("Play")) {
-            showProgressBar = true;
-            progressBarText = "Loading";
-            // State changing, editor->game, game->editor
-            editorState->IsPlayMode    = !editorState->IsPlayMode;
-            editorState->ShowInspector = !editorState->ShowInspector;
-            editorState->ShowHierarchy = !editorState->ShowHierarchy;
+            PlayStateChanged();
         }
-
         ImGui::SameLine();
-        // Sameline with Play button
         if (ImGui::Button("Pause")) {
-            showProgressBar = true;
-            progressBarText = "Paused";
-            editorState->ShowInspector = !editorState->ShowInspector;
-            editorState->ShowHierarchy = !editorState->ShowHierarchy;
+            PauseStateChanged();
         }
 
         ImGui::End();
     }
 
-    void MenuBarPanel::ShowTextWithProgressBar() {
+    void MenuBarPanel::ShowProgressBar() {
         if (!showProgressBar) return;
 
-        float currTime = Services::GetTime();
-        float elapsed = currTime - progressStartTime;
-        float progress = elapsed / 2.0f;
+        progressAccumulatedTime += Services::GetEngineState()->GetEditorDeltaTime(); // Sum with delta
+        float progress = progressAccumulatedTime / 3.0f;  // X seconds total (in this case 3)
 
-        if (progress > 1.0f) {
+        if (progress >= 1.0f) {
             showProgressBar = false;
+            progressAccumulatedTime = 0.0f;
             progress = 1.0f;
+            Services::GetEngineState()->SetPaused(false);
         }
 
         ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
@@ -130,12 +119,44 @@ namespace Zeroday::Editor::UI {
         const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 
         ImGui::SetWindowFontScale(1.5f);
-        ImGui::SetCursorPos(ImVec2(center.x - 60, center.y - 50));
-        ImGui::TextColored(ImVec4(0.1, 0.05, 0.6, 1.0), (progressBarText + "...").c_str());
+        ImGui::SetCursorPos(ImVec2(center.x - 92, center.y - 90));
+        ImGui::TextColored(ImVec4(0.78, 0.75, 0.76, 1.0), (progressBarText + "...").c_str());
 
         ImGui::SetCursorPos(ImVec2(center.x - 175, center.y - 50));
-        ImGui::ProgressBar(progress, ImVec2(250, 0));
+        ImGui::ProgressBar(progress, ImVec2(250, 40));
 
         ImGui::End();
+    }
+
+    void MenuBarPanel::PlayStateChanged() {
+        auto* engineState = Services::GetEngineState();
+
+        // Toggle play state
+        engineState->SetIsPlaying(!engineState->IsPlaying());
+
+        // Show appropriate progress bar
+        showProgressBar = true;
+        progressAccumulatedTime = 0.0f;
+
+        if (engineState->IsPlaying()) {
+            progressBarText = "Loading Game";
+        } else {
+            progressBarText = "Returning to Editor";
+        }
+        // State changing, editor->game, game->editor
+        // editorState->ShowInspector = !editorState->ShowInspector;
+        // editorState->ShowHierarchy = !editorState->ShowHierarchy;
+    }
+
+    void MenuBarPanel::PauseStateChanged() {
+        auto* engineState = Services::GetEngineState();
+
+        // Toggle pause state
+        engineState->SetPaused(!engineState->IsPaused());
+
+        // Show progress bar
+        showProgressBar = true;
+        progressAccumulatedTime = 0.0f;
+        progressBarText = engineState->IsPaused() ? "Pausing" : "Resuming";
     }
 }

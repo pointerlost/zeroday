@@ -18,18 +18,14 @@ struct GLFWwindow;
 
 namespace Zeroday::UI
 {
-	class ImGuiLayer
-	{
+	class ImGuiLayer {
 	public:
 		ImGuiLayer(GLFWwindow* window, SceneObjectFactory* factory);
 
 		void Init(GLFWwindow* window);
-		void initFontAndImages(const ImGuiIO& io);
 		void BeginFrame();
 		void EndFrame();
 		void Shutdown();
-
-		void SetDarkThemeColors();
 
 	private:
 		GLFWwindow* m_Window = nullptr;
@@ -47,5 +43,8 @@ namespace Zeroday::UI
 		bool m_showLightSourceObjects = false;
 
 		std::string m_fontPath{};
+
+		void SetDarkThemeColors();
+		void InitFontAndImages(const ImGuiIO& io);
 	};
 }

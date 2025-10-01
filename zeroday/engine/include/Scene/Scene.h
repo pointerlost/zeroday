@@ -29,6 +29,8 @@ namespace Zeroday {
         size_t GetEntityCount() const { return m_Entities.size(); }
         void CleanUpResources();
 
+        void Update();
+
     private:
         template <typename T>
         void OnComponentAdded(Entity entity, T& component);

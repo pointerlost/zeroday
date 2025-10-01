@@ -4,6 +4,10 @@
 #pragma once
 
 namespace Zeroday {
+    struct EngineState;
+}
+
+namespace Zeroday {
     namespace Graphics {
         class ModelLoader;
     }
@@ -27,8 +31,7 @@ namespace Zeroday::Services {
     Graphics::ModelLoader *GetModelLoader();
     opengl::RenderContext *GetRenderContext();
     Editor::EditorState *GetEditorState();
-    float GetTime();
-    void SetTime();
+    EngineState *GetEngineState();
 
     // Service registration
     void RegisterMeshLibrary(MeshLibrary *lib);
@@ -36,4 +39,5 @@ namespace Zeroday::Services {
     void RegisterModelLoader(Graphics::ModelLoader *loader);
     void RegisterRenderContext(opengl::RenderContext *rc);
     void RegisterEditorState(Editor::EditorState *state);
+    void RegisterEngineState(EngineState *engine);
 }

@@ -7,6 +7,10 @@
 #include "Graphics/OpenGL/Model/ModelLoader.h"
 #include "Graphics/OpenGL/Renderer/RenderContext.h"
 
+namespace Zeroday {
+    struct EngineState;
+}
+
 namespace {
     // Static service pointers
     Zeroday::MeshLibrary* g_MeshLibrary         = nullptr;
@@ -14,26 +18,21 @@ namespace {
     Zeroday::Graphics::ModelLoader* g_ModelLoader   = nullptr;
     Zeroday::opengl::RenderContext* g_RenderContext = nullptr;
     Zeroday::Editor::EditorState* g_EditorState     = nullptr;
-    float DeltaTime = 0.0f;
-    float lastFrameTime = 0.0f;
+    Zeroday::EngineState* g_Engine                       = nullptr;
 }
 
 namespace Zeroday::Services {
-    MeshLibrary *GetMeshLibrary()         { return g_MeshLibrary;     }
-    AssetManager *GetAssetManager()       { return g_AssetManager;    }
+    MeshLibrary *GetMeshLibrary()             { return g_MeshLibrary;     }
+    AssetManager *GetAssetManager()           { return g_AssetManager;    }
     Graphics::ModelLoader *GetModelLoader()   { return g_ModelLoader;     }
     opengl::RenderContext *GetRenderContext() { return g_RenderContext;   }
     Editor::EditorState *GetEditorState()     { return g_EditorState;     }
-    float GetTime() { return DeltaTime; }
-    void SetTime() {
-        const double currentTime = glfwGetTime();
-        DeltaTime = currentTime - lastFrameTime;
-        lastFrameTime = currentTime;
-    }
+    EngineState *GetEngineState() { return g_Engine; }
 
     void RegisterMeshLibrary(MeshLibrary   *lib)          { g_MeshLibrary     = lib;    }
     void RegisterAssetManager(AssetManager    *mngr)      { g_AssetManager    = mngr;   }
     void RegisterModelLoader(Graphics::ModelLoader   *loader) { g_ModelLoader = loader; }
     void RegisterRenderContext(opengl::RenderContext *rc) { g_RenderContext   = rc;     }
     void RegisterEditorState(Editor::EditorState* state)  { g_EditorState     = state;  }
+    void RegisterEngineState(EngineState *engine) { g_Engine = engine; }
 }

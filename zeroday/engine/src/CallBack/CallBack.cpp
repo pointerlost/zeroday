@@ -11,13 +11,11 @@ namespace Zeroday::CallBack
 		//glfwSetScrollCallback(window, scroll_CallBack);
 	}
 
-	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height) noexcept
-	{
+	void FrameBufferSizeCallback(GLFWwindow* window, int width, int height) noexcept {
 		glViewport(0, 0, width, height);
 	}
 
-	void Key_CallBack(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept
-	{
+	void Key_CallBack(GLFWwindow* window, int key, int scancode, int action, int mods) noexcept {
 		if (key < 0 || key >= Input::KEY_MAX) return;
 
 		using namespace Input;
@@ -34,8 +32,7 @@ namespace Zeroday::CallBack
 		}
 	}
 
-	void Mouse_CallBack(GLFWwindow* window, double xpos, double ypos) noexcept
-	{
+	void Mouse_CallBack(GLFWwindow* window, double xpos, double ypos) noexcept {
 		Input::xPosMouse = xpos;
 		Input::yPosMouse = ypos;
 		Input::UpdateMouseDelta();
