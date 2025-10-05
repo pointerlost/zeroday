@@ -86,10 +86,9 @@ namespace Zeroday {
 			transform.m_Transform.SetScale(glm::vec3(0.5f));
 
 			return entity;
-		} else {
-			Error("Failed to load Model!");
 		}
 
+		Error("Failed to load Model!");
 		return Entity{};
 	}
 }

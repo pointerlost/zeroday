@@ -62,7 +62,7 @@ namespace Zeroday {
             m_View = glm::inverse(cameraWorldMatrix);
             m_ViewProjectionDirty = true;
         }
-        [[nodiscard]] const glm::mat4& GetViewMatrix() { return m_View; }
+        [[nodiscard]] glm::mat4& GetViewMatrix() { return m_View; }
 
         void SetProjectionMatrix(float fov, float near, float far) {
             m_PerspectiveFOV  = fov;
@@ -71,7 +71,7 @@ namespace Zeroday {
             m_ProjectionDirty = true;
             m_ViewProjectionDirty = true;
         }
-        [[nodiscard]] const glm::mat4& GetProjectionMatrix() {
+        [[nodiscard]] glm::mat4& GetProjectionMatrix() {
             CalculateProjection();
             return m_Projection;
         }

@@ -107,14 +107,14 @@ namespace Zeroday::opengl {
 
             // Process ALL meshes in the model
             for (const auto& meshEntry : modelComp.model->m_Meshes) {
-                // Get mesh data from library
+                // Get mesh data
                 auto meshData = Services::GetMeshLibrary()->GetMeshData3D();
                 if (!meshData) {
                     Warn("Mesh not found in library: " + meshEntry.m_SubMeshName);
                     continue;
                 }
 
-                // Get submesh info (assuming first submesh for now)
+                // Get submesh info
                 const auto& meshInfo = meshData->GetMeshInfo(meshEntry.m_SubMeshName);
 
                 MaterialSSBO materialData = meshEntry.m_Material
