@@ -7,6 +7,7 @@ namespace Zeroday::CallBack
 		glfwSetFramebufferSizeCallback(window, FrameBufferSizeCallback);
 		glfwSetKeyCallback(window, Key_CallBack);
 		glfwSetCursorPosCallback(window, Mouse_CallBack);
+		// in editor, third flag should be GLFW_CURSOR_NORMAL but in game GLFW_CURSOR_DISABLED
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		//glfwSetScrollCallback(window, scroll_CallBack);
 	}
@@ -29,12 +30,13 @@ namespace Zeroday::CallBack
 		case GLFW_RELEASE:
 			g_IsKeyPressed[key] = false;
 			break;
+		default: ;
 		}
 	}
 
 	void Mouse_CallBack(GLFWwindow* window, double xpos, double ypos) noexcept {
-		Input::xPosMouse = xpos;
-		Input::yPosMouse = ypos;
+		Input::currMousePosX = xpos;
+		Input::currMousePosY = ypos;
 		Input::UpdateMouseDelta();
 	}
 	

@@ -2,7 +2,6 @@
 // Created by pointerlost on 8/14/25.
 //
 #include "Editor/MenuBarPanel.h"
-#include <imgui.h>
 #include <core/Config.h>
 #include <core/EngineConfig.h>
 #include <nlohmann/detail/string_concat.hpp>
@@ -11,6 +10,10 @@
 #include "Scene/SceneObjectFactory.h"
 
 namespace Zeroday::Editor::UI {
+
+    MenuBarPanel::MenuBarPanel(SceneObjectFactory *objectFactory) : sceneObjectFactory(objectFactory) {
+
+    }
 
     void MenuBarPanel::Draw(EditorState &state) {
 
@@ -59,7 +62,10 @@ namespace Zeroday::Editor::UI {
 
                     if (ImGui::BeginMenu("Create Model")) {
                         if (ImGui::MenuItem("Cybertruck")) {
-                            (void)sceneObjectFactory->CreateModel(nlohmann::detail::concat(MODEL_DIR, "/house/source/housetest/houselow.FBX"));
+                            // (void)sceneObjectFactory->CreateModel(nlohmann::detail::concat(MODEL_DIR, "cybertruck/"));
+                        }
+                        if (ImGui::MenuItem("house")) {
+                            // (void)sceneObjectFactory->CreateModel(nlohmann::detail::concat(MODEL_DIR, "house/source/housetest/houselow.FBX"));
                         }
                         ImGui::EndMenu();
                     }
@@ -68,8 +74,16 @@ namespace Zeroday::Editor::UI {
                 ImGui::EndMenu();
             }
 
+            if (ImGui::BeginMenu("Performance")) {
+                if (ImGui::MenuItem("Profiler")) {
+                    m_ShowPerformanceWindow = !m_ShowPerformanceWindow;
+                }
+                ImGui::EndMenu();
+            }
+
             if (ImGui::MenuItem("Exit")) {
                 Services::GetEngineState()->RequestShutdown();
+                ImGui::EndMenu();
             }
 
             ImGui::EndMainMenuBar();
@@ -77,6 +91,7 @@ namespace Zeroday::Editor::UI {
 
         ShowPlayPauseScreen();
         ShowProgressBar();
+        if (m_ShowPerformanceWindow) ShowPerformanceProfile();
     }
 
     void MenuBarPanel::ShowPlayPauseScreen() {
@@ -120,7 +135,7 @@ namespace Zeroday::Editor::UI {
 
         ImGui::SetWindowFontScale(1.5f);
         ImGui::SetCursorPos(ImVec2(center.x - 92, center.y - 90));
-        ImGui::TextColored(ImVec4(0.78, 0.75, 0.76, 1.0), (progressBarText + "...").c_str());
+        ImGui::TextColored(m_ScreenTextColor, (progressBarText + "...").c_str());
 
         ImGui::SetCursorPos(ImVec2(center.x - 175, center.y - 50));
         ImGui::ProgressBar(progress, ImVec2(250, 40));
@@ -130,6 +145,7 @@ namespace Zeroday::Editor::UI {
 
     void MenuBarPanel::PlayStateChanged() {
         auto* engineState = Services::GetEngineState();
+        auto* editorState = Services::GetEditorState();
 
         // Toggle play state
         engineState->SetIsPlaying(!engineState->IsPlaying());
@@ -144,8 +160,8 @@ namespace Zeroday::Editor::UI {
             progressBarText = "Returning to Editor";
         }
         // State changing, editor->game, game->editor
-        // editorState->ShowInspector = !editorState->ShowInspector;
-        // editorState->ShowHierarchy = !editorState->ShowHierarchy;
+        editorState->ShowInspector = !editorState->ShowInspector;
+        editorState->ShowHierarchy = !editorState->ShowHierarchy;
     }
 
     void MenuBarPanel::PauseStateChanged() {
@@ -158,5 +174,22 @@ namespace Zeroday::Editor::UI {
         showProgressBar = true;
         progressAccumulatedTime = 0.0f;
         progressBarText = engineState->IsPaused() ? "Pausing" : "Resuming";
+    }
+
+    void MenuBarPanel::ShowPerformanceProfile() {
+        ImGui::SetNextWindowPos(ImVec2(400,25), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(300, 150));
+
+        ImGui::Begin("Performance Profile", &m_ShowPerformanceWindow, ImGuiWindowFlags_NoResize);
+
+        std::string fpsStr = std::format("FPS: {:.2f}", Services::GetEngineState()->GetEditorFPS());
+        ImGui::Text("%s", fpsStr.c_str());
+
+        ImGui::Spacing();
+
+        // std::string frameCount = std::format("FPS: {:.2f}", Services::GetEngineState()->);
+        // ImGui::Text("%s", fpsStr.c_str());
+
+        ImGui::End();
     }
 }

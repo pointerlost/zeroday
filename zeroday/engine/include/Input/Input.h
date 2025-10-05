@@ -5,10 +5,13 @@ namespace Zeroday::Input {
 
 	constexpr int KEY_MAX = GLFW_KEY_LAST + 1; // 349 key
 
-	extern double xPosMouse;
-	extern double yPosMouse;
+	extern double currMousePosX;
+	extern double currMousePosY;
 	extern double lastMousePosX;
 	extern double lastMousePosY;
+
+	extern float yaw;
+	extern float pitch;
 
 	extern double sensitivity;
 	

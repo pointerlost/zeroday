@@ -9,10 +9,8 @@
 
 #include "Model.h"
 
-namespace Zeroday {
-    namespace opengl {
-        struct MaterialInstance;
-    }
+namespace Zeroday::opengl {
+    struct MaterialInstance;
 }
 
 namespace Zeroday::Graphics {
@@ -22,13 +20,18 @@ namespace Zeroday::Graphics {
         std::shared_ptr<opengl::Model> Load(const std::string& filePath);
 
     private:
-        std::shared_ptr<opengl::Material> ProcessMaterial(aiMaterial* mat, const std::string& directory);
-        opengl::MeshEntry ProcessMesh(aiMesh* mesh, const aiScene* scene,  const std::string& directory);
-        void ProcessNode(aiNode *node, const aiScene *scene, const std::string &directory, opengl::Model *model);
+        void ProcessNode(aiNode* node, const aiScene* scene, const std::string& directory);
+        opengl::MeshEntry ProcessMesh(aiMesh* mesh, const aiScene* scene, const std::string& directory);
+        Ref<opengl::Material> ProcessMaterial(aiMaterial* mat, const aiScene* scene, const std::string& directory);
 
-        float ShininessToRoughness(float shininess);
-        float SpecularToMetallic(const glm::vec3& spec, float defaultF0 = 0.04f);
+        std::string GetDirectoryFromPath(const std::string& filePath);
+        std::string GetTextureTypeName(aiTextureType type);
+        std::string FindTextureFile(const std::string& directory, const std::string& texturePath);
+        std::string SearchRecursively(const std::string& directory, const std::string& filename);
 
-        std::string GetDirectoryFromPath(const std::string &filePath);
+    private:
+        Ref<opengl::Model> m_CurrentModel;
+        std::string m_CurrentDirectory;
     };
+
 }

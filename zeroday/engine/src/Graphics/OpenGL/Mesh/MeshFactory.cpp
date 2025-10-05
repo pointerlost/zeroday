@@ -190,28 +190,7 @@ namespace Zeroday
 		return{};
 	}
 
-	void MeshFactory::SetupMeshes(const Ref<MeshData3D>& meshData) {
-
-		const auto AddMeshObject = [&](const std::string &name) {
-			auto [vertices, indices] = CreateMeshObject(name);
-			meshData->AddMesh3DToMeshData(name, vertices, indices);
-		};
-
-		AddMeshObject("triangle");
-		AddMeshObject("square");
-		AddMeshObject("cube");
-		AddMeshObject("circle");
-		AddMeshObject("sphere");
-
-		// Creation VBO, EBO
-		meshData->UploadToGPU();
-		meshData->CreateUniversalVAO();
-
-		Info("[MeshFactory::setupMeshes] successful!");
-	}
-
-	void MeshFactory::AddObjectsIntoMap()
-	{
+	void MeshFactory::AddObjectsIntoMap() {
 		meshObjects["triangle"] = CreateTriangle;
 		meshObjects["square"]   = CreateSquare;
 		meshObjects["cube"]     = CreateCube;

@@ -12,9 +12,9 @@
 
 namespace Zeroday {
     struct Light;
-    struct Model;
     struct MeshData3D;
     namespace opengl {
+        struct Model;
         struct MaterialInstance;
     }
 }
@@ -87,19 +87,18 @@ namespace Zeroday {
     };
 
     struct MeshComponent {
-        std::shared_ptr<MeshData3D> meshData = {};
-        std::string subMeshName = {};
+        std::string m_SubMeshName = {};
 
-        explicit MeshComponent(std::shared_ptr<MeshData3D> data) : meshData(std::move(data)) {}
+        explicit MeshComponent(std::string subMeshName) : m_SubMeshName(std::move(subMeshName)) {}
         MeshComponent() = default;
         MeshComponent(const MeshComponent&) = default;
         MeshComponent& operator=(const MeshComponent&) = default;
     };
 
     struct ModelComponent {
-        std::shared_ptr<Model> model;
+        std::shared_ptr<opengl::Model> model;
 
-        explicit ModelComponent(std::shared_ptr<Model> model) : model(std::move(model)) {}
+        explicit ModelComponent(std::shared_ptr<opengl::Model> model) : model(std::move(model)) {}
         ModelComponent() = default;
         ModelComponent(const ModelComponent&) = default;
     };

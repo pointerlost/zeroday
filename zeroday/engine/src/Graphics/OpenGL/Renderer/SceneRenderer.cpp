@@ -3,10 +3,13 @@
 //
 #include "Graphics/OpenGL/Renderer/SceneRenderer.h"
 #include "Core/AssetManager.h"
+#include "Core/Services.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Scene/Components.h"
 #include "Scene/Scene.h"
 #include "Graphics/OpenGL/GPU_buffers.h"
+#include "Graphics/OpenGL/Mesh/MeshLibrary.h"
+#include "Graphics/OpenGL/Model/Model.h"
 #include "Graphics/OpenGL/Renderer/RenderCommand.h"
 
 namespace Zeroday::opengl {
@@ -38,7 +41,7 @@ namespace Zeroday::opengl {
             result.materials.push_back(materialData);
             uint32_t materialIndex = result.materials.size() - 1;
 
-            const auto& meshInfo = mesh.meshData->GetMeshInfo(mesh.subMeshName);
+            const auto& meshInfo = Services::GetMeshLibrary()->GetMeshData3D()->GetMeshInfo(mesh.m_SubMeshName);
 
             RenderCommandMDI cmd;
             cmd.materialIndex  = materialIndex;
@@ -51,6 +54,7 @@ namespace Zeroday::opengl {
         ExtractLights(scene, result);
         ExtractCamera(scene, result);
         ExtractGlobalData(scene, result);
+        ExtractModels(scene, result);
 
         return result;
     }
@@ -86,5 +90,46 @@ namespace Zeroday::opengl {
         GlobalUBO global;
         global.globalAmbient = g_GlobalAmbient;
         result.globalData = global;
+    }
+
+    void SceneRenderer::ExtractModels(Scene *scene, ExtractResult &result) {
+        auto view = scene->GetAllEntitiesWith<TransformComponent, ModelComponent>();
+
+        for (auto [entity, transform, modelComp] : view.each()) {
+            if (!modelComp.model || !modelComp.model->IsValid()) continue;
+
+            TransformSSBO transformData;
+            glm::mat4 modelMatrix = transform.m_Transform.GetWorldMatrix();
+            transformData.modelMatrix = modelMatrix;
+            transformData.normalMatrix = glm::transpose(glm::inverse(glm::mat3(modelMatrix)));
+            uint32_t transformIndex = result.transforms.size();
+            result.transforms.push_back(transformData);
+
+            // Process ALL meshes in the model
+            for (const auto& meshEntry : modelComp.model->m_Meshes) {
+                // Get mesh data from library
+                auto meshData = Services::GetMeshLibrary()->GetMeshData3D();
+                if (!meshData) {
+                    Warn("Mesh not found in library: " + meshEntry.m_SubMeshName);
+                    continue;
+                }
+
+                // Get submesh info (assuming first submesh for now)
+                const auto& meshInfo = meshData->GetMeshInfo(meshEntry.m_SubMeshName);
+
+                MaterialSSBO materialData = meshEntry.m_Material
+                    ? meshEntry.m_Material->ToGPUFormat()
+                    : MaterialSSBO{};
+                result.materials.push_back(materialData);
+                uint32_t materialIndex = result.materials.size() - 1;
+
+                RenderCommandMDI cmd;
+                cmd.materialIndex = materialIndex;
+                cmd.transformIndex = transformIndex; // Same transform for all meshes in model
+                cmd.indexCount = meshInfo.m_IndexCount;
+                cmd.indexOffset = meshInfo.m_IndexOffset;
+                result.renderCommands.push_back(cmd);
+            }
+        }
     }
 }

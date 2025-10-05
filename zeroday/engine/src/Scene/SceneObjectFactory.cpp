@@ -1,24 +1,28 @@
 #include "Scene/SceneObjectFactory.h"
+
+#include <Core/Config.h>
+#include <nlohmann/detail/string_concat.hpp>
+
 #include "Core/AssetManager.h"
+#include "Core/File.h"
 #include "Core/Services.h"
 #include "Scene/Scene.h"
 #include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 #include "Graphics/OpenGL/Model/Model.h"
+#include "Graphics/OpenGL/Model/ModelLoader.h"
 
 namespace Zeroday {
 
 	SceneObjectFactory::SceneObjectFactory(Scene& scene) : m_Scene(scene) {}
 
     Entity SceneObjectFactory::CreatePrimitiveObject(const std::string& meshName, const std::string& entityName) const {
-        const auto* meshLib = Services::GetMeshLibrary();
 		auto entity = m_Scene.CreateEntity(entityName);
 
 		auto mat = Services::GetAssetManager()->CreateMaterialInstance("metal_048a");
 		entity.AddComponent<MaterialComponent>(mat);
 
         MeshComponent meshComp{};
-        meshComp.meshData = meshLib->GetMeshData3D();
-        meshComp.subMeshName = meshName;
+        meshComp.m_SubMeshName = meshName;
         entity.AddComponent<MeshComponent>(meshComp);
 
         return entity;
@@ -26,9 +30,6 @@ namespace Zeroday {
 
     Entity SceneObjectFactory::CreateLight(opengl::LightType type,
 										const std::string& entityName, const std::string& meshName) const {
-
-		auto* meshLib  = Services::GetMeshLibrary();
-
 		auto entity = m_Scene.CreateEntity(entityName);
 
 		auto mat = Services::GetAssetManager()->CreateMaterialInstance("onyx_015");
@@ -38,8 +39,7 @@ namespace Zeroday {
 		entity.AddComponent<LightComponent>(lightComp);
 
 		MeshComponent meshComp{};
-		meshComp.meshData = meshLib->GetMeshData3D();
-		meshComp.subMeshName = meshName;
+		meshComp.m_SubMeshName = meshName;
 		entity.AddComponent<MeshComponent>(meshComp);
 
 		// Add transform component
@@ -61,35 +61,35 @@ namespace Zeroday {
 		return entity;
     }
 
-    Entity SceneObjectFactory::CreateModel(const std::string &path, const std::string& entityName) const {
-		// auto* modelLoader   = Services::GetModelLoader();
-		// auto* matLib        = Services::GetMaterialLibrary();
+	Entity SceneObjectFactory::TestModelLoader(const std::string& path, const std::string& entityName) const {
+		const auto modelLoader = CreateScope<Graphics::ModelLoader>();
 
-		// const Scene::Entity entity = world.CreateEntity();
-		// auto model = modelLoader->load(path);
-		// if (!model) {
-		// 	Logger::warn("[SceneObjectFactory::createModelWithPath] Failed to load model " + path);
-		// 	return entity;
-		// }
-		//
-		// for (auto& meshEntry : model->meshes) {
-		// 	const Scene::MaterialComponent matC;
-		// 	if (meshEntry.subMeshName.empty()) {
-		// 		matC.instance->base = matLib->getDefaultMaterial();
-		// 	} else {
-		// 		matC.instance->base = matLib->getMaterialByName(meshEntry.subMeshName);
-		// 	}
-		// }
-		//
-		// Scene::TransformComponent tComp;
-		// tComp.transform = CreateRef<Transform>();
-		//
-		// Scene::ModelComponent modelComponent;
-		// modelComponent.model = std::move(model);
-		//
-		// world.AddComponent(entity, std::move(tComp));
-		// world.AddComponent(entity, std::move(modelComponent));
+		if (!File::Get().Exists(path)) {
+			Warn("Model not found: " + path);
+			return Entity{};
+		}
 
-		// return entity;
-    }
+		auto model = modelLoader->Load(path);
+
+		if (model && model->IsValid()) {
+			Info(std::format(" - Name: {}", model->m_Name));
+			Info(std::format(" - Meshes: {}", model->GetMeshCount()));
+
+			// Create a single entity with ModelComponent
+			auto entity = m_Scene.CreateEntity(model->m_Name);
+
+			// Add ModelComponent that references the entire model
+			entity.AddComponent<ModelComponent>(model);
+
+			// Add transform
+			auto& transform = entity.GetComponent<TransformComponent>();
+			transform.m_Transform.SetScale(glm::vec3(0.5f));
+
+			return entity;
+		} else {
+			Error("Failed to load Model!");
+		}
+
+		return Entity{};
+	}
 }

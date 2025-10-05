@@ -19,7 +19,7 @@ namespace Zeroday
 		[[nodiscard]] Entity CreateCamera(CameraMode mode = CameraMode::Perspective,
 			const std::string& entityName = std::string());
 
-		[[nodiscard]] Entity CreateModel(const std::string& path, const std::string& entityName = std::string()) const;
+		[[nodiscard]] Entity TestModelLoader(const std::string& path, const std::string& entityName = std::string()) const;
 
 	private:
 		Scene& m_Scene;

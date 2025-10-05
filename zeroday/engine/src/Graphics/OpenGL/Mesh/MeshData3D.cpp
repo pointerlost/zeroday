@@ -3,6 +3,9 @@
 #include <ranges>
 #include <glad/glad.h>
 #include "Core/Logger.h"
+#include "Core/Services.h"
+#include "Graphics/OpenGL/Mesh/MeshFactory.h"
+#include "Graphics/OpenGL/Mesh/MeshLibrary.h"
 
 namespace Zeroday {
 
@@ -94,9 +97,28 @@ namespace Zeroday {
         }
     }
 
+    void MeshData::SetupMeshes() {
+        const auto AddMeshObject = [&](const std::string &name) {
+            auto [vertices, indices] = MeshFactory::CreateMeshObject(name);
+            Services::GetMeshLibrary()->GetMeshData3D()->AddMesh3DToMeshData(name, vertices, indices);
+        };
+
+        AddMeshObject("triangle");
+        AddMeshObject("square");
+        AddMeshObject("cube");
+        AddMeshObject("circle");
+        AddMeshObject("sphere");
+
+        // Creation VBO, EBO
+        UploadToGPU();
+        CreateUniversalVAO();
+
+        Info("[MeshFactory::setupMeshes] successful!");
+    }
+
     void MeshData3D::AddMesh3DToMeshData(const std::string& name,
-                                        std::vector<Vertex>& v,
-                                        std::vector<uint32_t>& i) {
+                                         std::vector<Vertex>& v,
+                                         std::vector<uint32_t>& i) {
         (void)AddMesh(std::move(v), std::move(i), name);
     }
 

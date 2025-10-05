@@ -18,6 +18,7 @@ namespace Zeroday {
 }
 
 namespace Zeroday::opengl {
+
     enum class MaterialTextureType {
         BaseColor,
         Normal,

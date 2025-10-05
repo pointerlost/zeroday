@@ -2,8 +2,7 @@
 // Created by pointerlost on 9/28/25.
 //
 #include "Graphics/OpenGL/Textures/Textures.h"
-
-#include <iostream>
+#include "Core/Assert.h"
 
 namespace Zeroday {
 
@@ -34,20 +33,32 @@ namespace Zeroday {
         glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
-    uint64_t Texture::MakeResident() {
-        if (m_Id && !m_Resident) {
+    bool Texture::MakeResident() {
+        if (m_Resident) return true;
+
+        if (GLAD_GL_ARB_bindless_texture) {
             m_BindlessHandle = glGetTextureHandleARB(m_Id);
-            glMakeTextureHandleResidentARB(m_BindlessHandle);
-            m_Resident = true;
+            if (m_BindlessHandle) {
+                glMakeTextureHandleResidentARB(m_BindlessHandle);
+                m_Resident = true;
+                return true;
+            }
         }
-        return m_BindlessHandle;
+        return false;
     }
 
     void Texture::MakeNonResident() {
-        if (m_Resident) {
+        if (m_Resident && m_BindlessHandle) {
             glMakeTextureHandleNonResidentARB(m_BindlessHandle);
             m_Resident = false;
             m_BindlessHandle = 0;
         }
+    }
+
+    uint64_t Texture::GetBindlessHandle() const {
+        if (!m_Resident) {
+            ZD_WARN(false, "Texture '{}' is not resident", m_Name);
+        }
+        return m_BindlessHandle;
     }
 }

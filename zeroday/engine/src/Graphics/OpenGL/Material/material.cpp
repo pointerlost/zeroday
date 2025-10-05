@@ -19,7 +19,11 @@ namespace Zeroday::opengl {
         gpu.roughnessPadding  = glm::vec4(GetRoughness(), glm::vec3(0.0f));
 
         auto GetHandle = [](const Ref<Texture>& tex) -> uint64_t {
-            return tex ? tex->MakeResident() : 0; // Ensure resident and get handle
+            if (!tex) return 0;
+            if (!tex->IsResident()) {
+                tex->MakeResident();
+            }
+            return tex->GetBindlessHandle();
         };
 
         gpu.baseColorHandle    = GetHandle(GetTexture(MaterialTextureType::BaseColor, assetManager->GetDefaultTexture(MaterialTextureType::BaseColor)));

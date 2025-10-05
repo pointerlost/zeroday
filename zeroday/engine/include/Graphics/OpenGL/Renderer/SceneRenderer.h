@@ -41,6 +41,7 @@ namespace Zeroday::opengl {
         static void ExtractLights(Scene* scene, ExtractResult& result);
         static void ExtractCamera(Scene* scene, ExtractResult& result);
         static void ExtractGlobalData(Scene* scene, ExtractResult& result);
+        static void ExtractModels(Scene* scene, ExtractResult& result);
 
         static inline glm::vec3 g_GlobalAmbient = glm::vec3(0.1f);
 

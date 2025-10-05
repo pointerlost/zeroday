@@ -9,12 +9,15 @@ namespace Zeroday::Input {
 	bool g_IsKeyHeld[KEY_MAX] = {};
 	bool g_IsKeyUp[KEY_MAX] = {};
 
-	double xPosMouse = 0.0f;
-	double yPosMouse = 0.0f;
+	float yaw = -90.0f;
+	float pitch = 0.0f;
+
+	double currMousePosX = 0.0f;
+	double currMousePosY = 0.0f;
 	double lastMousePosX = 0.0f;
 	double lastMousePosY = 0.0f;
 
-	double sensitivity = 0.0444f;
+	double sensitivity = 0.3f;
 
 	double mouseDeltaX = 0.0f;
 	double mouseDeltaY = 0.0f;
@@ -39,8 +42,8 @@ namespace Zeroday::Input {
 		// to avoid a sudden change of the initial mouse delta
 		if (firstMouse) {
 			// update last mouse pos
-			lastMousePosX = xPosMouse;
-			lastMousePosY = yPosMouse;
+			lastMousePosX = currMousePosX;
+			lastMousePosY = currMousePosY;
 			
 			firstMouse = false;
 			mouseDeltaX = 0.0;
@@ -49,13 +52,21 @@ namespace Zeroday::Input {
 		}
 
 		// delta = last frame - current frame
-		mouseDeltaX = xPosMouse - lastMousePosX;
+		mouseDeltaX = currMousePosX - lastMousePosX;
 
-		// Y axis should be (curr - last) because Y axis in the opposite direction
-		mouseDeltaY = lastMousePosY- yPosMouse;
+		// Y-axis should be (curr - last) because Y axis in the opposite direction
+		mouseDeltaY = lastMousePosY- currMousePosY;
 
-		lastMousePosX = xPosMouse;
-		lastMousePosY = yPosMouse;
+		mouseDeltaX *= sensitivity;
+		mouseDeltaY *= sensitivity;
+
+		yaw   += static_cast<float>(mouseDeltaX);
+		pitch += static_cast<float>(mouseDeltaY);
+		if (pitch > 89.0) pitch = 89.0;
+		if (pitch < -89.0) pitch = -89.0;
+
+		lastMousePosX = currMousePosX;
+		lastMousePosY = currMousePosY;
 	}
 
 	void ResetMouseDelta() {

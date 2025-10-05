@@ -84,13 +84,19 @@ namespace Zeroday::Editor::UI {
         static bool headerOpened = true;
         ImGui::SetNextItemOpen(headerOpened, ImGuiCond_Once);
         if (ImGui::CollapsingHeader("Transform")) {
-            if (ImGui::DragFloat3("Position", glm::value_ptr(pos), 0.1)) {
+            ImGui::Text("Position");
+            ImGui::SameLine(0.0f, 14.0f);
+            if (ImGui::DragFloat3("##hidden1", glm::value_ptr(pos), 0.1)) {
                 transform.SetPosition(pos);
             }
-            if (ImGui::DragFloat3("Rotation", glm::value_ptr(rot), 0.1, -360.0, 360.0)) {
+            ImGui::Text("Rotate");
+            ImGui::SameLine(0.0f, 27.0f);
+            if (ImGui::DragFloat3("##hidden2", glm::value_ptr(rot), 0.1, -360.0, 360.0)) {
                 transform.SetEulerRotation(rot);
             }
-            if (ImGui::DragFloat3("Scale",    glm::value_ptr(scl), 0.1, 0.1)) {
+            ImGui::Text("Scale");
+            ImGui::SameLine(0.0f, 35.0f);
+            if (ImGui::DragFloat3("##hidden3", glm::value_ptr(scl), 0.09, 0.1)) {
                 transform.SetScale(scl);
             }
         }
@@ -106,22 +112,30 @@ namespace Zeroday::Editor::UI {
         // Material Properties
         if (ImGui::CollapsingHeader("Material Properties", ImGuiTreeNodeFlags_DefaultOpen)) {
             auto baseColor = material->GetBaseColor();
-            if (ImGui::ColorEdit4("Base Color", &baseColor.x)) {
+            ImGui::Text("Base Color");
+            ImGui::SameLine(0.0f, 15.0f);
+            if (ImGui::ColorEdit4("##hidden1", &baseColor.x)) {
                 material->SetBaseColor(baseColor);
             }
 
+            ImGui::Text("Metallic");
+            ImGui::SameLine(0.0f, 31.0f);
             float metallic = material->GetMetallic();
-            if (ImGui::SliderFloat("Metallic", &metallic, 0.0f, 1.0f)) {
+            if (ImGui::SliderFloat("##hidden2", &metallic, 0.0f, 1.0f)) {
                 material->SetMetallic(metallic);
             }
 
+            ImGui::Text("Roughness");
+            ImGui::SameLine(0.0f, 10.0f);
             float roughness = material->GetRoughness();
-            if (ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f)) {
+            if (ImGui::SliderFloat("##hidden3", &roughness, 0.0f, 1.0f)) {
                 material->SetRoughness(roughness);
             }
 
+            ImGui::Text("Emissive");
+            ImGui::SameLine(0.0f, 24.0f);
             glm::vec3 emissive = material->GetEmissive();
-            if (ImGui::ColorEdit3("Emissive", &emissive.x)) {
+            if (ImGui::ColorEdit3("##hidden4", &emissive.x)) {
                 material->SetEmissive(emissive);
             }
 
@@ -134,7 +148,7 @@ namespace Zeroday::Editor::UI {
             if (ImGui::Button("Enable All Textures")) {
                 material->EnableAllTextures();
             }
-            ImGui::SameLine();
+            ImGui::SameLine(0.0f, 5.0f);
             if (ImGui::Button("Disable All Textures")) {
                 material->DisableAllTextures();
             }
@@ -219,11 +233,10 @@ namespace Zeroday::Editor::UI {
                 }
             }
             ImGui::PopStyleColor(2);
-
             ImGui::Separator();
 
             // Radiance with color picker
-            glm::vec3 radiance = light.GetRadiance();
+            const glm::vec3 radiance = light.GetRadiance();
             float radianceArray[3] = { radiance.x, radiance.y, radiance.z };
             if (ImGui::ColorEdit3("Radiance", radianceArray)) {
                 light.SetRadiance(glm::vec3(radianceArray[0], radianceArray[1], radianceArray[2]));

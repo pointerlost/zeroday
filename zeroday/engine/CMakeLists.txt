@@ -21,6 +21,7 @@ add_library(glad_local STATIC
     vendor/glad/src/glad.c
         include/Core/Timer.h
         include/Core/EngineState.h
+        include/Graphics/OpenGL/Camera/CameraInput.h
 )
 
 # Include directories for local GLAD
@@ -123,6 +124,7 @@ add_library(ZeroDayEngine STATIC
     include/Graphics/OpenGL/Renderer/SceneRenderer.h
         src/Core/Timer.cpp
         src/Core/EngineState.cpp
+        src/Graphics/OpenGL/Camera/CameraInput.cpp
 )
 
 # Include directories

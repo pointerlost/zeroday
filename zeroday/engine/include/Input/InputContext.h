@@ -3,8 +3,7 @@
 
 namespace Zeroday::Input {
 	
-	struct InputContext
-	{
+	struct InputContext {
 	public:
 		float m_delta = {};
 		float m_rotationSpeed = {};

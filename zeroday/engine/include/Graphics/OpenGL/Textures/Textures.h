@@ -14,8 +14,10 @@ namespace Zeroday {
 		void UploadData(GLenum format, GLenum type, const void* data);
 		void GenerateMipmaps();
 		// Generate bindless handle
-		uint64_t MakeResident();
+		bool MakeResident();
 		void MakeNonResident();
+		[[nodiscard]] uint64_t GetBindlessHandle() const;
+		[[nodiscard]] bool IsResident() const { return m_Resident; }
 
 		Texture() = default;
 		~Texture() {

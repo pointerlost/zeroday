@@ -14,7 +14,7 @@
 #include "Graphics/OpenGL/Textures/Textures.h"
 #include "stb/stb_image.h"
 
-static Zeroday::File& file = Zeroday::File::Get();
+static Zeroday::File& fileMngr = Zeroday::File::Get();
 using json = nlohmann::json;
 
 namespace Zeroday {
@@ -240,7 +240,7 @@ namespace Zeroday {
     }
 
     bool AssetManager::LoadMaterialsFromFolder(const std::string& filePath) {
-        std::string content = file.ReadFromFile(filePath);
+        std::string content = fileMngr.ReadFromFile(filePath);
         if (content.empty()) {
             Warn("[MaterialLibrary::CreateMaterials] Content is empty for file: " + filePath + "\n");
             return false;

@@ -6,25 +6,25 @@
 #include <vector>
 #include <memory>
 #include "Graphics/OpenGL/Material/material.h"
-
-namespace Zeroday::opengl {
-    struct SubMeshInfo;
-    struct MeshData3D;
-}
+#include "Graphics/OpenGL/Mesh/MeshData3D.h"
 
 namespace Zeroday::opengl {
 
     struct MeshEntry {
-        Ref<MeshData3D> meshData;
-        std::string subMeshName;
-        Ref<MaterialInstance> material;
+        std::string m_SubMeshName;
+        Ref<MaterialInstance> m_Material;
     };
 
     struct Model {
-        std::vector<MeshEntry> meshes;
+        std::vector<MeshEntry> m_Meshes;
+        std::string m_Name;
+        std::string m_FilePath;
 
-        void AddMesh(Ref<MeshData3D> data, const std::string& name, Ref<MaterialInstance> material) {
-            meshes.push_back({std::move(data), name, std::move(material)});
+        void AddMesh(const std::string& name, Ref<MaterialInstance> material) {
+            m_Meshes.push_back({name, std::move(material)});
         }
+
+        [[nodiscard]] size_t GetMeshCount() const { return m_Meshes.size(); }
+        [[nodiscard]] bool IsValid() const { return !m_Meshes.empty(); }
     };
 }

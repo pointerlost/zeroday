@@ -216,4 +216,5 @@ namespace Zeroday::opengl {
     Buffers& GPURenderer::CheckStateAndGetBuffers() {
         return Services::GetEngineState()->IsPlaying() ? m_GameStateBuffers : m_EditorStateBuffers;
     }
+
 }

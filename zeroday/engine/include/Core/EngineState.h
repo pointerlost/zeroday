@@ -19,6 +19,12 @@ namespace Zeroday {
     public:
         EngineState() = default;
 
+        Timer& GetEditorTimer() { return m_EditorTimer; }
+        Timer& GetGameTimer()   { return m_GameTimer;   }
+
+        [[nodiscard]] float GetEditorFPS() const { return m_EditorTimer.GetFPS(); }
+        [[nodiscard]] float GetGameFPS()   const { return m_GameTimer.GetFPS();   }
+
         // State control
         void SetRunning(bool running) { m_Running  = running; }
         void SetPaused(bool paused)   { m_IsPaused = paused;  }

@@ -18,6 +18,9 @@ namespace Zeroday {
         [[nodiscard]] float GetCurrentTime() const { return m_CurrentFrameTime; }
         [[nodiscard]] bool IsRunning() const { return m_Running;  }
 
+        void CalculateFPS();
+        [[nodiscard]] float GetFPS() const { return m_CurrentFPS; }
+
         Timer()  = default;
         ~Timer() = default;
         Timer(const Timer&) = default;
@@ -29,5 +32,10 @@ namespace Zeroday {
         float m_CurrentFrameTime = 0.0f;
         float m_DeltaTime        = 0.0f;  // Last - Curr
         bool m_Running           = false; // Is timer active
+
+        // FPS
+        int m_FrameCount = 0;
+        float m_FPSTimeAccum = 0.0f;
+        float m_CurrentFPS = 0.0f;
     };
 }

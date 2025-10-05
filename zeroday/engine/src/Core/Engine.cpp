@@ -4,10 +4,13 @@
 #include <imgui_impl_opengl3.h>
 #include <thread>
 #include <Input/Input.h>
+#include <nlohmann/detail/string_concat.hpp>
+
 #include "Core/Services.h"
 #include "Editor/InspectorPanel.h"
 #include "Editor/MenuBarPanel.h"
 #include "Editor/SceneHierarchyPanel.h"
+#include "Graphics/OpenGL/Camera/CameraInput.h"
 #include "Graphics/OpenGL/Mesh/MeshData3D.h"
 #include "Graphics/OpenGL/Renderer/SceneRenderer.h"
 #include "Graphics/OpenGL/Textures/Textures.h"
@@ -50,14 +53,20 @@ namespace Zeroday {
 			Error("[Engine::initResources] LoadAllShaders FAILED!");
 		}
 
+		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Point, "Point Light");
+		(void)m_SceneObjectFactory->CreatePrimitiveObject("cube", "Cube");
+
+		(void)m_SceneObjectFactory->TestModelLoader(nlohmann::detail::concat(MODEL_DIR, "Sponza/glTF/Sponza.gltf"));
+		(void)m_SceneObjectFactory->TestModelLoader(nlohmann::detail::concat(MODEL_DIR, "island_tree/island_tree_02_4k.gltf"));
+
+		// Load meshes into GPU
+		g_MeshLibrary->GetMeshData3D()->SetupMeshes();
+
 		m_Renderer3D->Init();
 
 		Info("[Engine::initResources] Shaders loaded successfully!");
 
 		m_ImGuiLayer->Init(m_Window->GetGLFWwindow());
-
-		(void)m_SceneObjectFactory->CreateLight(opengl::LightType::Point, "Point Light");
-		(void)m_SceneObjectFactory->CreatePrimitiveObject("cube", "Cube");
 
 		Info("Engine initResources successful!");
 
@@ -205,6 +214,7 @@ namespace Zeroday {
 
 	void Engine::UpdatePhase() {
 		Input::Update();
+		CameraInput::Update();
 		m_EngineState->UpdateTimers();
 		m_Scene->Update();
 	}

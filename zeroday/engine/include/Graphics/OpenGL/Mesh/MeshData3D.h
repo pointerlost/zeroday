@@ -48,6 +48,8 @@ namespace Zeroday {
         [[nodiscard]] const std::vector<Vertex>& GetVertices()  const { return all_Vertices; }
         [[nodiscard]] const std::vector<uint32_t>& GetIndices() const { return all_Indices;  }
 
+        void SetupMeshes();
+
     private:
         GLuint m_UniversalVAO = 0;
         uint32_t m_VBO = 0;

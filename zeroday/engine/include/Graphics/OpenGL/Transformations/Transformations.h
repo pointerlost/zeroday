@@ -17,7 +17,7 @@ namespace Zeroday {
         [[nodiscard]] const glm::vec3& GetPosition() const { return m_Position; }
         glm::vec3 GetPosition() { return m_Position; }
 
-        // Get Euler angles (degrees) - user friendly (for example UI)
+        // Get Euler angles (degrees) for UI
         const glm::vec3& GetEulerRotation() const;
 
         // set Euler angles (degrees) - converts to quaternion internally
